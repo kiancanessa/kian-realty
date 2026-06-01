@@ -1,0 +1,134 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Jost:wght@200;300;400;500;600&family=DM+Mono:wght@300;400&display=swap');
+
+@theme {
+  --color-obsidian: #0A0A0A;
+  --color-charcoal: #141414;
+  --color-graphite: #1E1E1E;
+  --color-gold: #C9A84C;
+  --color-gold-light: #E8C97A;
+  --color-gold-dark: #9A7A2E;
+  --color-cream: #F5F0E8;
+  --color-cream-dark: #D4CFC7;
+  --color-mist: #8A8A8A;
+
+  --font-display: 'Cormorant Garamond', serif;
+  --font-sans: 'Jost', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+
+  --animate-shimmer: shimmer 3s linear infinite;
+  --animate-scroll-down: scrollDown 2s ease-in-out infinite;
+  --animate-fade-up: fadeUp 0.8s ease forwards;
+  --animate-fade-in: fadeIn 1s ease forwards;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes scrollDown {
+  0%, 100% { transform: translateY(0);   opacity: 1;   }
+  50%       { transform: translateY(8px); opacity: 0.4; }
+}
+@keyframes fadeUp {
+  0%   { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0);    }
+}
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; overflow-x: hidden; }
+
+body {
+  background-color: #0A0A0A;
+  color: #F5F0E8;
+  font-family: 'Jost', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: #0A0A0A; }
+::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 2px; }
+
+/* Gold shimmer text */
+.gold-shimmer {
+  background: linear-gradient(90deg, #C9A84C 0%, #E8C97A 30%, #C9A84C 60%, #9A7A2E 80%, #E8C97A 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Grain overlay */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.35;
+}
+
+/* Reveal animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Gold divider */
+.gold-line {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+}
+
+/* Property card hover */
+.property-card {
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.property-card:hover { transform: translateY(-8px); }
+.property-card:hover .card-overlay { opacity: 1; }
+
+/* ===== RESPONSIVE LAYOUT HELPERS ===== */
+
+/* Mobile: hide desktop nav, show burger */
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+  .show-mobile { display: block !important; }
+}
+@media (min-width: 769px) {
+  .hide-mobile { display: flex !important; }
+  .show-mobile { display: none !important; }
+}
+
+/* Stats: 4 cols on desktop */
+@media (min-width: 769px) {
+  .stats-grid { grid-template-columns: repeat(4, 1fr) !important; }
+}
+
+/* About: 2 cols on desktop */
+@media (min-width: 1024px) {
+  .about-grid { grid-template-columns: 1fr 1.2fr !important; }
+}
+
+/* Location: map + sidebar on desktop */
+@media (min-width: 1024px) {
+  .location-grid { grid-template-columns: 1.5fr 1fr !important; }
+}
+
+/* Contact: 2 cols on desktop */
+@media (min-width: 1024px) {
+  .contact-grid { grid-template-columns: 1fr 1.2fr !important; }
+}

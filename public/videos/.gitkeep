@@ -1,0 +1,3 @@
+# Add your drone video here:
+# hero.mp4 — aerial coastal Baja footage (HD preferred)
+# Then uncomment the <source> tag in Hero.tsx
