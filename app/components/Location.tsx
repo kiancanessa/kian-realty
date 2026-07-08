@@ -2,15 +2,6 @@
 import { useRef, useEffect } from "react";
 import { useLang } from "../lib/LangContext";
 
-const NEARBY = [
-  { name: "San Diego, CA", dist: "45 min", emoji: "🇺🇸" },
-  { name: "Rosarito Beach", dist: "On-site", emoji: "🏖️" },
-  { name: "Ensenada", dist: "1.5 hr", emoji: "🦞" },
-  { name: "Valle de Guadalupe", dist: "2 hr", emoji: "🍷" },
-  { name: "Tijuana Airport", dist: "40 min", emoji: "✈️" },
-  { name: "Playas de Tijuana", dist: "30 min", emoji: "🌊" },
-];
-
 export default function Location() {
   const { t } = useLang();
   const sectionRef = useRef<HTMLElement>(null);
@@ -25,55 +16,55 @@ export default function Location() {
   }, []);
 
   return (
-    <section id="location" ref={sectionRef} style={{ padding: "112px 24px", background: "#141414" }}>
+    <section id="location" ref={sectionRef} style={{ padding: "112px 24px", background: "#F0E7D8" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         <div className="reveal" style={{ textAlign: "center", marginBottom: 64 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 24 }}>
-            <div className="gold-line" />
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "#C9A84C" }}>Location</span>
-            <div className="gold-line" />
+            <div className="sage-line" />
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "#6B8A42" }}>{t.labels.location}</span>
+            <div className="sage-line" />
           </div>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "#F5F0E8", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "-0.02em", marginBottom: 16 }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "#23221E", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "-0.02em", marginBottom: 16 }}>
             {t.location.title}
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", color: "rgba(245,240,232,0.38)", fontSize: "0.88rem", maxWidth: 520, margin: "0 auto", lineHeight: 1.7 }}>
+          <p style={{ fontFamily: "'Jost', sans-serif", color: "rgba(35,34,30,0.38)", fontSize: "0.88rem", maxWidth: 520, margin: "0 auto", lineHeight: 1.7 }}>
             {t.location.subtitle}
           </p>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 32 }} className="location-grid">
           {/* Map */}
-          <div className="reveal" style={{ border: "1px solid rgba(201,168,76,0.12)", overflow: "hidden", height: 420, position: "relative" }}>
+          <div className="reveal" style={{ border: "1px solid rgba(107,138,66,0.12)", overflow: "hidden", height: 420, position: "relative" }}>
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d110943.85506978478!2d-117.13505673203128!3d32.33292814013765!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80d8b5d5cc7a3101%3A0xbf24fb6f27f22a6d!2sRosarito%2C%20Baja%20California%2C%20Mexico!5e0!3m2!1sen!2s!4v1710000000000!5m2!1sen!2s"
               width="100%" height="100%"
-              style={{ border: 0, filter: "invert(90%) hue-rotate(180deg) saturate(0.5) brightness(0.85)" }}
+              style={{ border: 0, filter: "saturate(0.85) contrast(0.95)" }}
               allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Map"
             />
-            <div style={{ position: "absolute", top: 16, left: 16, background: "rgba(10,10,10,0.9)", padding: "8px 16px", border: "1px solid rgba(201,168,76,0.2)" }}>
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#C9A84C" }}>Baja California Coast</span>
+            <div style={{ position: "absolute", top: 16, left: 16, background: "rgba(10,10,10,0.9)", padding: "8px 16px", border: "1px solid rgba(107,138,66,0.2)" }}>
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#6B8A42" }}>Rosarito, Baja California</span>
             </div>
           </div>
 
           {/* Nearby */}
           <div className="reveal">
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#C9A84C", marginBottom: 24 }}>Nearby</div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#6B8A42", marginBottom: 24 }}>{t.labels.nearby}</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-              {NEARBY.map((place, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0", borderBottom: "1px solid rgba(201,168,76,0.1)", paddingRight: i % 2 === 0 ? 24 : 0 }}>
+              {t.location.nearby.map((place, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0", borderBottom: "1px solid rgba(107,138,66,0.1)", paddingRight: i % 2 === 0 ? 24 : 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <span style={{ fontSize: "1.1rem" }}>{place.emoji}</span>
-                    <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(245,240,232,0.58)" }}>{place.name}</span>
+                    <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(35,34,30,0.58)" }}>{place.name}</span>
                   </div>
-                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", color: "rgba(201,168,76,0.6)", letterSpacing: "0.06em", whiteSpace: "nowrap", marginLeft: 8 }}>{place.dist}</span>
+                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", color: "rgba(107,138,66,0.6)", letterSpacing: "0.06em", whiteSpace: "nowrap", marginLeft: 8 }}>{place.dist}</span>
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: 32, paddingTop: 24, borderTop: "1px solid rgba(201,168,76,0.1)", display: "flex", gap: 32 }}>
+            <div style={{ marginTop: 32, paddingTop: 24, borderTop: "1px solid rgba(107,138,66,0.1)", display: "flex", gap: 32 }}>
               {t.location.highlights.map((h, i) => (
                 <div key={i}>
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "2.5rem", color: "#C9A84C", fontWeight: 300 }}>{h.value}</div>
-                  <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(245,240,232,0.38)", lineHeight: 1.4, marginTop: 2 }}>{h.label}</div>
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "2.5rem", color: "#6B8A42", fontWeight: 300 }}>{h.value}</div>
+                  <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(35,34,30,0.38)", lineHeight: 1.4, marginTop: 2 }}>{h.label}</div>
                 </div>
               ))}
             </div>

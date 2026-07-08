@@ -9,14 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        obsidian: "#0A0A0A",
-        charcoal: "#141414",
-        graphite: "#1E1E1E",
-        gold: "#C9A84C",
-        "gold-light": "#E8C97A",
-        "gold-dark": "#9A7A2E",
-        cream: "#F5F0E8",
-        "cream-dark": "#D4CFC7",
+        obsidian: "#FAF6EE",
+        charcoal: "#F0E7D8",
+        graphite: "#FFFFFF",
+        sage: "#6B8A42",
+        "sage-light": "#85A857",
+        "sage-dark": "#47592B",
+        cream: "#23221E",
+        "cream-dark": "#DDD4C0",
         mist: "#8A8A8A",
       },
       fontFamily: {

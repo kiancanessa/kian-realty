@@ -34,14 +34,14 @@ export default function Stats() {
     { value: 5,   suffix: "+", label: t.stats.exp },
   ];
   return (
-    <section style={{ borderTop: "1px solid rgba(201,168,76,0.12)", borderBottom: "1px solid rgba(201,168,76,0.12)", background: "rgba(20,20,20,0.5)" }}>
+    <section style={{ borderTop: "1px solid rgba(107,138,66,0.12)", borderBottom: "1px solid rgba(107,138,66,0.12)", background: "#F0E7D8" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 24px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 32 }} className="stats-grid">
         {stats.map((s, i) => (
           <div key={i} style={{ textAlign: "center" }}>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "#C9A84C", fontSize: "clamp(2.5rem, 5vw, 4rem)" }}>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "#6B8A42", fontSize: "clamp(2.5rem, 5vw, 4rem)" }}>
               <CountUp target={s.value} />{s.suffix}
             </div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(245,240,232,0.35)", marginTop: 4 }}>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(35,34,30,0.35)", marginTop: 4 }}>
               {s.label}
             </div>
           </div>

@@ -3,13 +3,13 @@ import "./globals.css";
 import { LangProvider } from "./lib/LangContext";
 
 export const metadata: Metadata = {
-  title: "Kian Canessa · Baja California Real Estate",
+  title: "El Casa Rosarito · Real Estate",
   description:
-    "Premium real estate along the Baja California coast. Buy, sell, rent, or invest with Kian Saavedra Canessa — your bilingual local expert from Tijuana to Ensenada.",
-  keywords: ["Baja California real estate", "Rosarito homes", "Mexico beach property", "Tijuana property", "Ensenada real estate"],
+    "Premium real estate in Rosarito and along the Baja California coast. Buy, sell, rent, or invest with El Casa Rosarito — your bilingual local agency.",
+  keywords: ["Rosarito real estate", "Rosarito homes", "Mexico beach property", "Baja California real estate", "El Casa Rosarito"],
   openGraph: {
-    title: "Kian Canessa · Baja California Real Estate",
-    description: "Premium coastal properties. Buy, sell, rent, or invest with a bilingual local expert.",
+    title: "El Casa Rosarito · Real Estate",
+    description: "Premium coastal properties in Rosarito. Buy, sell, rent, or invest with a bilingual local agency.",
     type: "website",
   },
 };
