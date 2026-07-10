@@ -12,7 +12,7 @@ export default function Footer() {
           <Logo size={28} />
           <div>
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", fontWeight: 300, color: "#23221E", marginBottom: 4 }}>El Casa Rosarito</div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#6B8A42" }}>Rosarito · Real Estate</div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#6B8A42" }}>{t.nav.tagline}</div>
           </div>
         </div>
         <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgba(35,34,30,0.2)", textAlign: "center" }}>{t.footer.tagline}</p>

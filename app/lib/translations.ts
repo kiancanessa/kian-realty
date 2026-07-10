@@ -8,6 +8,7 @@ export const translations = {
       services: "Services",
       contact: "Contact",
       cta: "Find Your Property",
+      tagline: "Management & Development Group",
     },
     labels: {
       services: "Services",
@@ -50,6 +51,10 @@ export const translations = {
         title: "Invest",
         desc: "Identify high-yield opportunities in one of Mexico's fastest-growing real estate corridors.",
       },
+      legal: {
+        title: "Legal Advisory",
+        desc: "Contracts, permits, and closing support from a bilingual team that knows Mexican property law.",
+      },
     },
     featured: {
       title: "Featured Properties",
@@ -57,12 +62,13 @@ export const translations = {
       tag: "Featured",
       inquire: "View Listing",
       viewAll: "View All Properties",
+      filters: { all: "All", house: "Houses", apartment: "Apartments", land: "Land" },
       properties: [
-        { slug: "oceanfront-villa", title: "Oceanfront Villa", location: "Rosarito Beach", price: "$485,000", tag: "New", specs: ["4 Beds", "3 Baths", "280 m²"] },
-        { slug: "modern-condo", title: "Modern Condo", location: "Playas de Rosarito", price: "$1,800/mo", tag: "Available", specs: ["2 Beds", "2 Baths", "110 m²"] },
-        { slug: "beachfront-getaway", title: "Beachfront Getaway", location: "Popotla, Rosarito", price: "$320,000", tag: "Hot Deal", specs: ["3 Beds", "2 Baths", "200 m²"] },
-        { slug: "k38-ocean-apartment", title: "Ocean View Apartment", location: "Km 37.5, Rosarito", price: "Price on Request", tag: "For Rent", specs: ["2 Beds", "2 Baths", "180 m²"] },
-        { slug: "rosarito-ocean-lot", title: "Ocean-View Lot", location: "Km 42, Rosarito", price: "$95,000", tag: "Land", specs: ["500 m² Lot", "Ocean View"] },
+        { slug: "oceanfront-villa", type: "house", title: "Oceanfront Villa", location: "Rosarito Beach", price: "$485,000", tag: "New", specs: ["4 Beds", "3 Baths", "280 m²"] },
+        { slug: "modern-condo", type: "apartment", title: "Modern Condo", location: "Playas de Rosarito", price: "$1,800/mo", tag: "Available", specs: ["2 Beds", "2 Baths", "110 m²"] },
+        { slug: "beachfront-getaway", type: "house", title: "Beachfront Getaway", location: "Popotla, Rosarito", price: "$320,000", tag: "Hot Deal", specs: ["3 Beds", "2 Baths", "200 m²"] },
+        { slug: "k38-ocean-apartment", type: "apartment", title: "Ocean View Apartment", location: "Km 37.5, Rosarito", price: "Price on Request", tag: "For Rent", specs: ["2 Beds", "2 Baths", "180 m²"] },
+        { slug: "rosarito-ocean-lot", type: "land", title: "Ocean-View Lot", location: "Km 42, Rosarito", price: "$95,000", tag: "Land", specs: ["500 m² Lot", "Ocean View"] },
       ],
     },
     about: {
@@ -80,10 +86,8 @@ export const translations = {
         "Property maintenance & rental management",
       ],
       team: [
-        { name: "Jorge L. Juarez Arellano", role: "President · Sales Manager" },
-        { name: "Iwona Kosmalska", role: "Vice-President · Financial Advisor" },
-        { name: "Veronica Ruiz Olvera", role: "Office Manager · Legal Advisor" },
-        { name: "Andre Kmiec", role: "Technology Director" },
+        { name: "Jorge L. Juarez Arellano", role: "President · Sales Manager", photo: "" },
+        { name: "Veronica Ruiz Olvera", role: "Office Manager · Legal Advisor", photo: "" },
       ],
     },
     location: {
@@ -130,6 +134,7 @@ export const translations = {
       services: "Servicios",
       contact: "Contacto",
       cta: "Encuentra tu Propiedad",
+      tagline: "Management & Development Group",
     },
     labels: {
       services: "Servicios",
@@ -172,6 +177,10 @@ export const translations = {
         title: "Invertir",
         desc: "Identifica oportunidades de alto rendimiento en uno de los corredores inmobiliarios de más rápido crecimiento de México.",
       },
+      legal: {
+        title: "Asesoría Legal",
+        desc: "Contratos, permisos y acompañamiento en el cierre, con un equipo bilingüe que conoce la ley de propiedad mexicana.",
+      },
     },
     featured: {
       title: "Propiedades Destacadas",
@@ -179,12 +188,13 @@ export const translations = {
       tag: "Destacado",
       inquire: "Ver Propiedad",
       viewAll: "Ver Todas las Propiedades",
+      filters: { all: "Todas", house: "Casas", apartment: "Departamentos", land: "Terrenos" },
       properties: [
-        { slug: "oceanfront-villa", title: "Villa Frente al Mar", location: "Playas de Rosarito", price: "$485,000", tag: "Nuevo", specs: ["4 Recámaras", "3 Baños", "280 m²"] },
-        { slug: "modern-condo", title: "Departamento Moderno", location: "Playas de Rosarito", price: "$1,800/mes", tag: "Disponible", specs: ["2 Recámaras", "2 Baños", "110 m²"] },
-        { slug: "beachfront-getaway", title: "Escape Frente a la Playa", location: "Popotla, Rosarito", price: "$320,000", tag: "Oferta", specs: ["3 Recámaras", "2 Baños", "200 m²"] },
-        { slug: "k38-ocean-apartment", title: "Departamento Vista al Mar", location: "Km 37.5, Rosarito", price: "Precio a Consultar", tag: "En Renta", specs: ["2 Recámaras", "2 Baños", "180 m²"] },
-        { slug: "rosarito-ocean-lot", title: "Terreno con Vista al Mar", location: "Km 42, Rosarito", price: "$95,000", tag: "Terreno", specs: ["500 m² de Terreno", "Vista al Mar"] },
+        { slug: "oceanfront-villa", type: "house", title: "Villa Frente al Mar", location: "Playas de Rosarito", price: "$485,000", tag: "Nuevo", specs: ["4 Recámaras", "3 Baños", "280 m²"] },
+        { slug: "modern-condo", type: "apartment", title: "Departamento Moderno", location: "Playas de Rosarito", price: "$1,800/mes", tag: "Disponible", specs: ["2 Recámaras", "2 Baños", "110 m²"] },
+        { slug: "beachfront-getaway", type: "house", title: "Escape Frente a la Playa", location: "Popotla, Rosarito", price: "$320,000", tag: "Oferta", specs: ["3 Recámaras", "2 Baños", "200 m²"] },
+        { slug: "k38-ocean-apartment", type: "apartment", title: "Departamento Vista al Mar", location: "Km 37.5, Rosarito", price: "Precio a Consultar", tag: "En Renta", specs: ["2 Recámaras", "2 Baños", "180 m²"] },
+        { slug: "rosarito-ocean-lot", type: "land", title: "Terreno con Vista al Mar", location: "Km 42, Rosarito", price: "$95,000", tag: "Terreno", specs: ["500 m² de Terreno", "Vista al Mar"] },
       ],
     },
     about: {
@@ -202,10 +212,8 @@ export const translations = {
         "Mantenimiento y administración de rentas",
       ],
       team: [
-        { name: "Jorge L. Juarez Arellano", role: "Presidente · Gerente de Ventas" },
-        { name: "Iwona Kosmalska", role: "Vicepresidenta · Asesora Financiera" },
-        { name: "Veronica Ruiz Olvera", role: "Gerente de Oficina · Asesora Legal" },
-        { name: "Andre Kmiec", role: "Director de Tecnología" },
+        { name: "Jorge L. Juarez Arellano", role: "Presidente · Gerente de Ventas", photo: "" },
+        { name: "Veronica Ruiz Olvera", role: "Gerente de Oficina · Asesora Legal", photo: "" },
       ],
     },
     location: {

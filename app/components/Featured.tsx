@@ -1,21 +1,24 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { useLang } from "../lib/LangContext";
 import { MapPin, ArrowRight } from "lucide-react";
 
-const IMAGES = [
-  "/images/properties/oceanfront-villa.jpg",
-  "/images/properties/modern-condo.jpg",
-  "/images/properties/beachfront-getaway.jpg",
-  "/images/k38-apartment/depa4.jpeg",
-  "/images/properties/land/1-beach.jpg",
-];
-const BG_TONES = ["#E3ECD9", "#E0E3EC", "#ECE3D9", "#DCE3EC", "#E3E6D9"];
+const MEDIA: Record<string, { image: string; bg: string }> = {
+  "oceanfront-villa": { image: "/images/properties/oceanfront-villa.jpg", bg: "#E3ECD9" },
+  "modern-condo": { image: "/images/properties/modern-condo.jpg", bg: "#E0E3EC" },
+  "beachfront-getaway": { image: "/images/properties/beachfront-getaway.jpg", bg: "#ECE3D9" },
+  "k38-ocean-apartment": { image: "/images/k38-apartment/depa4.jpeg", bg: "#DCE3EC" },
+  "rosarito-ocean-lot": { image: "/images/properties/land/1-beach.jpg", bg: "#E3E6D9" },
+};
+
+type FilterKey = "all" | "house" | "apartment" | "land";
 
 export default function Featured() {
   const { t } = useLang();
   const sectionRef = useRef<HTMLElement>(null);
+  const [filter, setFilter] = useState<FilterKey>("all");
+
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -26,11 +29,14 @@ export default function Featured() {
     return () => observer.disconnect();
   }, []);
 
+  const filters: FilterKey[] = ["all", "house", "apartment", "land"];
+  const visible = filter === "all" ? t.featured.properties : t.featured.properties.filter(p => p.type === filter);
+
   return (
     <section id="featured" ref={sectionRef} style={{ padding: "112px 24px", background: "#F0E7D8" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         {/* Header */}
-        <div className="reveal" style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 64, gap: 16 }}>
+        <div className="reveal" style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 40, gap: 16 }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
               <div className="sage-line" />
@@ -45,15 +51,32 @@ export default function Featured() {
           </p>
         </div>
 
+        {/* Filter tabs */}
+        <div className="reveal" style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 40 }}>
+          {filters.map(f => (
+            <button key={f} onClick={() => setFilter(f)}
+              style={{
+                padding: "9px 20px", borderRadius: 999, cursor: "pointer",
+                border: `1px solid ${filter === f ? "#6B8A42" : "rgba(107,138,66,0.25)"}`,
+                background: filter === f ? "#6B8A42" : "transparent",
+                color: filter === f ? "#FAF6EE" : "rgba(35,34,30,0.6)",
+                fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", fontWeight: filter === f ? 600 : 400,
+                transition: "all 0.3s",
+              }}>
+              {t.featured.filters[f]}
+            </button>
+          ))}
+        </div>
+
         {/* Cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-          {t.featured.properties.map((p, idx) => (
-            <Link key={idx} href={`/properties/${p.slug}`} className="reveal property-card" style={{ display: "block", border: "1px solid rgba(107,138,66,0.1)", overflow: "hidden", transition: "border-color 0.4s", textDecoration: "none" }}
+          {visible.map((p) => (
+            <Link key={p.slug} href={`/properties/${p.slug}`} className="reveal property-card" style={{ display: "block", border: "1px solid rgba(107,138,66,0.1)", overflow: "hidden", transition: "border-color 0.4s", textDecoration: "none" }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(107,138,66,0.35)"}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(107,138,66,0.1)"}>
               {/* Image */}
-              <div style={{ position: "relative", height: 256, background: `linear-gradient(to bottom, ${BG_TONES[idx]}, #FFFFFF)`, overflow: "hidden" }}>
-                <img src={IMAGES[idx]} alt={p.title}
+              <div style={{ position: "relative", height: 256, background: `linear-gradient(to bottom, ${MEDIA[p.slug].bg}, #FFFFFF)`, overflow: "hidden" }}>
+                <img src={MEDIA[p.slug].image} alt={p.title}
                   style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.85, transition: "opacity 0.5s, transform 0.7s" }}
                   onError={e => (e.currentTarget.style.display = "none")}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; (e.currentTarget as HTMLElement).style.transform = "scale(1.05)"; }}

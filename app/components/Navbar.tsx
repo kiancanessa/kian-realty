@@ -39,8 +39,8 @@ export default function Navbar() {
             <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", fontWeight: 300, letterSpacing: "0.06em", color: "#23221E" }}>
               El Casa Rosarito
             </span>
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.26em", color: "#6B8A42", textTransform: "uppercase" }}>
-              Rosarito · Real Estate
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.58rem", letterSpacing: "0.1em", color: "#6B8A42", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+              {t.nav.tagline}
             </span>
           </span>
         </a>

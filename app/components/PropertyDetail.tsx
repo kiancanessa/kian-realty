@@ -28,8 +28,8 @@ export type PropertyDetailProps = {
   messagePlaceholder: Bilingual;
 };
 
-const WHATSAPP_HREF = "https://wa.me/526611255047";
-const EMAIL_HREF = "mailto:elcasarosarito@gmail.com";
+const WHATSAPP_HREF = "https://wa.me/526611256107";
+const EMAIL_HREF = "mailto:jorgeelcasarosarito@gmail.com";
 
 export default function PropertyDetail(p: PropertyDetailProps) {
   const [lang, setLang] = useState<"en" | "es">("en");

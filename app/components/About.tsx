@@ -78,10 +78,14 @@ export default function About() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24 }}>
           {t.about.team.map((member, i) => (
             <div key={i} style={{ textAlign: "center", padding: 24, border: "1px solid rgba(107,138,66,0.1)", background: "#FFFFFF" }}>
-              <div style={{ width: 56, height: 56, borderRadius: "50%", border: "1px solid rgba(107,138,66,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", color: "#6B8A42" }}>
-                  {member.name.split(" ").map(w => w[0]).slice(0, 2).join("")}
-                </span>
+              <div style={{ width: 56, height: 56, borderRadius: "50%", border: "1px solid rgba(107,138,66,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", overflow: "hidden" }}>
+                {member.photo ? (
+                  <img src={member.photo} alt={member.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", color: "#6B8A42" }}>
+                    {member.name.split(" ").map(w => w[0]).slice(0, 2).join("")}
+                  </span>
+                )}
               </div>
               <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.15rem", color: "#23221E", fontWeight: 400, marginBottom: 4 }}>
                 {member.name}

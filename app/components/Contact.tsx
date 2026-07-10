@@ -32,9 +32,9 @@ export default function Contact() {
   const inputStyle: React.CSSProperties = { width: "100%", background: "#FFFFFF", border: "1px solid rgba(107,138,66,0.15)", outline: "none", padding: "14px 16px", fontFamily: "'Jost', sans-serif", fontSize: "0.88rem", color: "#23221E", transition: "border-color 0.3s", boxSizing: "border-box" };
 
   const contactLinks = [
-    { icon: Mail, label: "Email", value: "elcasarosarito@gmail.com", href: "mailto:elcasarosarito@gmail.com" },
-    { icon: Phone, label: "WhatsApp · MX", value: "+52 661 125 5047", href: "https://wa.me/526611255047" },
-    { icon: Phone, label: "Phone · US", value: "+1 818 617 5047", href: "tel:+18186175047" },
+    { icon: Mail, label: "Email", value: "jorgeelcasarosarito@gmail.com", href: "mailto:jorgeelcasarosarito@gmail.com" },
+    { icon: Phone, label: "WhatsApp · MX", value: "+52 661 125 6107", href: "https://wa.me/526611256107" },
+    { icon: Phone, label: "Phone · US", value: "+1 (818) 617-5047", href: "tel:+18186175047" },
   ];
 
   return (
