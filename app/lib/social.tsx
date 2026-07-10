@@ -1,7 +1,7 @@
 export function FacebookIcon({ size = 18 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 8.71 8.71 0 0 0-.821.036c-.34.036-.643.174-.807.325-.226.235-.335.53-.335 1.1v1.53h1.4v3.667h-1.4v7.98" />
+    <svg width={size} height={size} viewBox="0 0 320 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z" />
     </svg>
   );
 }
@@ -24,11 +24,11 @@ export function TikTokIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-export type SocialLink = { name: string; href: string; Icon: (props: { size?: number }) => React.JSX.Element };
+export type SocialLink = { name: string; href: string; Icon: (props: { size?: number }) => React.JSX.Element; color: string; hoverColor: string };
 
 // Add Instagram/TikTok entries here once real links are available:
-// { name: "Instagram", href: "https://instagram.com/...", Icon: InstagramIcon }
-// { name: "TikTok", href: "https://tiktok.com/@...", Icon: TikTokIcon }
+// { name: "Instagram", href: "https://instagram.com/...", Icon: InstagramIcon, color: "#E1306C", hoverColor: "#C13584" }
+// { name: "TikTok", href: "https://tiktok.com/@...", Icon: TikTokIcon, color: "#000000", hoverColor: "#333333" }
 export const SOCIAL_LINKS: SocialLink[] = [
-  { name: "Facebook", href: "https://www.facebook.com/share/1KXb7Lm8g9/", Icon: FacebookIcon },
+  { name: "Facebook", href: "https://www.facebook.com/share/1KXb7Lm8g9/", Icon: FacebookIcon, color: "#1877F2", hoverColor: "#166FE5" },
 ];

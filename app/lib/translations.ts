@@ -88,8 +88,8 @@ export const translations = {
       team: [
         { name: "Jorge L. Juarez Arellano", role: "President", photo: "/images/team/jorge.jpg" },
         { name: "Veronica Ruiz Olvera", role: "Office Manager · Legal Advisor", photo: "/images/team/veronica.jpg" },
-        { name: "Irving Berron Mena", role: "Real Estate Sales Manager", photo: "/images/team/irving.jpg" },
-        { name: "Leticia Bonilla", role: "Real Estate Advisor", photo: "/images/team/leticia.jpg" },
+        { name: "Irving Berron Mena", role: "Real Estate Sales Manager", photo: "/images/team/irving.jpeg" },
+        { name: "Leticia Bonilla", role: "Real Estate Advisor", photo: "/images/team/leticia.jpeg" },
       ],
     },
     location: {
@@ -216,8 +216,8 @@ export const translations = {
       team: [
         { name: "Jorge L. Juarez Arellano", role: "Presidente", photo: "/images/team/jorge.jpg" },
         { name: "Veronica Ruiz Olvera", role: "Gerente de Oficina · Asesora Legal", photo: "/images/team/veronica.jpg" },
-        { name: "Irving Berron Mena", role: "Gerente de Ventas Inmobiliarias", photo: "/images/team/irving.jpg" },
-        { name: "Leticia Bonilla", role: "Asesora Inmobiliaria", photo: "/images/team/leticia.jpg" },
+        { name: "Irving Berron Mena", role: "Gerente de Ventas Inmobiliarias", photo: "/images/team/irving.jpeg" },
+        { name: "Leticia Bonilla", role: "Asesora Inmobiliaria", photo: "/images/team/leticia.jpeg" },
       ],
     },
     location: {

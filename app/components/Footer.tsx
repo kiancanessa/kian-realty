@@ -18,13 +18,13 @@ export default function Footer() {
         </div>
         <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgba(35,34,30,0.2)", textAlign: "center" }}>{t.footer.tagline}</p>
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            {SOCIAL_LINKS.map(({ name, href, Icon }) => (
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            {SOCIAL_LINKS.map(({ name, href, Icon, color, hoverColor }) => (
               <a key={name} href={href} target="_blank" rel="noopener noreferrer" aria-label={name}
-                style={{ color: "rgba(107,138,66,0.6)", display: "flex", transition: "color 0.3s" }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#6B8A42"}
-                onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(107,138,66,0.6)"}>
-                <Icon size={16} />
+                style={{ width: 28, height: 28, borderRadius: "50%", background: color, color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.3s" }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = hoverColor}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = color}>
+                <Icon size={13} />
               </a>
             ))}
           </div>
