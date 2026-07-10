@@ -41,9 +41,6 @@ export default function Location() {
               style={{ border: 0, filter: "saturate(0.85) contrast(0.95)" }}
               allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Map"
             />
-            <div style={{ position: "absolute", top: 16, left: 16, background: "rgba(10,10,10,0.9)", padding: "8px 16px", border: "1px solid rgba(107,138,66,0.2)" }}>
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#6B8A42" }}>Rosarito, Baja California</span>
-            </div>
           </div>
 
           {/* Nearby */}

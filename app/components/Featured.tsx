@@ -71,7 +71,7 @@ export default function Featured() {
         {/* Cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
           {visible.map((p) => (
-            <Link key={p.slug} href={`/properties/${p.slug}`} className="reveal property-card" style={{ display: "block", border: "1px solid rgba(107,138,66,0.1)", overflow: "hidden", transition: "border-color 0.4s", textDecoration: "none" }}
+            <Link key={p.slug} href={`/properties/${p.slug}`} className="property-card" style={{ display: "block", border: "1px solid rgba(107,138,66,0.1)", overflow: "hidden", transition: "border-color 0.4s", textDecoration: "none" }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(107,138,66,0.35)"}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(107,138,66,0.1)"}>
               {/* Image */}

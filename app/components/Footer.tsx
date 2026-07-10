@@ -1,6 +1,7 @@
 "use client";
 import { useLang } from "../lib/LangContext";
 import Logo from "./Logo";
+import { SOCIAL_LINKS } from "../lib/social";
 
 export default function Footer() {
   const { t } = useLang();
@@ -17,6 +18,16 @@ export default function Footer() {
         </div>
         <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgba(35,34,30,0.2)", textAlign: "center" }}>{t.footer.tagline}</p>
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {SOCIAL_LINKS.map(({ name, href, Icon }) => (
+              <a key={name} href={href} target="_blank" rel="noopener noreferrer" aria-label={name}
+                style={{ color: "rgba(107,138,66,0.6)", display: "flex", transition: "color 0.3s" }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#6B8A42"}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(107,138,66,0.6)"}>
+                <Icon size={16} />
+              </a>
+            ))}
+          </div>
           <a href="#" style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(35,34,30,0.2)", textDecoration: "none" }}>{t.footer.privacy}</a>
           <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", color: "rgba(35,34,30,0.2)" }}>© {year} · {t.footer.rights}</span>
         </div>

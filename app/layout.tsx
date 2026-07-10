@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LangProvider } from "./lib/LangContext";
+import SocialFloat from "./components/SocialFloat";
 
 export const metadata: Metadata = {
   title: "El Casa Rosarito · Real Estate",
@@ -31,6 +32,7 @@ export default function RootLayout({
       </head>
       <body className="grain">
         <LangProvider>{children}</LangProvider>
+        <SocialFloat />
       </body>
     </html>
   );

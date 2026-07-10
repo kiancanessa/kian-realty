@@ -1,8 +1,30 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useLang } from "../lib/LangContext";
 import { CheckCircle, ArrowRight } from "lucide-react";
 import Logo from "./Logo";
+
+function TeamAvatar({ photo, name }: { photo?: string; name: string }) {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    if (!photo) return;
+    setLoaded(false);
+    const img = new window.Image();
+    img.onload = () => setLoaded(true);
+    img.src = photo;
+  }, [photo]);
+
+  return (
+    <div style={{ position: "relative", width: 88, height: 88, borderRadius: "50%", border: "1px solid rgba(107,138,66,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", overflow: "hidden", background: "#F0E7D8" }}>
+      <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.6rem", color: "#6B8A42" }}>
+        {name.split(" ").map(w => w[0]).slice(0, 2).join("")}
+      </span>
+      {loaded && (
+        <img src={photo} alt={name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+      )}
+    </div>
+  );
+}
 
 export default function About() {
   const { t } = useLang();
@@ -78,15 +100,7 @@ export default function About() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24 }}>
           {t.about.team.map((member, i) => (
             <div key={i} style={{ textAlign: "center", padding: 24, border: "1px solid rgba(107,138,66,0.1)", background: "#FFFFFF" }}>
-              <div style={{ width: 56, height: 56, borderRadius: "50%", border: "1px solid rgba(107,138,66,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", overflow: "hidden" }}>
-                {member.photo ? (
-                  <img src={member.photo} alt={member.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                ) : (
-                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", color: "#6B8A42" }}>
-                    {member.name.split(" ").map(w => w[0]).slice(0, 2).join("")}
-                  </span>
-                )}
-              </div>
+              <TeamAvatar photo={member.photo} name={member.name} />
               <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.15rem", color: "#23221E", fontWeight: 400, marginBottom: 4 }}>
                 {member.name}
               </div>
