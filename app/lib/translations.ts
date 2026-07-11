@@ -55,6 +55,10 @@ export const translations = {
         title: "Legal Advisory",
         desc: "Contracts, permits, and closing support from a bilingual team that knows Mexican property law.",
       },
+      development: {
+        title: "Development",
+        desc: "Architectural design, construction, and remodeling — from the first blueprint to move-in day.",
+      },
     },
     featured: {
       title: "Featured Properties",
@@ -148,7 +152,7 @@ export const translations = {
       email: "Email Address",
       phone: "Phone (optional)",
       interest: "I'm interested in...",
-      options: ["Buying", "Selling", "Renting", "Investing", "Legal Advisory"],
+      options: ["Buying", "Selling", "Renting", "Investing", "Legal Advisory", "Development"],
       message: "Tell us about your needs",
       send: "Send Message",
       sending: "Sending...",
@@ -214,6 +218,10 @@ export const translations = {
       legal: {
         title: "Asesoría Legal",
         desc: "Contratos, permisos y acompañamiento en el cierre, con un equipo bilingüe que conoce la ley de propiedad mexicana.",
+      },
+      development: {
+        title: "Construcción",
+        desc: "Diseño arquitectónico, construcción y remodelación — desde el primer plano hasta la entrega de llaves.",
       },
     },
     featured: {
@@ -308,7 +316,7 @@ export const translations = {
       email: "Correo Electrónico",
       phone: "Teléfono (opcional)",
       interest: "Me interesa...",
-      options: ["Comprar", "Vender", "Rentar", "Invertir", "Asesoría Legal"],
+      options: ["Comprar", "Vender", "Rentar", "Invertir", "Asesoría Legal", "Construcción"],
       message: "Cuéntanos sobre lo que necesitas",
       send: "Enviar Mensaje",
       sending: "Enviando...",

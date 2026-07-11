@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useLang } from "../lib/LangContext";
-import { Home, TrendingUp, Key, BarChart2, Scale } from "lucide-react";
+import { Home, TrendingUp, Key, BarChart2, Scale, Hammer } from "lucide-react";
 
 export default function Services() {
   const { t } = useLang();
@@ -27,6 +27,7 @@ export default function Services() {
     { icon: Key, key: "rent" as const },
     { icon: BarChart2, key: "invest" as const },
     { icon: Scale, key: "legal" as const },
+    { icon: Hammer, key: "development" as const },
   ];
 
   return (
