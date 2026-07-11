@@ -125,6 +125,7 @@ export const translations = {
       ],
       team: [
         { name: "Lic. Jorge L. Juarez Arellano", role: "President", photo: "/images/team/jorge.jpg" },
+        { name: "Lic. Eduardo Molina Herrera", role: "Attorney at Law", photo: "/images/team/eduardo.jpeg" },
         { name: "Veronica Ruiz Olvera", role: "Office Manager · Legal Advisor", photo: "/images/team/veronica.jpg" },
         { name: "Irving Berron Mena", role: "Real Estate Sales Manager", photo: "/images/team/irving.jpeg" },
         { name: "Leticia Bonilla", role: "Real Estate Advisor", photo: "/images/team/leticia.jpeg" },
@@ -291,6 +292,7 @@ export const translations = {
       ],
       team: [
         { name: "Lic. Jorge L. Juarez Arellano", role: "Presidente", photo: "/images/team/jorge.jpg" },
+        { name: "Lic. Eduardo Molina Herrera", role: "Abogado", photo: "/images/team/eduardo.jpeg" },
         { name: "Veronica Ruiz Olvera", role: "Gerente de Oficina · Asesora Legal", photo: "/images/team/veronica.jpg" },
         { name: "Irving Berron Mena", role: "Gerente de Ventas Inmobiliarias", photo: "/images/team/irving.jpeg" },
         { name: "Leticia Bonilla", role: "Asesora Inmobiliaria", photo: "/images/team/leticia.jpeg" },
