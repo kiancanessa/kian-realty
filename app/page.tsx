@@ -7,15 +7,18 @@ import About from "./components/About";
 import Location from "./components/Location";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import { getAllProperties, toCard } from "./lib/easybroker";
 
-export default function Home() {
+export default async function Home() {
+  const properties = (await getAllProperties()).map(toCard);
+
   return (
     <main>
       <Navbar />
       <Hero />
       <Stats />
       <Services />
-      <Featured />
+      <Featured properties={properties} />
       <About />
       <Location />
       <Contact />

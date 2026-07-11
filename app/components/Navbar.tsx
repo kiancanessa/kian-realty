@@ -16,10 +16,10 @@ export default function Navbar() {
   }, []);
 
   const links = [
-    { href: "#services", label: t.nav.services },
-    { href: "#featured", label: t.nav.properties },
-    { href: "#about", label: t.nav.about },
-    { href: "#contact", label: t.nav.contact },
+    { href: "/#services", label: t.nav.services },
+    { href: "/propiedades", label: t.nav.properties },
+    { href: "/#about", label: t.nav.about },
+    { href: "/#contact", label: t.nav.contact },
   ];
 
   return (
@@ -33,7 +33,7 @@ export default function Navbar() {
     }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         {/* Logo */}
-        <a href="#" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 12 }}>
+        <a href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 12 }}>
           <Logo size={34} />
           <span style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
             <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", fontWeight: 300, letterSpacing: "0.06em", color: "#23221E" }}>
@@ -70,7 +70,7 @@ export default function Navbar() {
               </button>
             ))}
           </div>
-          <a href="#contact" style={{ padding: "10px 22px", border: "1px solid #6B8A42", color: "#6B8A42", fontFamily: "'Jost', sans-serif", fontSize: "0.7rem", letterSpacing: "0.22em", textTransform: "uppercase", textDecoration: "none", transition: "all 0.3s" }}
+          <a href="/#contact" style={{ padding: "10px 22px", border: "1px solid #6B8A42", color: "#6B8A42", fontFamily: "'Jost', sans-serif", fontSize: "0.7rem", letterSpacing: "0.22em", textTransform: "uppercase", textDecoration: "none", transition: "all 0.3s" }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#6B8A42"; (e.currentTarget as HTMLElement).style.color = "#FAF6EE"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#6B8A42"; }}>
             {t.nav.cta}

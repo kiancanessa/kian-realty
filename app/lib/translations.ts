@@ -62,14 +62,8 @@ export const translations = {
       tag: "Featured",
       inquire: "View Listing",
       viewAll: "View All Properties",
+      empty: "New listings coming soon — check back shortly.",
       filters: { all: "All", house: "Houses", apartment: "Apartments", land: "Land" },
-      properties: [
-        { slug: "oceanfront-villa", type: "house", title: "Oceanfront Villa", location: "Rosarito Beach", price: "$485,000", tag: "New", specs: ["4 Beds", "3 Baths", "280 m²"] },
-        { slug: "modern-condo", type: "apartment", title: "Modern Condo", location: "Playas de Rosarito", price: "$1,800/mo", tag: "Available", specs: ["2 Beds", "2 Baths", "110 m²"] },
-        { slug: "beachfront-getaway", type: "house", title: "Beachfront Getaway", location: "Popotla, Rosarito", price: "$320,000", tag: "Hot Deal", specs: ["3 Beds", "2 Baths", "200 m²"] },
-        { slug: "k38-ocean-apartment", type: "apartment", title: "Ocean View Apartment", location: "Km 37.5, Rosarito", price: "Price on Request", tag: "For Rent", specs: ["2 Beds", "2 Baths", "180 m²"] },
-        { slug: "rosarito-ocean-lot", type: "land", title: "Ocean-View Lot", location: "Km 42, Rosarito", price: "$95,000", tag: "Land", specs: ["500 m² Lot", "Ocean View"] },
-      ],
     },
     about: {
       title: "About Us",
@@ -190,14 +184,8 @@ export const translations = {
       tag: "Destacado",
       inquire: "Ver Propiedad",
       viewAll: "Ver Todas las Propiedades",
+      empty: "Nuevas propiedades muy pronto — vuelve a revisar en un momento.",
       filters: { all: "Todas", house: "Casas", apartment: "Departamentos", land: "Terrenos" },
-      properties: [
-        { slug: "oceanfront-villa", type: "house", title: "Villa Frente al Mar", location: "Playas de Rosarito", price: "$485,000", tag: "Nuevo", specs: ["4 Recámaras", "3 Baños", "280 m²"] },
-        { slug: "modern-condo", type: "apartment", title: "Departamento Moderno", location: "Playas de Rosarito", price: "$1,800/mes", tag: "Disponible", specs: ["2 Recámaras", "2 Baños", "110 m²"] },
-        { slug: "beachfront-getaway", type: "house", title: "Escape Frente a la Playa", location: "Popotla, Rosarito", price: "$320,000", tag: "Oferta", specs: ["3 Recámaras", "2 Baños", "200 m²"] },
-        { slug: "k38-ocean-apartment", type: "apartment", title: "Departamento Vista al Mar", location: "Km 37.5, Rosarito", price: "Precio a Consultar", tag: "En Renta", specs: ["2 Recámaras", "2 Baños", "180 m²"] },
-        { slug: "rosarito-ocean-lot", type: "land", title: "Terreno con Vista al Mar", location: "Km 42, Rosarito", price: "$95,000", tag: "Terreno", specs: ["500 m² de Terreno", "Vista al Mar"] },
-      ],
     },
     about: {
       title: "Nosotros",
