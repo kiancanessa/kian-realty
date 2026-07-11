@@ -7,10 +7,10 @@ import About from "./components/About";
 import Location from "./components/Location";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
-import { getAllProperties, toCard } from "./lib/easybroker";
+import { getAllProperties, toCard, sortFeatured } from "./lib/easybroker";
 
 export default async function Home() {
-  const properties = (await getAllProperties()).map(toCard);
+  const properties = sortFeatured((await getAllProperties()).map(toCard));
 
   return (
     <main>

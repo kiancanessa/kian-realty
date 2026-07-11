@@ -10,9 +10,11 @@ export type OperationType = "sale" | "rental";
 const PROPERTY_TYPE_MAP: Record<string, PropertyCategory> = {
   "Casa": "house",
   "Casa con uso de suelo": "house",
+  "Edificio": "house",
   "Departamento": "apartment",
   "Casa en condominio": "apartment",
   "Terreno": "land",
+  "Terreno comercial": "land",
 };
 
 export function categoryFor(propertyType: string): PropertyCategory {
@@ -140,4 +142,19 @@ export function toCard(item: EBPropertyListItem): PropertyCard {
     lotSize: item.lot_size,
     image: item.title_image_full ?? PLACEHOLDER_IMAGE,
   };
+}
+
+// Hand-picked listings to always surface first in "Featured Properties".
+// Order below is the priority order within each category.
+const FEATURED_PROPERTY_IDS = [
+  // Houses / condos
+  "EB-VV4976", "EB-QT1711", "EB-UC4180", "EB-WI0472", "EB-RX5660",
+  "EB-UT8365", "EB-PG6498", "EB-WE0804", "EB-UT3992", "EB-UY1695",
+  // Land
+  "EB-VX6734", "EB-UU7947", "EB-SC4594",
+];
+
+export function sortFeatured(cards: PropertyCard[]): PropertyCard[] {
+  const rank = new Map(FEATURED_PROPERTY_IDS.map((id, i) => [id, i]));
+  return [...cards].sort((a, b) => (rank.get(a.id) ?? Infinity) - (rank.get(b.id) ?? Infinity));
 }

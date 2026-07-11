@@ -102,9 +102,11 @@ export const translations = {
       typeLabels: {
         "Casa": "House",
         "Casa con uso de suelo": "House (mixed use)",
+        "Edificio": "Building",
         "Departamento": "Apartment",
         "Casa en condominio": "Condo",
         "Terreno": "Land",
+        "Terreno comercial": "Commercial Land",
       } as Record<string, string>,
     },
     about: {
@@ -266,9 +268,11 @@ export const translations = {
       typeLabels: {
         "Casa": "Casa",
         "Casa con uso de suelo": "Casa (uso mixto)",
+        "Edificio": "Edificio",
         "Departamento": "Departamento",
         "Casa en condominio": "Condominio",
         "Terreno": "Terreno",
+        "Terreno comercial": "Terreno Comercial",
       } as Record<string, string>,
     },
     about: {

@@ -35,7 +35,7 @@ export default function Footer() {
       <div style={{ maxWidth: 1280, margin: "24px auto 0", paddingTop: 20, borderTop: "1px solid rgba(107,138,66,0.08)", textAlign: "center" }}>
         <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.05em", color: "rgba(35,34,30,0.25)" }}>
           Sitio web desarrollado por{" "}
-          <a href="mailto:kiansaaca@gmail.com" style={{ color: "rgba(107,138,66,0.7)", textDecoration: "none" }}>Kian Canessa</a>
+          <a href="https://portafolio-kian-rho.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: "rgba(107,138,66,0.7)", textDecoration: "none" }}>Kian Canessa</a>
         </span>
       </div>
     </footer>
