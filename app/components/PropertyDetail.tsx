@@ -1,13 +1,29 @@
 "use client";
 import { useState } from "react";
-import { MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Check, LucideIcon } from "lucide-react";
+import {
+  MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Check,
+  Bed, Bath, Square, Waves, Car, Sun, ShieldCheck, Wifi, Dumbbell, Flame,
+  Ruler, Zap, Droplets, FileCheck, Wind, WashingMachine, type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
+
+// Icons are looked up by string key (rather than passed as component references)
+// so that the property page.tsx files can stay Server Components and export
+// per-listing SEO metadata — passing a component reference across the
+// server/client boundary isn't serializable.
+const ICON_MAP = {
+  bed: Bed, bath: Bath, square: Square, waves: Waves, car: Car, sun: Sun,
+  shieldCheck: ShieldCheck, wifi: Wifi, dumbbell: Dumbbell, flame: Flame,
+  ruler: Ruler, zap: Zap, droplets: Droplets, fileCheck: FileCheck,
+  wind: Wind, washingMachine: WashingMachine,
+} satisfies Record<string, LucideIcon>;
+export type IconKey = keyof typeof ICON_MAP;
 
 export type Bilingual = { en: string; es: string };
 
 export type PropertyImage = { src: string; label: Bilingual };
-export type PropertySpec = { icon: LucideIcon; val: string; label: Bilingual };
-export type PropertyAmenity = { icon: LucideIcon; label: Bilingual };
+export type PropertySpec = { icon: IconKey; val: string; label: Bilingual };
+export type PropertyAmenity = { icon: IconKey; label: Bilingual };
 export type NearbyItem = { emoji: string; text: Bilingual };
 
 export type PropertyDetailProps = {
@@ -134,13 +150,16 @@ export default function PropertyDetail(p: PropertyDetailProps) {
               </div>
             </div>
             <div style={{ display: "flex", gap: 24 }}>
-              {p.specs.map(({ icon: Icon, val, label }, i) => (
+              {p.specs.map(({ icon, val, label }, i) => {
+                const Icon = ICON_MAP[icon];
+                return (
                 <div key={i} style={{ textAlign: "center" }}>
                   <Icon size={18} color="#6B8A42" style={{ marginBottom: 6 }} />
                   <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.6rem", color: "#23221E", fontWeight: 300, lineHeight: 1 }}>{val}</div>
                   <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(35,34,30,0.35)", marginTop: 2 }}>{tr(label)}</div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -161,12 +180,15 @@ export default function PropertyDetail(p: PropertyDetailProps) {
                 {en ? "Amenities" : "Comodidades"}
               </h3>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
-                {p.amenities.map(({ icon: Icon, label }, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", border: "1px solid rgba(107,138,66,0.1)", background: "rgba(35,34,30,0.03)" }}>
-                    <Icon size={15} color="#6B8A42" style={{ flexShrink: 0 }} />
-                    <span style={{ fontSize: "0.85rem", color: "rgba(35,34,30,0.6)" }}>{tr(label)}</span>
-                  </div>
-                ))}
+                {p.amenities.map(({ icon, label }, i) => {
+                  const Icon = ICON_MAP[icon];
+                  return (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", border: "1px solid rgba(107,138,66,0.1)", background: "rgba(35,34,30,0.03)" }}>
+                      <Icon size={15} color="#6B8A42" style={{ flexShrink: 0 }} />
+                      <span style={{ fontSize: "0.85rem", color: "rgba(35,34,30,0.6)" }}>{tr(label)}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

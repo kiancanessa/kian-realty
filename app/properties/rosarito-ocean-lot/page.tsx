@@ -1,5 +1,4 @@
-"use client";
-import { Ruler, Zap, Droplets, FileCheck } from "lucide-react";
+import type { Metadata } from "next";
 import PropertyDetail from "../../components/PropertyDetail";
 
 const IMAGES = [
@@ -8,8 +7,33 @@ const IMAGES = [
   { src: "/images/properties/land/3-coastline.jpg", label: { en: "Coastline", es: "Costa" } },
 ];
 
+export const metadata: Metadata = {
+  title: "Ocean-View Lot for Sale in Rosarito",
+  description: "500 m² buildable ocean-view lot for sale at Km 42, Rosarito, Baja California — $95,000. Flat terrain, deed in order, utilities at the street. Contact El Casa Rosarito.",
+  alternates: { canonical: "/properties/rosarito-ocean-lot" },
+  openGraph: {
+    title: "Ocean-View Lot for Sale in Rosarito",
+    description: "500 m² buildable ocean-view lot at Km 42, Rosarito — $95,000.",
+    images: ["/images/properties/land/1-beach.jpg"],
+    type: "website",
+  },
+};
+
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "RealEstateListing",
+  name: "Ocean-View Lot, Km 42, Rosarito",
+  description: "500 m² buildable ocean-view lot for sale at Km 42, Rosarito, Baja California with a flat, easy-to-build terrain.",
+  url: "https://elcasarosaritogroup.com/properties/rosarito-ocean-lot",
+  image: "https://elcasarosaritogroup.com/images/properties/land/1-beach.jpg",
+  address: { "@type": "PostalAddress", addressLocality: "Rosarito", addressRegion: "Baja California", addressCountry: "MX" },
+  offers: { "@type": "Offer", price: "95000", priceCurrency: "USD" },
+};
+
 export default function RosaritoOceanLotPage() {
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
     <PropertyDetail
       badge={{ en: "Land For Sale", es: "Terreno En Venta" }}
       title={{ en: "Ocean-View Lot", es: "Terreno con Vista al Mar" }}
@@ -19,17 +43,17 @@ export default function RosaritoOceanLotPage() {
       price={{ en: "$95,000", es: "$95,000" }}
       priceNote={{ en: "Priced in US Dollars", es: "Precio en dólares americanos" }}
       specs={[
-        { icon: Ruler, val: "500", label: { en: "m² Lot", es: "m² Terreno" } },
-        { icon: Ruler, val: "20×25", label: { en: "Dimensions (m)", es: "Dimensiones (m)" } },
+        { icon: "ruler", val: "500", label: { en: "m² Lot", es: "m² Terreno" } },
+        { icon: "ruler", val: "20×25", label: { en: "Dimensions (m)", es: "Dimensiones (m)" } },
       ]}
       description={{
         en: "A flat, buildable ocean-view lot south of downtown Rosarito — a rare opportunity to design and build your dream coastal home from the ground up. Deed in order, utilities at the street, and just minutes from the highway.",
         es: "Un terreno plano y edificable con vista al mar al sur del centro de Rosarito — una oportunidad única para diseñar y construir la casa costera de tus sueños desde cero. Escritura en regla, servicios sobre la calle, y a minutos de la carretera.",
       }}
       amenities={[
-        { icon: Zap, label: { en: "Electricity at the street", es: "Electricidad sobre la calle" } },
-        { icon: Droplets, label: { en: "Water access available", es: "Acceso a agua disponible" } },
-        { icon: FileCheck, label: { en: "Clear title / deed in order", es: "Escritura en regla" } },
+        { icon: "zap", label: { en: "Electricity at the street", es: "Electricidad sobre la calle" } },
+        { icon: "droplets", label: { en: "Water access available", es: "Acceso a agua disponible" } },
+        { icon: "fileCheck", label: { en: "Clear title / deed in order", es: "Escritura en regla" } },
       ]}
       highlights={[
         { en: "Flat, easy-to-build terrain", es: "Terreno plano, fácil de construir" },
@@ -48,5 +72,6 @@ export default function RosaritoOceanLotPage() {
       mapEmbedUrl="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d110943.85506978478!2d-117.13505673203128!3d32.33292814013765!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80d8b5d5cc7a3101%3A0xbf24fb6f27f22a6d!2sRosarito%2C%20Baja%20California%2C%20Mexico!5e0!3m2!1sen!2s!4v1710000000000!5m2!1sen!2s"
       messagePlaceholder={{ en: "I'm interested in this lot...", es: "Me interesa este terreno..." }}
     />
+    </>
   );
 }

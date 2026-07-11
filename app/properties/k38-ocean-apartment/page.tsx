@@ -1,5 +1,4 @@
-"use client";
-import { Bed, Bath, Square, Wifi, Car, Wind, WashingMachine } from "lucide-react";
+import type { Metadata } from "next";
 import PropertyDetail from "../../components/PropertyDetail";
 
 const IMAGES = [
@@ -17,8 +16,32 @@ const IMAGES = [
   { src: "/images/k38-apartment/cochera.jpg", label: { en: "Private Garage", es: "Cochera Privada" } },
 ];
 
+export const metadata: Metadata = {
+  title: "Ocean View Apartment for Rent Near K38, Rosarito",
+  description: "2-bed, 2-bath fully furnished ocean-view apartment for rent at Km 37.5, Playas de Rosarito. Fiber internet, private garage, steps from K38 surf break. Contact El Casa Rosarito.",
+  alternates: { canonical: "/properties/k38-ocean-apartment" },
+  openGraph: {
+    title: "Ocean View Apartment for Rent Near K38, Rosarito",
+    description: "2-bed, 2-bath furnished ocean-view apartment at Km 37.5, Playas de Rosarito.",
+    images: ["/images/k38-apartment/depa4.jpeg"],
+    type: "website",
+  },
+};
+
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "RealEstateListing",
+  name: "Ocean View Apartment, Km 37.5, Playas de Rosarito",
+  description: "2-bed, 2-bath fully furnished ocean-view apartment for rent at Km 37.5, Playas de Rosarito, steps from the K38 surf break.",
+  url: "https://elcasarosaritogroup.com/properties/k38-ocean-apartment",
+  image: "https://elcasarosaritogroup.com/images/k38-apartment/depa4.jpeg",
+  address: { "@type": "PostalAddress", addressLocality: "Playas de Rosarito", addressRegion: "Baja California", addressCountry: "MX" },
+};
+
 export default function K38ApartmentPage() {
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
     <PropertyDetail
       badge={{ en: "For Rent", es: "En Renta" }}
       title={{ en: "Ocean View Apartment", es: "Departamento Vista al Mar" }}
@@ -28,19 +51,19 @@ export default function K38ApartmentPage() {
       price={{ en: "Price on Request", es: "Precio a Consultar" }}
       priceNote={{ en: "Priced in US Dollars", es: "Precio en dólares americanos" }}
       specs={[
-        { icon: Bed, val: "2", label: { en: "Bedrooms", es: "Recámaras" } },
-        { icon: Bath, val: "2", label: { en: "Bathrooms", es: "Baños" } },
-        { icon: Square, val: "180", label: { en: "m²", es: "m²" } },
+        { icon: "bed", val: "2", label: { en: "Bedrooms", es: "Recámaras" } },
+        { icon: "bath", val: "2", label: { en: "Bathrooms", es: "Baños" } },
+        { icon: "square", val: "180", label: { en: "m²", es: "m²" } },
       ]}
       description={{
         en: "Live by the ocean. This fully furnished ground-floor apartment offers the perfect blend of comfort, convenience, and coastal living. Whether you're a remote worker, digital nomad, surfer, or frequent commuter to San Diego, this home is designed for your lifestyle.",
         es: "Vive frente al mar. Este departamento completamente amueblado en planta baja combina comodidad, ubicación y estilo de vida costero. Perfecto para trabajadores remotos, surfistas o personas que viajan frecuentemente a San Diego.",
       }}
       amenities={[
-        { icon: Wifi, label: { en: "Fiber optic internet", es: "Internet de fibra óptica" } },
-        { icon: Car, label: { en: "Private garage", es: "Cochera privada" } },
-        { icon: Wind, label: { en: "Gas heating", es: "Calefacción de gas" } },
-        { icon: WashingMachine, label: { en: "Laundry available", es: "Lavadero disponible" } },
+        { icon: "wifi", label: { en: "Fiber optic internet", es: "Internet de fibra óptica" } },
+        { icon: "car", label: { en: "Private garage", es: "Cochera privada" } },
+        { icon: "wind", label: { en: "Gas heating", es: "Calefacción de gas" } },
+        { icon: "washingMachine", label: { en: "Laundry available", es: "Lavadero disponible" } },
       ]}
       highlights={[
         { en: "High-speed fiber optic internet", es: "Internet de fibra óptica de alta velocidad" },
@@ -61,5 +84,6 @@ export default function K38ApartmentPage() {
       mapEmbedUrl="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3264.0!2d-117.0599!3d32.2677!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80d8b32b3c4f4f4f%3A0x0!2sKm%2037.5%2C%20Tijuana%E2%80%93Ensenada%20Hwy%2C%20Rosarito%2C%20BC!5e0!3m2!1sen!2smx!4v1710000000000"
       messagePlaceholder={{ en: "I'm interested in this apartment...", es: "Me interesa este departamento..." }}
     />
+    </>
   );
 }

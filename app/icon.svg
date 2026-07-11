@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 90" width="120" height="90">
+  <rect x="0" y="0" width="120" height="90" rx="18" fill="#FAF6EE" />
+  <defs>
+    <clipPath id="ecr-roof-clip-fav">
+      <polygon points="34,10 20,34 48,34" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#ecr-roof-clip-fav)">
+    <g stroke="#6B8A42" stroke-width="7">
+      <line x1="-4" y1="62" x2="30" y2="-2" />
+      <line x1="8" y1="62" x2="42" y2="-2" />
+      <line x1="20" y1="62" x2="54" y2="-2" />
+      <line x1="32" y1="62" x2="66" y2="-2" />
+      <line x1="44" y1="62" x2="78" y2="-2" />
+    </g>
+  </g>
+  <polygon points="34,10 8,60 62,60" fill="none" stroke="#3A3A38" stroke-width="6" stroke-linejoin="round" />
+  <polygon points="86,30 60,60 116,60" fill="none" stroke="#3A3A38" stroke-width="6" stroke-linejoin="round" />
+</svg>
