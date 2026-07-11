@@ -7,8 +7,6 @@ import PropertyCardTile from "./PropertyCardTile";
 type TypeFilter = "all" | "house" | "apartment" | "land";
 type OpFilter = "all" | "sale" | "rental";
 
-const OP_LABELS: Record<OpFilter, string> = { all: "Todas", sale: "En Venta", rental: "En Renta" };
-
 function FilterButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button onClick={onClick}
@@ -54,12 +52,12 @@ export default function PropertyGrid({ properties }: { properties: PropertyCard[
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 40 }}>
         {opFilters.map(f => (
-          <FilterButton key={f} active={op === f} onClick={() => setOp(f)}>{OP_LABELS[f]}</FilterButton>
+          <FilterButton key={f} active={op === f} onClick={() => setOp(f)}>{t.property.opFilters[f]}</FilterButton>
         ))}
       </div>
 
       <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "rgba(35,34,30,0.4)", marginBottom: 24, letterSpacing: "0.05em" }}>
-        {visible.length} {visible.length === 1 ? "propiedad" : "propiedades"}
+        {visible.length} {visible.length === 1 ? t.property.countSingular : t.property.countPlural}
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>

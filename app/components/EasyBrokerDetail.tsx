@@ -4,13 +4,13 @@ import { MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Bed, Bath
 import Link from "next/link";
 import type { EBPropertyDetail } from "../lib/easybroker";
 import { primaryOperation } from "../lib/easybroker";
+import { useLang } from "../lib/LangContext";
 
 const WHATSAPP_HREF = "https://wa.me/526611256107";
 const EMAIL_HREF = "mailto:jorgeelcasarosarito@gmail.com";
 
-const OPERATION_LABEL: Record<string, string> = { sale: "En Venta", rental: "En Renta" };
-
 export default function EasyBrokerDetail({ property }: { property: EBPropertyDetail }) {
+  const { t } = useLang();
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [sent, setSent] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
@@ -41,10 +41,10 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
   };
 
   const specs = [
-    property.bedrooms ? { icon: Bed, val: String(property.bedrooms), label: "Recámaras" } : null,
-    property.bathrooms ? { icon: Bath, val: String(property.bathrooms), label: "Baños" } : null,
-    property.parking_spaces ? { icon: Car, val: String(property.parking_spaces), label: "Autos" } : null,
-    property.construction_size ? { icon: Square, val: `${property.construction_size}`, label: "m² const." } : property.lot_size ? { icon: Square, val: `${property.lot_size}`, label: "m² terreno" } : null,
+    property.bedrooms ? { icon: Bed, val: String(property.bedrooms), label: t.property.beds } : null,
+    property.bathrooms ? { icon: Bath, val: String(property.bathrooms), label: t.property.baths } : null,
+    property.parking_spaces ? { icon: Car, val: String(property.parking_spaces), label: t.property.parking } : null,
+    property.construction_size ? { icon: Square, val: `${property.construction_size}`, label: t.property.builtArea } : property.lot_size ? { icon: Square, val: `${property.lot_size}`, label: t.property.lotArea } : null,
   ].filter((s): s is { icon: typeof Bed; val: string; label: string } => s !== null);
 
   const { latitude: lat, longitude: lng } = property.location_detail;
@@ -63,7 +63,7 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
         <Link href="/propiedades" style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(35,34,30,0.5)", textDecoration: "none", fontSize: "0.8rem", letterSpacing: "0.1em", transition: "color 0.3s" }}
           onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#6B8A42"}
           onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(35,34,30,0.5)"}>
-          <ArrowLeft size={14} /> Volver a propiedades
+          <ArrowLeft size={14} /> {t.property.backToListings}
         </Link>
         <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.2rem", fontWeight: 300, color: "#23221E" }}>
           El Casa Rosarito · <span style={{ color: "#6B8A42" }}>Real Estate</span>
@@ -79,11 +79,11 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
         )}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.1) 0%, rgba(10,10,10,0.7) 100%)" }} />
         <div style={{ position: "absolute", top: 24, left: 24, background: "#6B8A42", color: "#FAF6EE", padding: "6px 16px", fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", letterSpacing: "0.25em", textTransform: "uppercase", fontWeight: 600 }}>
-          {op ? OPERATION_LABEL[op.type] : "Consultar"}
+          {op ? (op.type === "rental" ? t.property.forRent : t.property.forSale) : t.property.consult}
         </div>
         {images.length > 0 && (
           <div style={{ position: "absolute", bottom: 24, right: 24, background: "rgba(10,10,10,0.8)", border: "1px solid rgba(107,138,66,0.3)", padding: "8px 16px", fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", color: "#6B8A42", letterSpacing: "0.15em" }}>
-            Ver las {images.length} fotos
+            {t.property.viewAllPhotos.replace("{n}", String(images.length))}
           </div>
         )}
         <div style={{ position: "absolute", bottom: 24, left: 24 }}>
@@ -122,13 +122,13 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 40, paddingBottom: 32, borderBottom: "1px solid rgba(107,138,66,0.1)" }}>
             <div>
               <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#6B8A42", marginBottom: 8 }}>
-                {op?.type === "rental" ? "Renta Mensual" : "Precio de Venta"} · {op?.currency ?? "USD"}
+                {op?.type === "rental" ? t.property.monthlyRent : t.property.salePrice} · {op?.currency ?? "USD"}
               </div>
               <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(2rem, 4vw, 3rem)", color: "#23221E", fontWeight: 300, lineHeight: 1 }}>
-                {op?.formatted_amount ?? "Precio a Consultar"}
+                {op?.formatted_amount ?? t.property.priceOnRequest}
               </div>
               <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgba(35,34,30,0.4)", marginTop: 6 }}>
-                {property.property_type}
+                {t.property.typeLabels[property.property_type] ?? property.property_type}
               </div>
             </div>
             {specs.length > 0 && (
@@ -147,7 +147,7 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
           {/* Description */}
           <div style={{ marginBottom: 40 }}>
             <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.8rem", fontWeight: 300, color: "#23221E", marginBottom: 16 }}>
-              Sobre esta propiedad
+              {t.property.aboutThisProperty}
             </h2>
             {property.description.split("\n").filter(Boolean).map((para, i) => (
               <p key={i} style={{ color: "rgba(35,34,30,0.55)", lineHeight: 1.85, fontSize: "0.92rem", marginBottom: 12 }}>
@@ -160,14 +160,14 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
           {mapUrl && (
             <div style={{ marginBottom: 40 }}>
               <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", fontWeight: 300, color: "#23221E", marginBottom: 16 }}>
-                Ubicación
+                {t.labels.location}
               </h3>
               <div style={{ border: "1px solid rgba(107,138,66,0.12)", overflow: "hidden", height: 280, marginBottom: 8 }}>
                 <iframe
                   src={mapUrl}
                   width="100%" height="100%"
                   style={{ border: 0, filter: "saturate(0.85) contrast(0.95)" }}
-                  loading="lazy" title="Ubicación de la propiedad"
+                  loading="lazy" title={t.labels.location}
                 />
               </div>
               {mapLinkUrl && (
@@ -175,7 +175,7 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
                   style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", color: "rgba(35,34,30,0.4)", letterSpacing: "0.06em", textDecoration: "none" }}
                   onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#6B8A42"}
                   onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(35,34,30,0.4)"}>
-                  Ver mapa más grande →
+                  {t.property.viewLargerMap} →
                 </a>
               )}
             </div>
@@ -186,7 +186,7 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
             style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "rgba(35,34,30,0.4)", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", textDecoration: "none" }}
             onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#6B8A42"}
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(35,34,30,0.4)"}>
-            Ver ficha completa en EasyBroker <ExternalLink size={13} />
+            {t.property.viewOnEasyBroker} <ExternalLink size={13} />
           </a>
         </div>
 
@@ -194,13 +194,13 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
         <div>
           <div style={{ position: "sticky", top: 80, border: "1px solid rgba(107,138,66,0.15)", background: "#F0E7D8", padding: 32 }}>
             <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#6B8A42", marginBottom: 6 }}>
-              Publicado por
+              {t.property.listedBy}
             </div>
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.5rem", color: "#23221E", fontWeight: 300, marginBottom: 4 }}>
               El Casa Rosarito
             </div>
             <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", color: "rgba(35,34,30,0.35)", letterSpacing: "0.15em", marginBottom: 24 }}>
-              Agencia Inmobiliaria · Rosarito, Baja California
+              {t.about.role}
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
@@ -220,35 +220,35 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
 
             <div style={{ borderTop: "1px solid rgba(107,138,66,0.1)", paddingTop: 24 }}>
               <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.82rem", color: "rgba(35,34,30,0.4)", marginBottom: 16 }}>
-                Envía un mensaje
+                {t.property.sendMessage}
               </div>
               {sent ? (
                 <div style={{ textAlign: "center", padding: "20px 0" }}>
                   <Check size={32} color="#6B8A42" style={{ margin: "0 auto 12px" }} />
                   <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.2rem", color: "#23221E" }}>
-                    ¡Mensaje enviado!
+                    {t.property.messageSent}
                   </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  <input style={inp} placeholder="Tu nombre" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required
+                  <input style={inp} placeholder={t.property.namePlaceholder} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required
                     onFocus={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.5)"}
                     onBlur={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.15)"} />
-                  <input style={inp} type="email" placeholder="Correo" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required
+                  <input style={inp} type="email" placeholder={t.property.emailPlaceholder} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required
                     onFocus={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.5)"}
                     onBlur={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.15)"} />
-                  <input style={inp} placeholder="Teléfono / WhatsApp" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
+                  <input style={inp} placeholder={t.property.phonePlaceholder} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
                     onFocus={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.5)"}
                     onBlur={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.15)"} />
                   <textarea style={{ ...inp, resize: "none" }} rows={3}
-                    placeholder={`Me interesa: ${property.title}`}
+                    placeholder={t.property.interestedIn.replace("{title}", property.title)}
                     value={form.message} onChange={e => setForm({ ...form, message: e.target.value })}
                     onFocus={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.5)"}
                     onBlur={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.15)"} />
                   <button type="submit" style={{ padding: "14px", background: "#6B8A42", color: "#FAF6EE", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: 600, fontSize: "0.78rem", letterSpacing: "0.2em", textTransform: "uppercase", transition: "background 0.3s" }}
                     onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#85A857"}
                     onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "#6B8A42"}>
-                    Enviar Consulta
+                    {t.property.sendInquiry}
                   </button>
                 </form>
               )}

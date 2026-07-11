@@ -108,10 +108,15 @@ export type PropertyCard = {
   id: string;
   title: string;
   location: string;
-  price: string;
+  price: string | null;
   operation: OperationType;
   type: PropertyCategory;
-  specs: string[];
+  propertyType: string;
+  bedrooms: number | null;
+  bathrooms: number | null;
+  parkingSpaces: number | null;
+  constructionSize: number | null;
+  lotSize: number | null;
   image: string;
 };
 
@@ -119,20 +124,20 @@ const PLACEHOLDER_IMAGE = "/images/properties/placeholder.jpg";
 
 export function toCard(item: EBPropertyListItem): PropertyCard {
   const op = primaryOperation(item.operations);
-  const specs: string[] = [];
-  if (item.bedrooms) specs.push(`${item.bedrooms} Rec.`);
-  if (item.bathrooms) specs.push(`${item.bathrooms} Baños`);
-  if (item.construction_size) specs.push(`${item.construction_size} m² const.`);
-  if (item.lot_size) specs.push(`${item.lot_size} m² terreno`);
 
   return {
     id: item.public_id,
     title: item.title,
     location: item.location,
-    price: op?.formatted_amount ?? "Precio a consultar",
+    price: op?.formatted_amount ?? null,
     operation: op?.type ?? "sale",
     type: categoryFor(item.property_type),
-    specs,
+    propertyType: item.property_type,
+    bedrooms: item.bedrooms,
+    bathrooms: item.bathrooms,
+    parkingSpaces: item.parking_spaces,
+    constructionSize: item.construction_size,
+    lotSize: item.lot_size,
     image: item.title_image_full ?? PLACEHOLDER_IMAGE,
   };
 }
