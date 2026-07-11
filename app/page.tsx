@@ -16,7 +16,7 @@ export default async function Home() {
     <main>
       <Navbar />
       <Hero />
-      <Stats />
+      <Stats activeListings={properties.length} />
       <Services />
       <Featured properties={properties} />
       <About />

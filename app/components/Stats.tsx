@@ -25,13 +25,13 @@ function CountUp({ target, duration = 2000 }: { target: number; duration?: numbe
   return <span ref={ref}>{count}</span>;
 }
 
-export default function Stats() {
+export default function Stats({ activeListings }: { activeListings: number }) {
   const { t } = useLang();
   const stats = [
     { value: 120, suffix: "+", label: t.stats.coast },
-    { value: 48,  suffix: "",  label: t.stats.listings },
-    { value: 200, suffix: "+", label: t.stats.clients },
-    { value: 5,   suffix: "+", label: t.stats.exp },
+    { value: activeListings, suffix: "", label: t.stats.listings },
+    { value: 300, suffix: "+", label: t.stats.clients },
+    { value: 15,  suffix: "+", label: t.stats.exp },
   ];
   return (
     <section style={{ borderTop: "1px solid rgba(107,138,66,0.12)", borderBottom: "1px solid rgba(107,138,66,0.12)", background: "#F0E7D8" }}>

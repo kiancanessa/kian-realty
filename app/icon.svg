@@ -1,19 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 90" width="120" height="90">
-  <rect x="0" y="0" width="120" height="90" rx="18" fill="#FAF6EE" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 170" width="210" height="170">
+  <rect x="0" y="0" width="210" height="170" rx="24" fill="#FAF6EE" />
   <defs>
     <clipPath id="ecr-roof-clip-fav">
-      <polygon points="34,10 20,34 48,34" />
+      <polygon points="14,12 100,12 58,92 14,92" />
+    </clipPath>
+    <clipPath id="ecr-notch-clip-fav">
+      <polygon points="150,46 133,80 167,80" />
     </clipPath>
   </defs>
   <g clip-path="url(#ecr-roof-clip-fav)">
-    <g stroke="#6B8A42" stroke-width="7">
-      <line x1="-4" y1="62" x2="30" y2="-2" />
-      <line x1="8" y1="62" x2="42" y2="-2" />
-      <line x1="20" y1="62" x2="54" y2="-2" />
-      <line x1="32" y1="62" x2="66" y2="-2" />
-      <line x1="44" y1="62" x2="78" y2="-2" />
+    <g stroke="#6B8A42" stroke-width="9">
+      <line x1="-6" y1="102" x2="34" y2="-6" />
+      <line x1="10" y1="102" x2="50" y2="-6" />
+      <line x1="26" y1="102" x2="66" y2="-6" />
+      <line x1="42" y1="102" x2="82" y2="-6" />
+      <line x1="58" y1="102" x2="98" y2="-6" />
+      <line x1="74" y1="102" x2="114" y2="-6" />
     </g>
   </g>
-  <polygon points="34,10 8,60 62,60" fill="none" stroke="#3A3A38" stroke-width="6" stroke-linejoin="round" />
-  <polygon points="86,30 60,60 116,60" fill="none" stroke="#3A3A38" stroke-width="6" stroke-linejoin="round" />
+  <g clip-path="url(#ecr-notch-clip-fav)">
+    <rect x="120" y="38" width="60" height="50" fill="#6B8A42" />
+  </g>
+  <polygon points="150,46 112,148 205,148" fill="none" stroke="#3A3A38" stroke-width="7" stroke-linejoin="round" />
+  <polygon points="100,12 25,148 172,148" fill="none" stroke="#3A3A38" stroke-width="7" stroke-linejoin="round" />
 </svg>

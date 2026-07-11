@@ -42,13 +42,22 @@ export default function About() {
   return (
     <section id="about" ref={sectionRef} style={{ padding: "112px 24px", background: "#FAF6EE", overflow: "hidden" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr", gap: 80, alignItems: "center" }} className="about-grid">
-        {/* Photo */}
+        {/* Photo collage */}
         <div className="reveal" style={{ position: "relative" }}>
-          <div style={{ position: "relative", maxWidth: 380, margin: "0 auto", aspectRatio: "3/4", overflow: "hidden" }}>
-            <img src="/images/about/coastline.jpg" alt="Rosarito coastline" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.55), transparent 55%)" }} />
-            <div style={{ position: "absolute", top: 24, left: 24, background: "rgba(10,10,10,0.55)", border: "1px solid rgba(107,138,66,0.3)", padding: 12, backdropFilter: "blur(4px)" }}>
-              <Logo size={40} strokeColor="#FAF6EE" />
+          <div style={{ position: "relative", maxWidth: 460, margin: "0 auto" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gridTemplateRows: "1fr 1fr", gap: 8, aspectRatio: "6/5" }}>
+              <div style={{ position: "relative", gridRow: "1 / 3", overflow: "hidden" }}>
+                <img src="/images/about/rosarito-beach.jpg" alt="Playas de Rosarito" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                <div style={{ position: "absolute", top: 16, left: 16, background: "rgba(10,10,10,0.55)", border: "1px solid rgba(107,138,66,0.3)", padding: 10, backdropFilter: "blur(4px)" }}>
+                  <Logo size={34} strokeColor="#FAF6EE" />
+                </div>
+              </div>
+              <div style={{ position: "relative", overflow: "hidden" }}>
+                <img src="/images/about/rosarito-coastline.jpg" alt="Costa de Rosarito" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
+              <div style={{ position: "relative", overflow: "hidden" }}>
+                <img src="/images/about/rosarito-cristo.jpg" alt="Cristo del Sagrado Corazón, Rosarito" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
             </div>
             {/* Frame */}
             <div style={{ position: "absolute", bottom: -16, right: -16, width: "100%", height: "100%", border: "1px solid rgba(107,138,66,0.2)", pointerEvents: "none" }} />
@@ -58,6 +67,9 @@ export default function About() {
             <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#FAF6EE" }}>Rosarito</div>
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", color: "#FAF6EE" }}>Coast Specialists</div>
           </div>
+          <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.65rem", color: "rgba(35,34,30,0.3)", marginTop: 28, textAlign: "center" }}>
+            Photos: Cesar Bojorquez, Miles Gehm, Eric Golub · CC BY 2.0 · Wikimedia Commons
+          </p>
         </div>
 
         {/* Text */}
