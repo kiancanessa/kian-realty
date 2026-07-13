@@ -2,6 +2,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useLang } from "../lib/LangContext";
 import { Mail, Phone, Send, CheckCircle } from "lucide-react";
+import { sendInquiry, whatsappLink } from "../lib/sendInquiry";
+
+const WHATSAPP_NUMBER = "526611256107";
 
 export default function Contact() {
   const { t } = useLang();
@@ -9,6 +12,7 @@ export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", interest: "", message: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -20,13 +24,28 @@ export default function Contact() {
     return () => observer.disconnect();
   }, []);
 
+  const waMessage = `Hola, soy ${form.name || "..."}. Me interesa: ${form.interest || "información general"}.\n${form.message}`.trim();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    await new Promise(r => setTimeout(r, 1500));
+    setFailed(false);
+    const ok = await sendInquiry({
+      subject: `Nueva consulta de ${form.name} — El Casa Rosarito`,
+      from_name: "El Casa Rosarito Website",
+      replyto: form.email,
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      interest: form.interest,
+      message: form.message,
+    });
     setSending(false);
-    setSent(true);
-    setForm({ name: "", email: "", phone: "", interest: "", message: "" });
+    if (ok) {
+      setSent(true);
+    } else {
+      setFailed(true);
+    }
   };
 
   const inputStyle: React.CSSProperties = { width: "100%", background: "#FFFFFF", border: "1px solid rgba(107,138,66,0.15)", outline: "none", padding: "14px 16px", fontFamily: "'Jost', sans-serif", fontSize: "0.88rem", color: "#23221E", transition: "border-color 0.3s", boxSizing: "border-box" };
@@ -74,10 +93,17 @@ export default function Contact() {
           {sent ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "80px 0" }}>
               <CheckCircle size={48} color="#6B8A42" style={{ marginBottom: 24 }} />
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "2rem", color: "#23221E" }}>{t.contact.success}</h3>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "2rem", color: "#23221E", marginBottom: 20 }}>{t.contact.success}</h3>
+              <a href={whatsappLink(WHATSAPP_NUMBER, waMessage)} target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 28px", background: "#6B8A42", color: "#FAF6EE", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.78rem", letterSpacing: "0.16em", textTransform: "uppercase" }}>
+                <Phone size={14} /> {t.contact.alsoWhatsApp}
+              </a>
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {failed && (
+                <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "#B0472B", lineHeight: 1.6 }}>{t.contact.error}</p>
+              )}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <input style={inputStyle} placeholder={t.contact.name} value={form.name} onChange={e => setForm({...form, name: e.target.value})} required
                   onFocus={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.45)"}

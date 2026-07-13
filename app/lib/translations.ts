@@ -161,6 +161,8 @@ export const translations = {
       sending: "Sending...",
       success: "Message sent! We'll be in touch soon.",
       or: "Or reach us directly",
+      alsoWhatsApp: "Also send via WhatsApp",
+      error: "Something went wrong sending your message. Please try WhatsApp or email us directly below.",
     },
     footer: {
       tagline: "Premium real estate along the Rosarito and Baja California coast.",
@@ -327,6 +329,8 @@ export const translations = {
       send: "Enviar Mensaje",
       sending: "Enviando...",
       success: "¡Mensaje enviado! Nos pondremos en contacto pronto.",
+      alsoWhatsApp: "Enviar también por WhatsApp",
+      error: "Hubo un problema al enviar tu mensaje. Intenta por WhatsApp o escríbenos directo abajo.",
       or: "O contáctanos directamente",
     },
     footer: {

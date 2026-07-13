@@ -5,14 +5,17 @@ import Link from "next/link";
 import type { EBPropertyDetail } from "../lib/easybroker";
 import { primaryOperation } from "../lib/easybroker";
 import { useLang } from "../lib/LangContext";
+import { sendInquiry, whatsappLink } from "../lib/sendInquiry";
 
-const WHATSAPP_HREF = "https://wa.me/526611256107";
+const WHATSAPP_NUMBER = "526611256107";
+const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER}`;
 const EMAIL_HREF = "mailto:jorgeelcasarosarito@gmail.com";
 
 export default function EasyBrokerDetail({ property }: { property: EBPropertyDetail }) {
   const { t } = useLang();
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [sent, setSent] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
 
   const images = property.property_images.length > 0
@@ -28,10 +31,22 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
   const prevImg = () => setLightbox(i => (i !== null ? (i - 1 + images.length) % images.length : null));
   const nextImg = () => setLightbox(i => (i !== null ? (i + 1) % images.length : null));
 
+  const waMessage = `Hola, soy ${form.name || "..."}. Me interesa: ${property.title} (${property.public_id}).\n${form.message}`.trim();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await new Promise(r => setTimeout(r, 1000));
-    setSent(true);
+    setFailed(false);
+    const ok = await sendInquiry({
+      subject: `Consulta por "${property.title}" — El Casa Rosarito`,
+      from_name: "El Casa Rosarito Website",
+      replyto: form.email,
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      property: `${property.title} (${property.public_id})`,
+      message: form.message,
+    });
+    if (ok) setSent(true); else setFailed(true);
   };
 
   const inp: React.CSSProperties = {
@@ -225,12 +240,19 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
               {sent ? (
                 <div style={{ textAlign: "center", padding: "20px 0" }}>
                   <Check size={32} color="#6B8A42" style={{ margin: "0 auto 12px" }} />
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.2rem", color: "#23221E" }}>
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.2rem", color: "#23221E", marginBottom: 16 }}>
                     {t.property.messageSent}
                   </div>
+                  <a href={whatsappLink(WHATSAPP_NUMBER, waMessage)} target="_blank" rel="noopener noreferrer"
+                    style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 20px", background: "#6B8A42", color: "#FAF6EE", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: 600, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                    <Phone size={13} /> {t.contact.alsoWhatsApp}
+                  </a>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {failed && (
+                    <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "#B0472B", lineHeight: 1.5 }}>{t.contact.error}</p>
+                  )}
                   <input style={inp} placeholder={t.property.namePlaceholder} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required
                     onFocus={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.5)"}
                     onBlur={e => (e.target as HTMLElement).style.borderColor = "rgba(107,138,66,0.15)"} />
