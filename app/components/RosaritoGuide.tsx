@@ -89,81 +89,81 @@ export default function RosaritoGuide() {
         aria-label={t.guide.trigger}
         style={{
           ...GLASS,
-          width: 46, height: 46, borderRadius: "50%",
+          width: 52, height: 52, borderRadius: "50%",
           background: open ? "rgba(var(--accent),0.75)" : GLASS.background,
           color: open ? "#FAF6EE" : "rgb(var(--accent))",
           display: "flex", alignItems: "center", justifyContent: "center",
           cursor: "pointer", boxShadow: "0 4px 20px rgba(var(--ink),0.15)",
           transition: "background 0.3s, color 0.3s",
         }}>
-        {open ? <X size={18} /> : <Compass size={20} />}
+        {open ? <X size={20} /> : <Compass size={23} />}
       </button>
 
       {/* Panel */}
       <div
         style={{
           ...GLASS,
-          position: "absolute", top: 58, left: 0,
-          width: "min(360px, calc(100vw - 40px))",
-          borderRadius: 26,
+          position: "absolute", top: 64, left: 0,
+          width: "min(440px, calc(100vw - 40px))",
+          borderRadius: 28,
           boxShadow: "0 16px 48px rgba(var(--ink),0.25), inset 0 1px 0 rgba(255,255,255,0.35)",
           opacity: open ? 1 : 0,
           transform: open ? "translateY(0)" : "translateY(-8px)",
           pointerEvents: open ? "auto" : "none",
           transition: "opacity 0.25s ease, transform 0.25s ease",
-          maxHeight: "calc(100vh - 176px)",
+          maxHeight: "calc(100vh - 184px)",
           overflowY: "auto",
-          padding: 20,
+          padding: 26,
         }}>
         {/* Header row: title + weather badge */}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 18 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 14, marginBottom: 22 }}>
           <div>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", color: "rgb(var(--ink))", fontWeight: 400 }}>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.55rem", color: "rgb(var(--ink))", fontWeight: 400 }}>
               {t.guide.title}
             </div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(var(--accent),0.85)", marginTop: 2 }}>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(var(--accent),0.85)", marginTop: 2 }}>
               {t.guide.subtitle}
             </div>
           </div>
           <div style={{
-            ...GLASS, borderRadius: 18, padding: "8px 12px", display: "flex", alignItems: "center", gap: 6, flexShrink: 0,
+            ...GLASS, borderRadius: 20, padding: "10px 16px", display: "flex", alignItems: "center", gap: 8, flexShrink: 0,
           }}>
-            <WeatherIcon size={15} color="rgb(var(--accent))" />
-            {weather === null && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", color: "rgba(var(--ink),0.4)" }}>···</span>}
-            {weather === "error" && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", color: "rgba(var(--ink),0.4)" }}>—</span>}
+            <WeatherIcon size={18} color="rgb(var(--accent))" />
+            {weather === null && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "rgba(var(--ink),0.4)" }}>···</span>}
+            {weather === "error" && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", color: "rgba(var(--ink),0.4)" }}>—</span>}
             {weather && weather !== "error" && (
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.15rem", color: "rgb(var(--ink))" }}>{weather.tempF}°</span>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", color: "rgb(var(--ink))" }}>{weather.tempF}°</span>
             )}
           </div>
         </div>
 
         {/* Restaurants | Places */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.25)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.25)" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
-              <UtensilsCrossed size={12} color="rgb(var(--accent))" />
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.56rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
+              <UtensilsCrossed size={14} color="rgb(var(--accent))" />
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
                 {t.guide.restaurantsTitle}
               </span>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
               {t.guide.restaurants.map((r, i) => (
-                <div key={i} style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.76rem", color: "rgb(var(--ink))", lineHeight: 1.3 }}>
+                <div key={i} style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgb(var(--ink))", lineHeight: 1.3 }}>
                   {r.name}
                 </div>
               ))}
             </div>
           </div>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
-              <MapPin size={12} color="rgb(var(--accent))" />
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.56rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
+              <MapPin size={14} color="rgb(var(--accent))" />
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
                 {t.guide.placesTitle}
               </span>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
               {t.guide.places.map((p, i) => (
-                <div key={i} style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.76rem", color: "rgb(var(--ink))", lineHeight: 1.3 }}>
+                <div key={i} style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgb(var(--ink))", lineHeight: 1.3 }}>
                   {p.name}
                 </div>
               ))}
@@ -173,17 +173,17 @@ export default function RosaritoGuide() {
 
         {/* Follow */}
         {SOCIAL_LINKS.length > 0 && (
-          <div style={{ paddingTop: 16, marginTop: 16, borderTop: "1px solid rgba(255,255,255,0.25)" }}>
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.56rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
+          <div style={{ paddingTop: 20, marginTop: 20, borderTop: "1px solid rgba(255,255,255,0.25)" }}>
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
               {t.guide.followTitle}
             </span>
-            <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+            <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
               {SOCIAL_LINKS.map(({ name, href, Icon, color, hoverColor }) => (
                 <a key={name} href={href} target="_blank" rel="noopener noreferrer" aria-label={name}
-                  style={{ width: 32, height: 32, borderRadius: "50%", background: color, color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.3s", flexShrink: 0 }}
+                  style={{ width: 38, height: 38, borderRadius: "50%", background: color, color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.3s", flexShrink: 0 }}
                   onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = hoverColor}
                   onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = color}>
-                  <Icon size={14} />
+                  <Icon size={17} />
                 </a>
               ))}
             </div>

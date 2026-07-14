@@ -6,6 +6,10 @@ export default function Logo({ size = 36, strokeColor = "rgb(var(--ink))" }: { s
         <clipPath id="ecr-roof-clip">
           <polygon points="5,5 108,5 73,95 5,95" />
         </clipPath>
+        {/* Painted tip on the small peak */}
+        <clipPath id="ecr-tip-clip">
+          <polygon points="150,62 131,98 169,98" />
+        </clipPath>
       </defs>
 
       <g clipPath="url(#ecr-roof-clip)">
@@ -17,6 +21,9 @@ export default function Logo({ size = 36, strokeColor = "rgb(var(--ink))" }: { s
           <line x1="54" y1="100" x2="94" y2="-10" />
           <line x1="70" y1="100" x2="110" y2="-10" />
         </g>
+      </g>
+      <g clipPath="url(#ecr-tip-clip)">
+        <rect x="120" y="55" width="60" height="50" fill="rgb(var(--accent))" />
       </g>
 
       {/* Small peak */}

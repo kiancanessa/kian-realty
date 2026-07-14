@@ -26,9 +26,9 @@ export function TikTokIcon({ size = 18 }: { size?: number }) {
 
 export type SocialLink = { name: string; href: string; Icon: (props: { size?: number }) => React.JSX.Element; color: string; hoverColor: string };
 
-// Add Instagram/TikTok entries here once real links are available:
-// { name: "Instagram", href: "https://instagram.com/...", Icon: InstagramIcon, color: "#E1306C", hoverColor: "#C13584" }
+// Add a TikTok entry here once a real link is available:
 // { name: "TikTok", href: "https://tiktok.com/@...", Icon: TikTokIcon, color: "#000000", hoverColor: "#333333" }
 export const SOCIAL_LINKS: SocialLink[] = [
   { name: "Facebook", href: "https://www.facebook.com/share/1KXb7Lm8g9/", Icon: FacebookIcon, color: "#1877F2", hoverColor: "#166FE5" },
+  { name: "Instagram", href: "https://www.instagram.com/elcasarosaritogroup/", Icon: InstagramIcon, color: "#E1306C", hoverColor: "#C13584" },
 ];
