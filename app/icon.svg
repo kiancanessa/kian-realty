@@ -2,25 +2,19 @@
   <rect x="0" y="0" width="210" height="170" rx="24" fill="#FAF6EE" />
   <defs>
     <clipPath id="ecr-roof-clip-fav">
-      <polygon points="14,12 100,12 58,92 14,92" />
-    </clipPath>
-    <clipPath id="ecr-notch-clip-fav">
-      <polygon points="150,46 133,80 167,80" />
+      <polygon points="12,12 115,12 80,102 12,102" />
     </clipPath>
   </defs>
   <g clip-path="url(#ecr-roof-clip-fav)">
     <g stroke="#6B8A42" stroke-width="9">
-      <line x1="-6" y1="102" x2="34" y2="-6" />
-      <line x1="10" y1="102" x2="50" y2="-6" />
-      <line x1="26" y1="102" x2="66" y2="-6" />
-      <line x1="42" y1="102" x2="82" y2="-6" />
-      <line x1="58" y1="102" x2="98" y2="-6" />
-      <line x1="74" y1="102" x2="114" y2="-6" />
+      <line x1="-3" y1="107" x2="37" y2="-3" />
+      <line x1="13" y1="107" x2="53" y2="-3" />
+      <line x1="29" y1="107" x2="69" y2="-3" />
+      <line x1="45" y1="107" x2="85" y2="-3" />
+      <line x1="61" y1="107" x2="101" y2="-3" />
+      <line x1="77" y1="107" x2="117" y2="-3" />
     </g>
   </g>
-  <g clip-path="url(#ecr-notch-clip-fav)">
-    <rect x="120" y="38" width="60" height="50" fill="#6B8A42" />
-  </g>
-  <polygon points="150,46 112,148 205,148" fill="none" stroke="#3A3A38" stroke-width="7" stroke-linejoin="round" />
-  <polygon points="100,12 25,148 172,148" fill="none" stroke="#3A3A38" stroke-width="7" stroke-linejoin="round" />
+  <polygon points="157,69 107,165 207,165" fill="none" stroke="#3A3A38" stroke-width="7" stroke-linejoin="round" />
+  <polygon points="115,12 55,165 175,165" fill="none" stroke="#3A3A38" stroke-width="7" stroke-linejoin="round" />
 </svg>
