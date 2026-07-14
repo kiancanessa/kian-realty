@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLang } from "../lib/LangContext";
 import { SOCIAL_LINKS } from "../lib/social";
-import { Compass, X, Sun, Cloud, CloudFog, CloudDrizzle, CloudRain, CloudLightning, UtensilsCrossed, MapPin } from "lucide-react";
+import { Compass, X, Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, CloudLightning, UtensilsCrossed, MapPin, Droplets, Umbrella, Wind } from "lucide-react";
 
 const ROSARITO_LAT = 32.3628;
 const ROSARITO_LON = -117.0533;
@@ -27,8 +27,9 @@ const WEATHER_TEXT: Record<number, { en: string; es: string }> = {
 };
 
 function weatherIcon(code: number) {
-  if (code === 0 || code === 1) return Sun;
-  if (code === 2 || code === 3) return Cloud;
+  if (code === 0) return Sun;
+  if (code === 1 || code === 2) return CloudSun;
+  if (code === 3) return Cloud;
   if (code === 45 || code === 48) return CloudFog;
   if (code >= 51 && code <= 57) return CloudDrizzle;
   if ((code >= 61 && code <= 67) || (code >= 80 && code <= 82)) return CloudRain;
@@ -36,7 +37,15 @@ function weatherIcon(code: number) {
   return Cloud;
 }
 
-type Weather = { tempF: number; code: number };
+function dayLabel(dateStr: string, locale: "en" | "es") {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return dt.toLocaleDateString(locale === "es" ? "es-MX" : "en-US", { weekday: "short", timeZone: "UTC" });
+}
+
+type WeatherNow = { tempF: number; feelsF: number; humidity: number; windKmh: number; precipPct: number; code: number };
+type DayForecast = { date: string; code: number; highF: number; lowF: number };
+type WeatherData = { now: WeatherNow; days: DayForecast[] };
 
 const GLASS: React.CSSProperties = {
   background: "rgba(var(--surface),0.32)",
@@ -49,7 +58,7 @@ export default function RosaritoGuide() {
   const { locale, t } = useLang();
   const [hovering, setHovering] = useState(false);
   const [pinned, setPinned] = useState(false);
-  const [weather, setWeather] = useState<Weather | "error" | null>(null);
+  const [weather, setWeather] = useState<WeatherData | "error" | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const open = hovering || pinned;
@@ -58,11 +67,29 @@ export default function RosaritoGuide() {
     if (weather !== null) return;
     if (!open) return;
     fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${ROSARITO_LAT}&longitude=${ROSARITO_LON}&current=temperature_2m,weather_code&timezone=America%2FTijuana&temperature_unit=fahrenheit`
+      `https://api.open-meteo.com/v1/forecast?latitude=${ROSARITO_LAT}&longitude=${ROSARITO_LON}` +
+      `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
+      `&timezone=America%2FTijuana&temperature_unit=fahrenheit&wind_speed_unit=kmh&forecast_days=6`
     )
       .then(r => r.json())
       .then(data => {
-        setWeather({ tempF: Math.round(data.current.temperature_2m), code: data.current.weather_code });
+        setWeather({
+          now: {
+            tempF: Math.round(data.current.temperature_2m),
+            feelsF: Math.round(data.current.apparent_temperature),
+            humidity: Math.round(data.current.relative_humidity_2m),
+            windKmh: Math.round(data.current.wind_speed_10m * 10) / 10,
+            precipPct: Math.round(data.daily.precipitation_probability_max[0]),
+            code: data.current.weather_code,
+          },
+          days: data.daily.time.map((date: string, i: number) => ({
+            date,
+            code: data.daily.weather_code[i],
+            highF: Math.round(data.daily.temperature_2m_max[i]),
+            lowF: Math.round(data.daily.temperature_2m_min[i]),
+          })),
+        });
       })
       .catch(() => setWeather("error"));
   }, [open, weather]);
@@ -75,7 +102,7 @@ export default function RosaritoGuide() {
     closeTimer.current = setTimeout(() => setHovering(false), 150);
   };
 
-  const WeatherIcon = weather && weather !== "error" ? weatherIcon(weather.code) : Cloud;
+  const WeatherIcon = weather && weather !== "error" ? weatherIcon(weather.now.code) : Cloud;
 
   return (
     <div
@@ -132,10 +159,58 @@ export default function RosaritoGuide() {
             {weather === null && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "rgba(var(--ink),0.4)" }}>···</span>}
             {weather === "error" && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", color: "rgba(var(--ink),0.4)" }}>—</span>}
             {weather && weather !== "error" && (
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", color: "rgb(var(--ink))" }}>{weather.tempF}°</span>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", color: "rgb(var(--ink))" }}>{weather.now.tempF}°</span>
             )}
           </div>
         </div>
+
+        {/* Weather detail */}
+        {weather && weather !== "error" && (
+          <div style={{ marginBottom: 4 }}>
+            <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", color: "rgba(var(--ink),0.45)", marginBottom: 14 }}>
+              {WEATHER_TEXT[weather.now.code]?.[locale] ?? "—"} · {t.guide.feelsLike} {weather.now.feelsF}°
+            </div>
+
+            {/* 6-day strip */}
+            <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4, marginBottom: 16 }}>
+              {weather.days.map((d, i) => {
+                const DayIcon = weatherIcon(d.code);
+                return (
+                  <div key={d.date} style={{
+                    ...GLASS, borderRadius: 14, padding: "10px 8px", minWidth: 54, flexShrink: 0,
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+                    background: i === 0 ? "rgba(var(--accent),0.18)" : GLASS.background,
+                  }}>
+                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", textTransform: "capitalize", color: "rgba(var(--ink),0.55)" }}>
+                      {dayLabel(d.date, locale)}
+                    </span>
+                    <DayIcon size={16} color="rgb(var(--accent))" />
+                    <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", color: "rgb(var(--ink))", fontWeight: 500, whiteSpace: "nowrap" }}>
+                      {d.highF}° <span style={{ color: "rgba(var(--ink),0.4)" }}>{d.lowF}°</span>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Stats */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {[
+                { Icon: Droplets, label: t.guide.humidity, value: `${weather.now.humidity}%` },
+                { Icon: Umbrella, label: t.guide.precipitation, value: `${weather.now.precipPct}%` },
+                { Icon: Wind, label: t.guide.wind, value: `${weather.now.windKmh} Km/h` },
+              ].map(({ Icon, label, value }) => (
+                <div key={label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <Icon size={13} color="rgb(var(--accent))" />
+                    <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgba(var(--ink),0.55)" }}>{label}</span>
+                  </div>
+                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.78rem", color: "rgb(var(--ink))" }}>{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Restaurants | Places */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.25)" }}>
