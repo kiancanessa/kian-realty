@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLang } from "../lib/LangContext";
 import { SOCIAL_LINKS } from "../lib/social";
-import { Compass, X, Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, CloudLightning, UtensilsCrossed, MapPin, Droplets, Umbrella, Wind } from "lucide-react";
+import { Compass, X, Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, CloudLightning, UtensilsCrossed, MapPin, Droplets, Umbrella, Wind, Waves, Sunset, Gauge } from "lucide-react";
 
 const ROSARITO_LAT = 32.3628;
 const ROSARITO_LON = -117.0533;
@@ -43,7 +43,15 @@ function dayLabel(dateStr: string, locale: "en" | "es") {
   return dt.toLocaleDateString(locale === "es" ? "es-MX" : "en-US", { weekday: "short", timeZone: "UTC" });
 }
 
-type WeatherNow = { tempF: number; feelsF: number; humidity: number; windKmh: number; precipPct: number; code: number };
+function timeLabel(isoStr: string, locale: "en" | "es") {
+  const dt = new Date(isoStr);
+  return dt.toLocaleTimeString(locale === "es" ? "es-MX" : "en-US", { hour: "numeric", minute: "2-digit" });
+}
+
+type WeatherNow = {
+  tempF: number; feelsF: number; humidity: number; windKmh: number; precipPct: number; code: number;
+  seaTempF: number | null; uvIndex: number; sunset: string;
+};
 type DayForecast = { date: string; code: number; highF: number; lowF: number };
 type WeatherData = { now: WeatherNow; days: DayForecast[] };
 
@@ -66,14 +74,20 @@ export default function RosaritoGuide() {
   useEffect(() => {
     if (weather !== null) return;
     if (!open) return;
-    fetch(
+
+    const forecast = fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${ROSARITO_LAT}&longitude=${ROSARITO_LON}` +
       `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m` +
-      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunset` +
       `&timezone=America%2FTijuana&temperature_unit=fahrenheit&wind_speed_unit=kmh&forecast_days=6`
-    )
-      .then(r => r.json())
-      .then(data => {
+    ).then(r => r.json());
+
+    const marine = fetch(
+      `https://marine-api.open-meteo.com/v1/marine?latitude=${ROSARITO_LAT}&longitude=${ROSARITO_LON}&current=sea_surface_temperature&timezone=America%2FTijuana&temperature_unit=fahrenheit`
+    ).then(r => r.json()).catch(() => null);
+
+    Promise.all([forecast, marine])
+      .then(([data, sea]) => {
         setWeather({
           now: {
             tempF: Math.round(data.current.temperature_2m),
@@ -82,6 +96,9 @@ export default function RosaritoGuide() {
             windKmh: Math.round(data.current.wind_speed_10m * 10) / 10,
             precipPct: Math.round(data.daily.precipitation_probability_max[0]),
             code: data.current.weather_code,
+            seaTempF: sea?.current?.sea_surface_temperature != null ? Math.round(sea.current.sea_surface_temperature) : null,
+            uvIndex: Math.round(data.daily.uv_index_max[0] * 10) / 10,
+            sunset: data.daily.sunset[0],
           },
           days: data.daily.time.map((date: string, i: number) => ({
             date,
@@ -103,6 +120,15 @@ export default function RosaritoGuide() {
   };
 
   const WeatherIcon = weather && weather !== "error" ? weatherIcon(weather.now.code) : Cloud;
+
+  const stats = weather && weather !== "error" ? [
+    { Icon: Droplets, label: t.guide.humidity, value: `${weather.now.humidity}%` },
+    { Icon: Wind, label: t.guide.wind, value: `${weather.now.windKmh} Km/h` },
+    { Icon: Umbrella, label: t.guide.precipitation, value: `${weather.now.precipPct}%` },
+    { Icon: Waves, label: t.guide.seaTemp, value: weather.now.seaTempF != null ? `${weather.now.seaTempF}°` : "—" },
+    { Icon: Gauge, label: t.guide.uvIndex, value: `${weather.now.uvIndex}` },
+    { Icon: Sunset, label: t.guide.sunset, value: timeLabel(weather.now.sunset, locale) },
+  ] : [];
 
   return (
     <div
@@ -131,16 +157,16 @@ export default function RosaritoGuide() {
         style={{
           ...GLASS,
           position: "absolute", top: 64, left: 0,
-          width: "min(440px, calc(100vw - 40px))",
-          borderRadius: 28,
+          width: "min(680px, calc(100vw - 40px))",
+          borderRadius: 30,
           boxShadow: "0 16px 48px rgba(var(--ink),0.25), inset 0 1px 0 rgba(255,255,255,0.35)",
           opacity: open ? 1 : 0,
           transform: open ? "translateY(0)" : "translateY(-8px)",
           pointerEvents: open ? "auto" : "none",
           transition: "opacity 0.25s ease, transform 0.25s ease",
-          maxHeight: "calc(100vh - 184px)",
+          maxHeight: "calc(100vh - 180px)",
           overflowY: "auto",
-          padding: 26,
+          padding: 28,
         }}>
         {/* Header row: title + weather badge */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 14, marginBottom: 22 }}>
@@ -164,106 +190,110 @@ export default function RosaritoGuide() {
           </div>
         </div>
 
-        {/* Weather detail */}
-        {weather && weather !== "error" && (
-          <div style={{ marginBottom: 4 }}>
-            <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", color: "rgba(var(--ink),0.45)", marginBottom: 14 }}>
-              {WEATHER_TEXT[weather.now.code]?.[locale] ?? "—"} · {t.guide.feelsLike} {weather.now.feelsF}°
-            </div>
-
-            {/* 6-day strip */}
-            <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4, marginBottom: 16 }}>
-              {weather.days.map((d, i) => {
-                const DayIcon = weatherIcon(d.code);
-                return (
-                  <div key={d.date} style={{
-                    ...GLASS, borderRadius: 14, padding: "10px 8px", minWidth: 54, flexShrink: 0,
-                    display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
-                    background: i === 0 ? "rgba(var(--accent),0.18)" : GLASS.background,
-                  }}>
-                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", textTransform: "capitalize", color: "rgba(var(--ink),0.55)" }}>
-                      {dayLabel(d.date, locale)}
-                    </span>
-                    <DayIcon size={16} color="rgb(var(--accent))" />
-                    <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", color: "rgb(var(--ink))", fontWeight: 500, whiteSpace: "nowrap" }}>
-                      {d.highF}° <span style={{ color: "rgba(var(--ink),0.4)" }}>{d.lowF}°</span>
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Stats */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {[
-                { Icon: Droplets, label: t.guide.humidity, value: `${weather.now.humidity}%` },
-                { Icon: Umbrella, label: t.guide.precipitation, value: `${weather.now.precipPct}%` },
-                { Icon: Wind, label: t.guide.wind, value: `${weather.now.windKmh} Km/h` },
-              ].map(({ Icon, label, value }) => (
-                <div key={label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                    <Icon size={13} color="rgb(var(--accent))" />
-                    <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgba(var(--ink),0.55)" }}>{label}</span>
-                  </div>
-                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.78rem", color: "rgb(var(--ink))" }}>{value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Restaurants | Places */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.25)" }}>
+        <div className="guide-layout" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 24 }}>
+          {/* Weather column */}
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
-              <UtensilsCrossed size={14} color="rgb(var(--accent))" />
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
-                {t.guide.restaurantsTitle}
-              </span>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
-              {t.guide.restaurants.map((r, i) => (
-                <div key={i} style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgb(var(--ink))", lineHeight: 1.3 }}>
-                  {r.name}
+            {weather && weather !== "error" && (
+              <>
+                <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", color: "rgba(var(--ink),0.45)", marginBottom: 14 }}>
+                  {WEATHER_TEXT[weather.now.code]?.[locale] ?? "—"} · {t.guide.feelsLike} {weather.now.feelsF}°
                 </div>
-              ))}
-            </div>
+
+                {/* Day strip */}
+                <div style={{ display: "flex", gap: 7, overflowX: "auto", paddingBottom: 4, marginBottom: 16 }}>
+                  {weather.days.map((d, i) => {
+                    const DayIcon = weatherIcon(d.code);
+                    return (
+                      <div key={d.date} style={{
+                        ...GLASS, borderRadius: 14, padding: "9px 6px", minWidth: 50, flexShrink: 0,
+                        display: "flex", flexDirection: "column", alignItems: "center", gap: 5,
+                        background: i === 0 ? "rgba(var(--accent),0.18)" : GLASS.background,
+                      }}>
+                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.56rem", textTransform: "capitalize", color: "rgba(var(--ink),0.55)" }}>
+                          {dayLabel(d.date, locale)}
+                        </span>
+                        <DayIcon size={15} color="rgb(var(--accent))" />
+                        <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.68rem", color: "rgb(var(--ink))", fontWeight: 500, whiteSpace: "nowrap" }}>
+                          {d.highF}° <span style={{ color: "rgba(var(--ink),0.4)" }}>{d.lowF}°</span>
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Stats grid: 3 cols x 2 rows */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+                  {stats.map(({ Icon, label, value }) => (
+                    <div key={label} style={{ ...GLASS, borderRadius: 14, padding: "10px 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, textAlign: "center" }}>
+                      <Icon size={14} color="rgb(var(--accent))" />
+                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.78rem", color: "rgb(var(--ink))", fontWeight: 600 }}>{value}</span>
+                      <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.56rem", color: "rgba(var(--ink),0.45)", letterSpacing: "0.02em" }}>{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+            {weather === null && (
+              <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgba(var(--ink),0.4)" }}>{t.guide.weatherLoading}</span>
+            )}
+            {weather === "error" && (
+              <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgba(var(--ink),0.4)" }}>{t.guide.weatherError}</span>
+            )}
           </div>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
-              <MapPin size={14} color="rgb(var(--accent))" />
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
-                {t.guide.placesTitle}
-              </span>
+
+          {/* Local column: Restaurants, Places, Follow */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 10 }}>
+                <UtensilsCrossed size={13} color="rgb(var(--accent))" />
+                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.58rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
+                  {t.guide.restaurantsTitle}
+                </span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                {t.guide.restaurants.map((r, i) => (
+                  <div key={i} style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgb(var(--ink))", lineHeight: 1.25 }}>
+                    {r.name}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
-              {t.guide.places.map((p, i) => (
-                <div key={i} style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgb(var(--ink))", lineHeight: 1.3 }}>
-                  {p.name}
+
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 10 }}>
+                <MapPin size={13} color="rgb(var(--accent))" />
+                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.58rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
+                  {t.guide.placesTitle}
+                </span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                {t.guide.places.map((p, i) => (
+                  <div key={i} style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgb(var(--ink))", lineHeight: 1.25 }}>
+                    {p.name}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {SOCIAL_LINKS.length > 0 && (
+              <div>
+                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.58rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
+                  {t.guide.followTitle}
+                </span>
+                <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                  {SOCIAL_LINKS.map(({ name, href, Icon, color, hoverColor }) => (
+                    <a key={name} href={href} target="_blank" rel="noopener noreferrer" aria-label={name}
+                      style={{ width: 34, height: 34, borderRadius: "50%", background: color, color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.3s", flexShrink: 0 }}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = hoverColor}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = color}>
+                      <Icon size={15} />
+                    </a>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
-
-        {/* Follow */}
-        {SOCIAL_LINKS.length > 0 && (
-          <div style={{ paddingTop: 20, marginTop: 20, borderTop: "1px solid rgba(255,255,255,0.25)" }}>
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.55)" }}>
-              {t.guide.followTitle}
-            </span>
-            <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
-              {SOCIAL_LINKS.map(({ name, href, Icon, color, hoverColor }) => (
-                <a key={name} href={href} target="_blank" rel="noopener noreferrer" aria-label={name}
-                  style={{ width: 38, height: 38, borderRadius: "50%", background: color, color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.3s", flexShrink: 0 }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = hoverColor}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = color}>
-                  <Icon size={17} />
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
