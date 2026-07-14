@@ -3,6 +3,7 @@ import "./globals.css";
 import { LangProvider } from "./lib/LangContext";
 import { ThemeProvider } from "./lib/ThemeContext";
 import SocialFloat from "./components/SocialFloat";
+import RosaritoGuide from "./components/RosaritoGuide";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -79,8 +80,11 @@ export default function RootLayout({
       </head>
       <body className="grain">
         <ThemeProvider>
-          <LangProvider>{children}</LangProvider>
-          <SocialFloat />
+          <LangProvider>
+            {children}
+            <SocialFloat />
+            <RosaritoGuide />
+          </LangProvider>
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
