@@ -1,4 +1,4 @@
-export default function Logo({ size = 36, strokeColor = "#23221E" }: { size?: number; strokeColor?: string }) {
+export default function Logo({ size = 36, strokeColor = "rgb(var(--ink))" }: { size?: number; strokeColor?: string }) {
   return (
     <svg width={size} height={size * (170 / 210)} viewBox="0 0 210 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <defs>
@@ -13,7 +13,7 @@ export default function Logo({ size = 36, strokeColor = "#23221E" }: { size?: nu
       </defs>
 
       <g clipPath="url(#ecr-roof-clip)">
-        <g stroke="#6B8A42" strokeWidth={9}>
+        <g stroke="rgb(var(--accent))" strokeWidth={9}>
           <line x1="-10" y1="100" x2="30" y2="-10" />
           <line x1="6" y1="100" x2="46" y2="-10" />
           <line x1="22" y1="100" x2="62" y2="-10" />
@@ -23,7 +23,7 @@ export default function Logo({ size = 36, strokeColor = "#23221E" }: { size?: nu
         </g>
       </g>
       <g clipPath="url(#ecr-notch-clip)">
-        <rect x="120" y="35" width="60" height="50" fill="#6B8A42" />
+        <rect x="120" y="35" width="60" height="50" fill="rgb(var(--accent))" />
       </g>
 
       {/* Short peak */}

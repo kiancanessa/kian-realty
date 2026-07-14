@@ -39,25 +39,50 @@
   100% { opacity: 1; }
 }
 
+:root {
+  --bg: 250,246,238;
+  --bg-alt: 240,231,216;
+  --surface: 255,255,255;
+  --ink: 35,34,30;
+  --accent: 107,138,66;
+  --accent-light: 133,168,87;
+  --accent-dark: 71,89,43;
+  --error: 176,71,43;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: 17,18,13;
+  --bg-alt: 25,26,18;
+  --surface: 30,31,22;
+  --ink: 239,235,223;
+  --accent: 148,181,99;
+  --accent-light: 173,203,127;
+  --accent-dark: 107,138,66;
+  --error: 224,132,110;
+  color-scheme: dark;
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
-  background-color: #FAF6EE;
-  color: #23221E;
+  background-color: rgb(var(--bg));
+  color: rgb(var(--ink));
   font-family: 'Jost', sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar       { width: 4px; }
-::-webkit-scrollbar-track { background: #F0E7D8; }
-::-webkit-scrollbar-thumb { background: #6B8A42; border-radius: 2px; }
+::-webkit-scrollbar-track { background: rgb(var(--bg-alt)); }
+::-webkit-scrollbar-thumb { background: rgb(var(--accent)); border-radius: 2px; }
 
 /* Sage shimmer text */
 .sage-shimmer {
-  background: linear-gradient(90deg, #6B8A42 0%, #85A857 30%, #6B8A42 60%, #47592B 80%, #85A857 100%);
+  background: linear-gradient(90deg, rgb(var(--accent)) 0%, rgb(var(--accent-light)) 30%, rgb(var(--accent)) 60%, rgb(var(--accent-dark)) 80%, rgb(var(--accent-light)) 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -131,4 +156,28 @@ body {
 /* Contact: 2 cols on desktop */
 @media (min-width: 1024px) {
   .contact-grid { grid-template-columns: 1fr 1.2fr !important; }
+}
+
+/* Team: 2 cols on tablet, 3 cols (3 top / 3 bottom) on desktop */
+@media (min-width: 640px) {
+  .team-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (min-width: 900px) {
+  .team-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
+
+/* Featured properties: up to 3 cols, larger cards */
+@media (min-width: 700px) {
+  .featured-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (min-width: 1080px) {
+  .featured-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
+
+/* Services: 2 cols on tablet, 3 cols (3 top / 3 bottom) on desktop */
+@media (min-width: 640px) {
+  .services-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (min-width: 900px) {
+  .services-grid { grid-template-columns: repeat(3, 1fr) !important; }
 }

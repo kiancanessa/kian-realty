@@ -12,9 +12,9 @@ function FilterButton({ active, onClick, children }: { active: boolean; onClick:
     <button onClick={onClick}
       style={{
         padding: "9px 20px", borderRadius: 999, cursor: "pointer",
-        border: `1px solid ${active ? "#6B8A42" : "rgba(107,138,66,0.25)"}`,
-        background: active ? "#6B8A42" : "transparent",
-        color: active ? "#FAF6EE" : "rgba(35,34,30,0.6)",
+        border: `1px solid ${active ? "rgb(var(--accent))" : "rgba(var(--accent),0.25)"}`,
+        background: active ? "rgb(var(--accent))" : "transparent",
+        color: active ? "#FAF6EE" : "rgba(var(--ink),0.6)",
         fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", fontWeight: active ? 600 : 400,
         transition: "all 0.3s",
       }}>
@@ -37,7 +37,7 @@ export default function PropertyGrid({ properties }: { properties: PropertyCard[
 
   if (properties.length === 0) {
     return (
-      <p style={{ fontFamily: "'Jost', sans-serif", color: "rgba(35,34,30,0.45)", fontSize: "0.9rem" }}>
+      <p style={{ fontFamily: "'Jost', sans-serif", color: "rgba(var(--ink),0.45)", fontSize: "0.9rem" }}>
         {t.featured.empty}
       </p>
     );
@@ -56,7 +56,7 @@ export default function PropertyGrid({ properties }: { properties: PropertyCard[
         ))}
       </div>
 
-      <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "rgba(35,34,30,0.4)", marginBottom: 24, letterSpacing: "0.05em" }}>
+      <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "rgba(var(--ink),0.4)", marginBottom: 24, letterSpacing: "0.05em" }}>
         {visible.length} {visible.length === 1 ? t.property.countSingular : t.property.countPlural}
       </p>
 

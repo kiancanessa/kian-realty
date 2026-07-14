@@ -7,16 +7,16 @@ export default function Footer() {
   const { t } = useLang();
   const year = new Date().getFullYear();
   return (
-    <footer style={{ background: "#F0E7D8", borderTop: "1px solid rgba(107,138,66,0.1)", padding: "48px 24px" }}>
+    <footer style={{ background: "rgb(var(--bg-alt))", borderTop: "1px solid rgba(var(--accent),0.1)", padding: "48px 24px" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <Logo size={28} />
           <div>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", fontWeight: 300, color: "#23221E", marginBottom: 4 }}>El Casa Rosarito</div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#6B8A42" }}>{t.nav.tagline}</div>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", fontWeight: 300, color: "rgb(var(--ink))", marginBottom: 4 }}>El Casa Rosarito</div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgb(var(--accent))" }}>{t.nav.tagline}</div>
           </div>
         </div>
-        <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgba(35,34,30,0.2)", textAlign: "center" }}>{t.footer.tagline}</p>
+        <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgba(var(--ink),0.2)", textAlign: "center" }}>{t.footer.tagline}</p>
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {SOCIAL_LINKS.map(({ name, href, Icon, color, hoverColor }) => (
@@ -28,14 +28,14 @@ export default function Footer() {
               </a>
             ))}
           </div>
-          <a href="#" style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(35,34,30,0.2)", textDecoration: "none" }}>{t.footer.privacy}</a>
-          <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", color: "rgba(35,34,30,0.2)" }}>© {year} · {t.footer.rights}</span>
+          <a href="#" style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(var(--ink),0.2)", textDecoration: "none" }}>{t.footer.privacy}</a>
+          <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", color: "rgba(var(--ink),0.2)" }}>© {year} · {t.footer.rights}</span>
         </div>
       </div>
-      <div style={{ maxWidth: 1280, margin: "24px auto 0", paddingTop: 20, borderTop: "1px solid rgba(107,138,66,0.08)", textAlign: "center" }}>
-        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.05em", color: "rgba(35,34,30,0.25)" }}>
+      <div style={{ maxWidth: 1280, margin: "24px auto 0", paddingTop: 20, borderTop: "1px solid rgba(var(--accent),0.08)", textAlign: "center" }}>
+        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.05em", color: "rgba(var(--ink),0.25)" }}>
           Sitio web desarrollado por{" "}
-          <a href="https://portafolio-kian-rho.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: "rgba(107,138,66,0.7)", textDecoration: "none" }}>Kian Canessa</a>
+          <a href="https://portafolio-kian-rho.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: "rgba(var(--accent),0.7)", textDecoration: "none" }}>Kian Canessa</a>
         </span>
       </div>
     </footer>

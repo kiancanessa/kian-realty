@@ -17,7 +17,7 @@ export default async function PropiedadesPage() {
   return (
     <main>
       <Navbar />
-      <section style={{ padding: "160px 24px 112px", background: "#FAF6EE" }}>
+      <section style={{ padding: "160px 24px 112px", background: "rgb(var(--bg))" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <PropiedadesHeader />
           <PropertyGrid properties={properties} />

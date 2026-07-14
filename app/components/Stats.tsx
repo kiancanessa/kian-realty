@@ -34,14 +34,14 @@ export default function Stats({ activeListings }: { activeListings: number }) {
     { value: 15,  suffix: "+", label: t.stats.exp },
   ];
   return (
-    <section style={{ borderTop: "1px solid rgba(107,138,66,0.12)", borderBottom: "1px solid rgba(107,138,66,0.12)", background: "#F0E7D8" }}>
+    <section style={{ borderTop: "1px solid rgba(var(--accent),0.12)", borderBottom: "1px solid rgba(var(--accent),0.12)", background: "rgb(var(--bg-alt))" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 24px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 32 }} className="stats-grid">
         {stats.map((s, i) => (
           <div key={i} style={{ textAlign: "center" }}>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "#6B8A42", fontSize: "clamp(2.5rem, 5vw, 4rem)" }}>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "rgb(var(--accent))", fontSize: "clamp(2.5rem, 5vw, 4rem)" }}>
               <CountUp target={s.value} />{s.suffix}
             </div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(35,34,30,0.35)", marginTop: 4 }}>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(var(--ink),0.35)", marginTop: 4 }}>
               {s.label}
             </div>
           </div>

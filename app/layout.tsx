@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LangProvider } from "./lib/LangContext";
+import { ThemeProvider } from "./lib/ThemeContext";
 import SocialFloat from "./components/SocialFloat";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -58,7 +59,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -70,10 +71,17 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}`,
+          }}
+        />
       </head>
       <body className="grain">
-        <LangProvider>{children}</LangProvider>
-        <SocialFloat />
+        <ThemeProvider>
+          <LangProvider>{children}</LangProvider>
+          <SocialFloat />
+        </ThemeProvider>
         <Analytics />
         <SpeedInsights />
       </body>
