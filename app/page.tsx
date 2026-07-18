@@ -5,6 +5,7 @@ import Services from "./components/Services";
 import Featured from "./components/Featured";
 import About from "./components/About";
 import Location from "./components/Location";
+import Testimonials from "./components/Testimonials";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import { getAllProperties, toCard, sortFeatured } from "./lib/easybroker";
@@ -21,6 +22,7 @@ export default async function Home() {
       <Featured properties={properties} />
       <About />
       <Location />
+      <Testimonials />
       <Contact />
       <Footer />
     </main>

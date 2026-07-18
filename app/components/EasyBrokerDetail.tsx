@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
-import { MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Bed, Bath, Car, Square, ExternalLink, Check } from "lucide-react";
+import { MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Bed, Bath, Car, Square, ExternalLink, Check, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import type { EBPropertyDetail } from "../lib/easybroker";
 import { primaryOperation } from "../lib/easybroker";
 import { useLang } from "../lib/LangContext";
 import { sendInquiry, whatsappLink } from "../lib/sendInquiry";
+import StarRating from "./StarRating";
 
 const WHATSAPP_NUMBER = "526611256107";
 const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER}`;
@@ -17,6 +18,12 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
   const [sent, setSent] = useState(false);
   const [failed, setFailed] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ name: "", email: "", comment: "" });
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewSending, setReviewSending] = useState(false);
+  const [reviewSent, setReviewSent] = useState(false);
+  const [reviewFailed, setReviewFailed] = useState(false);
 
   const images = property.property_images.length > 0
     ? property.property_images
@@ -47,6 +54,24 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
       message: form.message,
     });
     if (ok) setSent(true); else setFailed(true);
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setReviewSending(true);
+    setReviewFailed(false);
+    const ok = await sendInquiry({
+      subject: `Nueva reseña para "${property.title}" — El Casa Rosarito`,
+      from_name: "El Casa Rosarito Website",
+      replyto: reviewForm.email,
+      name: reviewForm.name,
+      email: reviewForm.email,
+      property: `${property.title} (${property.public_id})`,
+      rating: `${reviewRating}/5`,
+      review: reviewForm.comment,
+    });
+    setReviewSending(false);
+    if (ok) setReviewSent(true); else setReviewFailed(true);
   };
 
   const inp: React.CSSProperties = {
@@ -195,6 +220,61 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
               )}
             </div>
           )}
+
+          {/* Reviews */}
+          <div style={{ marginBottom: 40, paddingTop: 32, borderTop: "1px solid rgba(var(--accent),0.1)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", fontWeight: 300, color: "rgb(var(--ink))" }}>
+                {t.property.reviewsTitle}
+              </h3>
+              {!showReviewForm && !reviewSent && (
+                <button onClick={() => setShowReviewForm(true)}
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", background: "transparent", border: "1px solid rgba(var(--accent),0.3)", color: "rgb(var(--accent))", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontSize: "0.7rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                  <MessageSquare size={13} /> {t.property.leaveReview}
+                </button>
+              )}
+            </div>
+
+            {!showReviewForm && !reviewSent && (
+              <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.4)", lineHeight: 1.6 }}>
+                {t.property.reviewsEmpty}
+              </p>
+            )}
+
+            {reviewSent && (
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <Check size={20} color="rgb(var(--accent))" />
+                <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgb(var(--ink))" }}>{t.property.reviewSent}</span>
+              </div>
+            )}
+
+            {showReviewForm && !reviewSent && (
+              <form onSubmit={handleReviewSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 460 }}>
+                {reviewFailed && (
+                  <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgb(var(--error))" }}>{t.testimonials.formError}</p>
+                )}
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.5)" }}>
+                    {t.property.yourRating}
+                  </span>
+                  <StarRating value={reviewRating} onChange={setReviewRating} size={20} />
+                </div>
+                <input style={inp} placeholder={t.testimonials.formName} value={reviewForm.name} onChange={e => setReviewForm({ ...reviewForm, name: e.target.value })} required />
+                <input style={inp} type="email" placeholder={t.testimonials.formEmail} value={reviewForm.email} onChange={e => setReviewForm({ ...reviewForm, email: e.target.value })} required />
+                <textarea style={{ ...inp, resize: "none" }} rows={3} placeholder={t.property.yourComment} value={reviewForm.comment} onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })} required />
+                <div style={{ display: "flex", gap: 10 }}>
+                  <button type="submit" disabled={reviewSending}
+                    style={{ flex: 1, padding: "12px", background: reviewSending ? "rgba(var(--accent),0.6)" : "rgb(var(--accent))", color: "#FAF6EE", border: "none", cursor: reviewSending ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: 600, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                    {reviewSending ? t.testimonials.formSending : t.property.submitReview}
+                  </button>
+                  <button type="button" onClick={() => setShowReviewForm(false)}
+                    style={{ padding: "12px 18px", background: "transparent", border: "1px solid rgba(var(--accent),0.3)", color: "rgb(var(--accent))", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                    {t.testimonials.cancel}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
 
           {/* EasyBroker source link */}
           <a href={property.public_url} target="_blank" rel="noopener noreferrer"

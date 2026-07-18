@@ -182,6 +182,11 @@ body {
   .services-grid { grid-template-columns: repeat(3, 1fr) !important; }
 }
 
+/* Testimonials: 1 col mobile, 3 cols on desktop */
+@media (min-width: 700px) {
+  .testimonials-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
+
 /* Rosarito Guide: stacked on phones, weather | local side by side on wider screens */
 @media (min-width: 640px) {
   .guide-layout { grid-template-columns: 1.1fr 1fr !important; }
