@@ -48,6 +48,10 @@ function timeLabel(isoStr: string, locale: "en" | "es") {
   return dt.toLocaleTimeString(locale === "es" ? "es-MX" : "en-US", { hour: "numeric", minute: "2-digit" });
 }
 
+function mapsLink(name: string) {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name}, Rosarito, Baja California`)}`;
+}
+
 type WeatherNow = {
   tempF: number; feelsF: number; humidity: number; windKmh: number; precipPct: number; code: number;
   seaTempF: number | null; uvIndex: number; sunset: string;
@@ -252,9 +256,12 @@ export default function RosaritoGuide() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
                 {t.guide.restaurants.map((r, i) => (
-                  <div key={i} style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgb(var(--ink))", lineHeight: 1.25 }}>
+                  <a key={i} href={mapsLink(r.name)} target="_blank" rel="noopener noreferrer"
+                    style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgb(var(--ink))", lineHeight: 1.25, textDecoration: "none", transition: "color 0.2s" }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "rgb(var(--accent))"}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgb(var(--ink))"}>
                     {r.name}
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>
@@ -268,9 +275,12 @@ export default function RosaritoGuide() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
                 {t.guide.places.map((p, i) => (
-                  <div key={i} style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgb(var(--ink))", lineHeight: 1.25 }}>
+                  <a key={i} href={mapsLink(p.name)} target="_blank" rel="noopener noreferrer"
+                    style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgb(var(--ink))", lineHeight: 1.25, textDecoration: "none", transition: "color 0.2s" }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "rgb(var(--accent))"}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgb(var(--ink))"}>
                     {p.name}
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>
