@@ -4,6 +4,7 @@ import { LangProvider } from "./lib/LangContext";
 import { ThemeProvider } from "./lib/ThemeContext";
 import SocialFloat from "./components/SocialFloat";
 import RosaritoGuide from "./components/RosaritoGuide";
+import EventAnnouncement from "./components/EventAnnouncement";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -84,6 +85,7 @@ export default function RootLayout({
             {children}
             <SocialFloat />
             <RosaritoGuide />
+            <EventAnnouncement />
           </LangProvider>
         </ThemeProvider>
         <Analytics />

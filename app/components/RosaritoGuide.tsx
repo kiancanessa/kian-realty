@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useLang } from "../lib/LangContext";
 import { SOCIAL_LINKS } from "../lib/social";
 import { Compass, X, Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, CloudLightning, UtensilsCrossed, MapPin, Droplets, Umbrella, Wind, Waves, Sunset, Gauge } from "lucide-react";
+import { GLASS } from "../lib/glass";
 
 const ROSARITO_LAT = 32.3628;
 const ROSARITO_LON = -117.0533;
@@ -58,13 +59,6 @@ type WeatherNow = {
 };
 type DayForecast = { date: string; code: number; highF: number; lowF: number };
 type WeatherData = { now: WeatherNow; days: DayForecast[] };
-
-const GLASS: React.CSSProperties = {
-  background: "rgba(var(--surface),0.32)",
-  backdropFilter: "blur(28px) saturate(200%)",
-  WebkitBackdropFilter: "blur(28px) saturate(200%)",
-  border: "1px solid rgba(255,255,255,0.3)",
-};
 
 export default function RosaritoGuide() {
   const { locale, t } = useLang();

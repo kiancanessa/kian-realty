@@ -191,3 +191,8 @@ body {
 @media (min-width: 640px) {
   .guide-layout { grid-template-columns: 1.1fr 1fr !important; }
 }
+
+/* Event announcement: stacked on phones, details | price+CTA side by side on wider popups */
+@media (min-width: 560px) {
+  .event-layout { grid-template-columns: 1.15fr 1fr !important; }
+}
