@@ -1,21 +1,44 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useLang } from "../lib/LangContext";
 import { useTheme } from "../lib/ThemeContext";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { useSession } from "../lib/useSession";
+import { Menu, X, Sun, Moon, User, LogOut, ShieldCheck, Heart } from "lucide-react";
 import Logo from "./Logo";
+import Avatar from "./Avatar";
 
 export default function Navbar() {
   const { locale, setLocale, t } = useLang();
   const { theme, setTheme } = useTheme();
+  const { user, refresh } = useSession();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const accountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (accountRef.current && !accountRef.current.contains(e.target as Node)) setAccountOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setAccountOpen(false);
+    await refresh();
+    router.push("/");
+    router.refresh();
+  };
 
   const links = [
     { href: "/#services", label: t.nav.services },
@@ -79,6 +102,46 @@ export default function Navbar() {
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}>
             {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
           </button>
+
+          {user ? (
+            <div ref={accountRef} style={{ position: "relative" }}>
+              <button onClick={() => setAccountOpen(o => !o)}
+                style={{ display: "flex", alignItems: "center", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                aria-label={t.auth.myAccount}>
+                <Avatar name={user.name} size={34} />
+              </button>
+              {accountOpen && (
+                <div style={{ position: "absolute", top: "calc(100% + 10px)", right: 0, minWidth: 200, background: "rgb(var(--surface))", border: "1px solid rgba(var(--accent),0.15)", boxShadow: "0 12px 32px rgba(0,0,0,0.12)", zIndex: 60 }}>
+                  <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(var(--accent),0.1)" }}>
+                    <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1rem", color: "rgb(var(--ink))" }}>{user.name}</div>
+                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", color: "rgba(var(--ink),0.45)" }}>{user.email}</div>
+                  </div>
+                  <a href="/favoritos" onClick={() => setAccountOpen(false)}
+                    style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgb(var(--ink))", textDecoration: "none", borderBottom: "1px solid rgba(var(--accent),0.1)" }}>
+                    <Heart size={15} color="rgb(var(--accent))" /> {t.favorites.navLabel}
+                  </a>
+                  {(user.is_admin || user.is_developer) && (
+                    <a href="/admin/reviews" onClick={() => setAccountOpen(false)}
+                      style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgb(var(--ink))", textDecoration: "none", borderBottom: "1px solid rgba(var(--accent),0.1)" }}>
+                      <ShieldCheck size={15} color="rgb(var(--accent))" /> {t.auth.adminPanel}
+                    </a>
+                  )}
+                  <button onClick={handleLogout}
+                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", background: "none", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgb(var(--ink))" }}>
+                    <LogOut size={15} /> {t.auth.logout}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <a href="/login" aria-label={t.auth.login}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, border: "1px solid rgba(var(--accent),0.25)", borderRadius: 999, background: "transparent", cursor: "pointer", color: "rgb(var(--accent))", transition: "all 0.3s", textDecoration: "none" }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "rgba(var(--accent),0.1)"}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}>
+              <User size={15} />
+            </a>
+          )}
+
           <a href="/#contact" style={{ padding: "10px 22px", border: "1px solid rgb(var(--accent))", color: "rgb(var(--accent))", fontFamily: "'Jost', sans-serif", fontSize: "0.7rem", letterSpacing: "0.22em", textTransform: "uppercase", textDecoration: "none", transition: "all 0.3s" }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent))"; (e.currentTarget as HTMLElement).style.color = "#FAF6EE"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "rgb(var(--accent))"; }}>
@@ -114,6 +177,34 @@ export default function Navbar() {
               {theme === "light" ? <Moon size={14} /> : <Sun size={14} />}
             </button>
           </div>
+
+          {user ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, paddingTop: 12, borderTop: "1px solid rgba(var(--accent),0.1)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <Avatar name={user.name} size={30} />
+                <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.82rem", color: "rgb(var(--ink))" }}>{user.name}</span>
+              </div>
+              <a href="/favoritos" onClick={() => setOpen(false)}
+                style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgb(var(--accent))", textDecoration: "none" }}>
+                <Heart size={15} /> {t.favorites.navLabel}
+              </a>
+              {(user.is_admin || user.is_developer) && (
+                <a href="/admin/reviews" onClick={() => setOpen(false)}
+                  style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgb(var(--accent))", textDecoration: "none" }}>
+                  <ShieldCheck size={15} /> {t.auth.adminPanel}
+                </a>
+              )}
+              <button onClick={handleLogout}
+                style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgba(var(--ink),0.6)" }}>
+                <LogOut size={15} /> {t.auth.logout}
+              </button>
+            </div>
+          ) : (
+            <a href="/login" onClick={() => setOpen(false)}
+              style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(var(--accent),0.1)", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgb(var(--accent))", textDecoration: "none" }}>
+              <User size={15} /> {t.auth.login}
+            </a>
+          )}
         </div>
       )}
     </nav>

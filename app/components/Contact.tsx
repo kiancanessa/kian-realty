@@ -40,6 +40,11 @@ export default function Contact() {
       interest: form.interest,
       message: form.message,
     });
+    fetch("/api/inquiries", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ source: "contact", name: form.name, email: form.email, phone: form.phone, interest: form.interest, message: form.message }),
+    }).catch(() => {});
     setSending(false);
     if (ok) {
       setSent(true);

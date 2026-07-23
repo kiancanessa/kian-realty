@@ -1,10 +1,12 @@
 "use client";
 import Link from "next/link";
-import { MapPin, ArrowRight } from "lucide-react";
+import { MapPin, ArrowRight, Star } from "lucide-react";
 import type { PropertyCard } from "../lib/easybroker";
 import { useLang } from "../lib/LangContext";
+import type { ReviewStats } from "../lib/useReviewStats";
+import FavoriteButton from "./FavoriteButton";
 
-export default function PropertyCardTile({ p, inquireLabel }: { p: PropertyCard; inquireLabel: string }) {
+export default function PropertyCardTile({ p, inquireLabel, stats }: { p: PropertyCard; inquireLabel: string; stats?: ReviewStats }) {
   const { t } = useLang();
   const operationLabel = p.operation === "rental" ? t.property.forRent : t.property.forSale;
   const specs: string[] = [];
@@ -29,6 +31,7 @@ export default function PropertyCardTile({ p, inquireLabel }: { p: PropertyCard;
         <div style={{ position: "absolute", top: 16, left: 16, padding: "4px 12px", background: "rgb(var(--accent))", color: "#FAF6EE", fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
           {operationLabel}
         </div>
+        <FavoriteButton propertyId={p.id} propertyTitle={p.title} propertyImage={p.image} size={16} style={{ position: "absolute", top: 12, right: 12 }} />
         <div style={{ position: "absolute", bottom: 16, right: 16, fontFamily: "'Cormorant Garamond', serif", fontSize: "1.5rem", color: "#FAF6EE" }}>
           {p.price ?? t.property.priceOnRequest}
         </div>
@@ -36,9 +39,18 @@ export default function PropertyCardTile({ p, inquireLabel }: { p: PropertyCard;
 
       {/* Info */}
       <div style={{ padding: 28, background: "rgb(var(--surface))", display: "flex", flexDirection: "column", flex: 1 }}>
-        <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.5rem", color: "rgb(var(--ink))", fontWeight: 400, marginBottom: 6 }}>
-          {p.title}
-        </h3>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 6 }}>
+          <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.5rem", color: "rgb(var(--ink))", fontWeight: 400 }}>
+            {p.title}
+          </h3>
+          {stats && stats.count > 0 && (
+            <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0, marginTop: 6 }}>
+              <Star size={13} color="rgb(var(--accent))" fill="rgb(var(--accent))" />
+              <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgb(var(--ink))" }}>{stats.avg.toFixed(1)}</span>
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", color: "rgba(var(--ink),0.4)" }}>({stats.count})</span>
+            </div>
+          )}
+        </div>
         <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 16 }}>
           <MapPin size={11} color="rgba(var(--accent),0.6)" />
           <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", color: "rgba(var(--ink),0.38)", letterSpacing: "0.06em" }}>{p.location}</span>

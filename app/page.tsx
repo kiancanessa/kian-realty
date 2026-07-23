@@ -5,6 +5,7 @@ import Services from "./components/Services";
 import Featured from "./components/Featured";
 import About from "./components/About";
 import Location from "./components/Location";
+import News from "./components/News";
 import Testimonials from "./components/Testimonials";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
@@ -22,6 +23,7 @@ export default async function Home() {
       <Featured properties={properties} />
       <About />
       <Location />
+      <News />
       <Testimonials />
       <Contact />
       <Footer />

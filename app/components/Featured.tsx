@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLang } from "../lib/LangContext";
 import { ArrowRight } from "lucide-react";
 import type { PropertyCard } from "../lib/easybroker";
+import { useReviewStats } from "../lib/useReviewStats";
 import PropertyCardTile from "./PropertyCardTile";
 
 type FilterKey = "all" | "house" | "apartment" | "land";
@@ -12,6 +13,7 @@ export default function Featured({ properties }: { properties: PropertyCard[] })
   const { t } = useLang();
   const sectionRef = useRef<HTMLElement>(null);
   const [filter, setFilter] = useState<FilterKey>("all");
+  const reviewStats = useReviewStats();
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -70,7 +72,7 @@ export default function Featured({ properties }: { properties: PropertyCard[] })
 
             {/* Cards */}
             <div className="featured-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 32, maxWidth: 1200, margin: "0 auto" }}>
-              {visible.map((p) => <PropertyCardTile key={p.id} p={p} inquireLabel={t.featured.inquire} />)}
+              {visible.map((p) => <PropertyCardTile key={p.id} p={p} inquireLabel={t.featured.inquire} stats={reviewStats[p.id]} />)}
             </div>
           </>
         )}

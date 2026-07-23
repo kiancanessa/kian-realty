@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { LangProvider } from "./lib/LangContext";
 import { ThemeProvider } from "./lib/ThemeContext";
-import SocialFloat from "./components/SocialFloat";
-import RosaritoGuide from "./components/RosaritoGuide";
-import EventAnnouncement from "./components/EventAnnouncement";
+import { FavoritesProvider } from "./lib/FavoritesContext";
+import PublicWidgets from "./components/PublicWidgets";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -82,10 +81,10 @@ export default function RootLayout({
       <body className="grain">
         <ThemeProvider>
           <LangProvider>
-            {children}
-            <SocialFloat />
-            <RosaritoGuide />
-            <EventAnnouncement />
+            <FavoritesProvider>
+              {children}
+              <PublicWidgets />
+            </FavoritesProvider>
           </LangProvider>
         </ThemeProvider>
         <Analytics />

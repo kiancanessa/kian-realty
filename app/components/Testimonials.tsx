@@ -1,19 +1,31 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useLang } from "../lib/LangContext";
-import { sendInquiry } from "../lib/sendInquiry";
+import { useSession } from "../lib/useSession";
+import Avatar from "./Avatar";
 import StarRating from "./StarRating";
 import { Quote, CheckCircle } from "lucide-react";
 
+type Review = { id: number; name: string; rating: number; comment: string };
+
 export default function Testimonials() {
   const { t } = useLang();
+  const { user } = useSession();
   const sectionRef = useRef<HTMLElement>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", comment: "" });
   const [rating, setRating] = useState(5);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/reviews?type=testimonial")
+      .then(res => res.json())
+      .then(data => setReviews(data.reviews ?? []))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -35,17 +47,17 @@ export default function Testimonials() {
     e.preventDefault();
     setSending(true);
     setFailed(false);
-    const ok = await sendInquiry({
-      subject: `Nueva reseña de ${form.name} — El Casa Rosarito`,
-      from_name: "El Casa Rosarito Website",
-      replyto: form.email,
-      name: form.name,
-      email: form.email,
-      rating: `${rating}/5`,
-      review: form.comment,
-    });
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "testimonial", name: user?.name ?? form.name, email: user?.email ?? form.email, rating, comment: form.comment }),
+      });
+      if (res.ok) setSent(true); else setFailed(true);
+    } catch {
+      setFailed(true);
+    }
     setSending(false);
-    if (ok) setSent(true); else setFailed(true);
   };
 
   return (
@@ -69,16 +81,19 @@ export default function Testimonials() {
         </div>
 
         {/* Cards */}
-        {t.testimonials.reviews.length > 0 ? (
+        {reviews.length > 0 ? (
           <div className="testimonials-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20, marginBottom: 48 }}>
-            {t.testimonials.reviews.map((r, i) => (
-              <div key={i} className="reveal" style={{ position: "relative", padding: 32, border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))" }}>
+            {reviews.map(r => (
+              <div key={r.id} className="reveal" style={{ position: "relative", padding: 32, border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))" }}>
                 <Quote size={22} color="rgba(var(--accent),0.35)" style={{ marginBottom: 14 }} />
                 <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.9rem", color: "rgba(var(--ink),0.65)", lineHeight: 1.7, marginBottom: 20 }}>
-                  {r.quote}
+                  {r.comment}
                 </p>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.1rem", color: "rgb(var(--ink))" }}>{r.name}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <Avatar name={r.name} size={34} />
+                    <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.1rem", color: "rgb(var(--ink))" }}>{r.name}</span>
+                  </div>
                   <StarRating value={r.rating} size={14} />
                 </div>
               </div>
@@ -124,8 +139,20 @@ export default function Testimonials() {
                 </span>
                 <StarRating value={rating} onChange={setRating} size={22} />
               </div>
-              <input style={inputStyle} placeholder={t.testimonials.formName} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
-              <input style={inputStyle} type="email" placeholder={t.testimonials.formEmail} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
+              {user ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 4px" }}>
+                  <Avatar name={user.name} size={30} />
+                  <div>
+                    <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgb(var(--ink))" }}>{user.name}</div>
+                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", color: "rgba(var(--ink),0.45)" }}>{user.email}</div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <input style={inputStyle} placeholder={t.testimonials.formName} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+                  <input style={inputStyle} type="email" placeholder={t.testimonials.formEmail} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
+                </>
+              )}
               <textarea style={{ ...inputStyle, resize: "none" }} rows={4} placeholder={t.testimonials.formComment} value={form.comment} onChange={e => setForm({ ...form, comment: e.target.value })} required />
               <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", color: "rgba(var(--ink),0.4)" }}>{t.testimonials.formNote}</p>
               <div style={{ display: "flex", gap: 12 }}>

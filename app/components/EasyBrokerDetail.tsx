@@ -1,12 +1,17 @@
 "use client";
-import { useState } from "react";
-import { MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Bed, Bath, Car, Square, ExternalLink, Check, MessageSquare } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Bed, Bath, Car, Square, ExternalLink, Check, MessageSquare, Quote } from "lucide-react";
 import Link from "next/link";
 import type { EBPropertyDetail } from "../lib/easybroker";
 import { primaryOperation } from "../lib/easybroker";
 import { useLang } from "../lib/LangContext";
+import { useSession } from "../lib/useSession";
 import { sendInquiry, whatsappLink } from "../lib/sendInquiry";
 import StarRating from "./StarRating";
+import Avatar from "./Avatar";
+import FavoriteButton from "./FavoriteButton";
+
+type PropertyReview = { id: number; name: string; rating: number; comment: string };
 
 const WHATSAPP_NUMBER = "526611256107";
 const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER}`;
@@ -14,16 +19,25 @@ const EMAIL_HREF = "mailto:jorgeelcasarosarito@gmail.com";
 
 export default function EasyBrokerDetail({ property }: { property: EBPropertyDetail }) {
   const { t } = useLang();
+  const { user } = useSession();
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [sent, setSent] = useState(false);
   const [failed, setFailed] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [reviews, setReviews] = useState<PropertyReview[]>([]);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewForm, setReviewForm] = useState({ name: "", email: "", comment: "" });
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewSending, setReviewSending] = useState(false);
   const [reviewSent, setReviewSent] = useState(false);
   const [reviewFailed, setReviewFailed] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/reviews?type=property&property_id=${encodeURIComponent(property.public_id)}`)
+      .then(res => res.json())
+      .then(data => setReviews(data.reviews ?? []))
+      .catch(() => {});
+  }, [property.public_id]);
 
   const images = property.property_images.length > 0
     ? property.property_images
@@ -53,6 +67,11 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
       property: `${property.title} (${property.public_id})`,
       message: form.message,
     });
+    fetch("/api/inquiries", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ source: "property", name: form.name, email: form.email, phone: form.phone, propertyId: property.public_id, propertyTitle: property.title, message: form.message }),
+    }).catch(() => {});
     if (ok) setSent(true); else setFailed(true);
   };
 
@@ -60,18 +79,25 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
     e.preventDefault();
     setReviewSending(true);
     setReviewFailed(false);
-    const ok = await sendInquiry({
-      subject: `Nueva reseña para "${property.title}" — El Casa Rosarito`,
-      from_name: "El Casa Rosarito Website",
-      replyto: reviewForm.email,
-      name: reviewForm.name,
-      email: reviewForm.email,
-      property: `${property.title} (${property.public_id})`,
-      rating: `${reviewRating}/5`,
-      review: reviewForm.comment,
-    });
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "property",
+          propertyId: property.public_id,
+          propertyTitle: property.title,
+          name: user?.name ?? reviewForm.name,
+          email: user?.email ?? reviewForm.email,
+          rating: reviewRating,
+          comment: reviewForm.comment,
+        }),
+      });
+      if (res.ok) setReviewSent(true); else setReviewFailed(true);
+    } catch {
+      setReviewFailed(true);
+    }
     setReviewSending(false);
-    if (ok) setReviewSent(true); else setReviewFailed(true);
   };
 
   const inp: React.CSSProperties = {
@@ -121,6 +147,7 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
         <div style={{ position: "absolute", top: 24, left: 24, background: "rgb(var(--accent))", color: "#FAF6EE", padding: "6px 16px", fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", letterSpacing: "0.25em", textTransform: "uppercase", fontWeight: 600 }}>
           {op ? (op.type === "rental" ? t.property.forRent : t.property.forSale) : t.property.consult}
         </div>
+        <FavoriteButton propertyId={property.public_id} propertyTitle={property.title} propertyImage={images[0]?.url} size={18} style={{ position: "absolute", top: 20, right: 20 }} />
         {images.length > 0 && (
           <div style={{ position: "absolute", bottom: 24, right: 24, background: "rgba(10,10,10,0.8)", border: "1px solid rgba(var(--accent),0.3)", padding: "8px 16px", fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", color: "rgb(var(--accent))", letterSpacing: "0.15em" }}>
             {t.property.viewAllPhotos.replace("{n}", String(images.length))}
@@ -224,9 +251,19 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
           {/* Reviews */}
           <div style={{ marginBottom: 40, paddingTop: 32, borderTop: "1px solid rgba(var(--accent),0.1)" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", fontWeight: 300, color: "rgb(var(--ink))" }}>
-                {t.property.reviewsTitle}
-              </h3>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", fontWeight: 300, color: "rgb(var(--ink))" }}>
+                  {t.property.reviewsTitle}
+                </h3>
+                {reviews.length > 0 && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <StarRating value={Math.round(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length)} size={14} />
+                    <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgba(var(--ink),0.55)" }}>
+                      {(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)} ({reviews.length})
+                    </span>
+                  </div>
+                )}
+              </div>
               {!showReviewForm && !reviewSent && (
                 <button onClick={() => setShowReviewForm(true)}
                   style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", background: "transparent", border: "1px solid rgba(var(--accent),0.3)", color: "rgb(var(--accent))", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontSize: "0.7rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>
@@ -235,7 +272,27 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
               )}
             </div>
 
-            {!showReviewForm && !reviewSent && (
+            {reviews.length > 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
+                {reviews.map(r => (
+                  <div key={r.id} style={{ padding: 18, border: "1px solid rgba(var(--accent),0.1)", background: "rgba(var(--bg-alt),0.5)" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, gap: 12, flexWrap: "wrap" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <Avatar name={r.name} size={30} />
+                        <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1rem", color: "rgb(var(--ink))" }}>{r.name}</span>
+                      </div>
+                      <StarRating value={r.rating} size={13} />
+                    </div>
+                    <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.65)", lineHeight: 1.6 }}>
+                      <Quote size={13} color="rgba(var(--accent),0.4)" style={{ marginRight: 4, verticalAlign: "-1px" }} />
+                      {r.comment}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {reviews.length === 0 && !showReviewForm && !reviewSent && (
               <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.4)", lineHeight: 1.6 }}>
                 {t.property.reviewsEmpty}
               </p>
@@ -259,8 +316,20 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
                   </span>
                   <StarRating value={reviewRating} onChange={setReviewRating} size={20} />
                 </div>
-                <input style={inp} placeholder={t.testimonials.formName} value={reviewForm.name} onChange={e => setReviewForm({ ...reviewForm, name: e.target.value })} required />
-                <input style={inp} type="email" placeholder={t.testimonials.formEmail} value={reviewForm.email} onChange={e => setReviewForm({ ...reviewForm, email: e.target.value })} required />
+                {user ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 2px" }}>
+                    <Avatar name={user.name} size={26} />
+                    <div>
+                      <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgb(var(--ink))" }}>{user.name}</div>
+                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.58rem", color: "rgba(var(--ink),0.45)" }}>{user.email}</div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <input style={inp} placeholder={t.testimonials.formName} value={reviewForm.name} onChange={e => setReviewForm({ ...reviewForm, name: e.target.value })} required />
+                    <input style={inp} type="email" placeholder={t.testimonials.formEmail} value={reviewForm.email} onChange={e => setReviewForm({ ...reviewForm, email: e.target.value })} required />
+                  </>
+                )}
                 <textarea style={{ ...inp, resize: "none" }} rows={3} placeholder={t.property.yourComment} value={reviewForm.comment} onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })} required />
                 <div style={{ display: "flex", gap: 10 }}>
                   <button type="submit" disabled={reviewSending}

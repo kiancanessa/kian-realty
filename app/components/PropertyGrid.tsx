@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useLang } from "../lib/LangContext";
 import type { PropertyCard } from "../lib/easybroker";
+import { useReviewStats } from "../lib/useReviewStats";
 import PropertyCardTile from "./PropertyCardTile";
 
 type TypeFilter = "all" | "house" | "apartment" | "land";
@@ -27,6 +28,7 @@ export default function PropertyGrid({ properties }: { properties: PropertyCard[
   const { t } = useLang();
   const [type, setType] = useState<TypeFilter>("all");
   const [op, setOp] = useState<OpFilter>("all");
+  const reviewStats = useReviewStats();
 
   const typeFilters: TypeFilter[] = ["all", "house", "apartment", "land"];
   const opFilters: OpFilter[] = ["all", "sale", "rental"];
@@ -61,7 +63,7 @@ export default function PropertyGrid({ properties }: { properties: PropertyCard[
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-        {visible.map(p => <PropertyCardTile key={p.id} p={p} inquireLabel={t.featured.inquire} />)}
+        {visible.map(p => <PropertyCardTile key={p.id} p={p} inquireLabel={t.featured.inquire} stats={reviewStats[p.id]} />)}
       </div>
     </div>
   );
