@@ -1,8 +1,57 @@
 "use client";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { useLang } from "../lib/LangContext";
-import { CheckCircle, ArrowRight } from "lucide-react";
+import { CheckCircle, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Logo from "./Logo";
+
+const ABOUT_PHOTOS = [
+  { src: "/images/about/rosarito-beach.jpg", alt: "Playas de Rosarito" },
+  { src: "/images/about/rosarito-coastline.jpg", alt: "Costa de Rosarito" },
+  { src: "/images/about/rosarito-cristo.jpg", alt: "Cristo del Sagrado Corazón, Rosarito" },
+];
+
+function AboutCarousel() {
+  const [index, setIndex] = useState(0);
+
+  const goTo = useCallback((i: number) => {
+    setIndex((i + ABOUT_PHOTOS.length) % ABOUT_PHOTOS.length);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => setIndex(prev => (prev + 1) % ABOUT_PHOTOS.length), 5000);
+    return () => clearInterval(timer);
+  }, [index]);
+
+  return (
+    <div style={{ position: "relative", maxWidth: 460, margin: "0 auto" }}>
+      <div style={{ position: "relative", overflow: "hidden", aspectRatio: "6/5" }}>
+        {ABOUT_PHOTOS.map((photo, i) => (
+          <img key={photo.src} src={photo.src} alt={photo.alt}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: i === index ? 1 : 0, transition: "opacity 1.1s ease" }} />
+        ))}
+        <div style={{ position: "absolute", top: 16, left: 16, background: "rgba(10,10,10,0.55)", border: "1px solid rgba(var(--accent),0.3)", padding: 10, backdropFilter: "blur(4px)" }}>
+          <Logo size={34} strokeColor="#FAF6EE" />
+        </div>
+        <button aria-label="Previous photo" onClick={() => goTo(index - 1)}
+          style={{ position: "absolute", top: "50%", left: 12, transform: "translateY(-50%)", width: 36, height: 36, borderRadius: "50%", border: "1px solid rgba(250,246,238,0.4)", background: "rgba(10,10,10,0.4)", color: "#FAF6EE", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)" }}>
+          <ChevronLeft size={18} />
+        </button>
+        <button aria-label="Next photo" onClick={() => goTo(index + 1)}
+          style={{ position: "absolute", top: "50%", right: 12, transform: "translateY(-50%)", width: 36, height: 36, borderRadius: "50%", border: "1px solid rgba(250,246,238,0.4)", background: "rgba(10,10,10,0.4)", color: "#FAF6EE", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)" }}>
+          <ChevronRight size={18} />
+        </button>
+        <div style={{ position: "absolute", bottom: 14, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 8 }}>
+          {ABOUT_PHOTOS.map((photo, i) => (
+            <button key={photo.src} aria-label={`Go to photo ${i + 1}`} onClick={() => goTo(i)}
+              style={{ width: 7, height: 7, borderRadius: "50%", border: "none", padding: 0, cursor: "pointer", background: i === index ? "#FAF6EE" : "rgba(250,246,238,0.4)" }} />
+          ))}
+        </div>
+      </div>
+      {/* Frame */}
+      <div style={{ position: "absolute", bottom: -16, right: -16, width: "100%", height: "100%", border: "1px solid rgba(var(--accent),0.2)", pointerEvents: "none" }} />
+    </div>
+  );
+}
 
 function TeamAvatar({ photo, name }: { photo?: string; name: string }) {
   const [loaded, setLoaded] = useState(false);
@@ -42,26 +91,9 @@ export default function About() {
   return (
     <section id="about" ref={sectionRef} style={{ padding: "112px 24px", background: "rgb(var(--bg))", overflow: "hidden" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr", gap: 80, alignItems: "center" }} className="about-grid">
-        {/* Photo collage */}
+        {/* Photo carousel */}
         <div className="reveal" style={{ position: "relative" }}>
-          <div style={{ position: "relative", maxWidth: 460, margin: "0 auto" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gridTemplateRows: "1fr 1fr", gap: 8, aspectRatio: "6/5" }}>
-              <div style={{ position: "relative", gridRow: "1 / 3", overflow: "hidden" }}>
-                <img src="/images/about/rosarito-beach.jpg" alt="Playas de Rosarito" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                <div style={{ position: "absolute", top: 16, left: 16, background: "rgba(10,10,10,0.55)", border: "1px solid rgba(var(--accent),0.3)", padding: 10, backdropFilter: "blur(4px)" }}>
-                  <Logo size={34} strokeColor="#FAF6EE" />
-                </div>
-              </div>
-              <div style={{ position: "relative", overflow: "hidden" }}>
-                <img src="/images/about/rosarito-coastline.jpg" alt="Costa de Rosarito" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-              </div>
-              <div style={{ position: "relative", overflow: "hidden" }}>
-                <img src="/images/about/rosarito-cristo.jpg" alt="Cristo del Sagrado Corazón, Rosarito" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-              </div>
-            </div>
-            {/* Frame */}
-            <div style={{ position: "absolute", bottom: -16, right: -16, width: "100%", height: "100%", border: "1px solid rgba(var(--accent),0.2)", pointerEvents: "none" }} />
-          </div>
+          <AboutCarousel />
           {/* Badge */}
           <div style={{ position: "absolute", bottom: 0, left: 0, background: "rgb(var(--accent))", padding: "14px 24px" }}>
             <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#FAF6EE" }}>Rosarito</div>

@@ -35,6 +35,8 @@ export const translations = {
     services: {
       title: "What We Offer",
       subtitle: "Full-spectrum real estate services tailored for buyers, sellers, and renters across Rosarito and Baja California.",
+      viewProjects: "View Our Projects",
+      viewSales: "View Properties Sold",
       buy: {
         title: "Buy",
         desc: "Find your dream home or investment property on the Rosarito coast with expert local guidance.",
@@ -242,6 +244,10 @@ export const translations = {
       adminPanel: "Admin Panel",
       logout: "Sign Out",
       login: "Sign In",
+      accountTypeClient: "Client",
+      accountTypeTeam: "Team",
+      accountTypeNote: "Team access is reviewed and approved by our developer — you'll be notified once activated.",
+      loginTeamNote: "If your account has been approved as admin or developer, you'll go straight to the panel.",
     },
     favorites: {
       title: "My Favorites",
@@ -253,6 +259,22 @@ export const translations = {
     news: {
       title: "Latest Updates",
       subtitle: "News, promotions, and announcements from our team.",
+    },
+    development: {
+      title: "Development & Construction",
+      subtitle: "A look at our completed projects and the results we deliver — from architectural design to move-in day.",
+      empty: "We're preparing our project portfolio — check back soon.",
+      cta: "Talk to Our Team",
+    },
+    sales: {
+      title: "Properties Sold",
+      subtitle: "A track record of successful sales across Rosarito and the Baja California coast.",
+      empty: "We're preparing our sales portfolio — check back soon.",
+      cta: "Talk to Our Team",
+    },
+    certifications: {
+      title: "Certified & Trusted",
+      subtitle: "Our credentials, verified by the organizations that set the standard for real estate practice in Mexico.",
     },
   },
   es: {
@@ -289,6 +311,8 @@ export const translations = {
     services: {
       title: "Lo que Ofrecemos",
       subtitle: "Servicios inmobiliarios completos para compradores, vendedores y arrendatarios en Rosarito y toda Baja California.",
+      viewProjects: "Ver Nuestros Proyectos",
+      viewSales: "Ver Propiedades Vendidas",
       buy: {
         title: "Comprar",
         desc: "Encuentra tu hogar soñado o propiedad de inversión en la costa de Rosarito con guía local experta.",
@@ -496,6 +520,10 @@ export const translations = {
       adminPanel: "Panel de Administración",
       logout: "Cerrar Sesión",
       login: "Iniciar Sesión",
+      accountTypeClient: "Cliente",
+      accountTypeTeam: "Equipo",
+      accountTypeNote: "El acceso de equipo es revisado y aprobado por nuestro desarrollador — te avisaremos cuando esté activado.",
+      loginTeamNote: "Si tu cuenta fue aprobada como admin o desarrollador, entrarás directo al panel.",
     },
     favorites: {
       title: "Mis Favoritos",
@@ -507,6 +535,22 @@ export const translations = {
     news: {
       title: "Últimas Novedades",
       subtitle: "Noticias, promociones y anuncios de nuestro equipo.",
+    },
+    development: {
+      title: "Desarrollo y Construcción",
+      subtitle: "Un vistazo a nuestros proyectos completados y los resultados que entregamos — desde el diseño arquitectónico hasta el día de entrega.",
+      empty: "Estamos preparando nuestro portafolio de proyectos — vuelve pronto.",
+      cta: "Habla con Nuestro Equipo",
+    },
+    sales: {
+      title: "Propiedades Vendidas",
+      subtitle: "Un historial de ventas exitosas a lo largo de Rosarito y la costa de Baja California.",
+      empty: "Estamos preparando nuestro portafolio de ventas — vuelve pronto.",
+      cta: "Habla con Nuestro Equipo",
+    },
+    certifications: {
+      title: "Certificados y Confiables",
+      subtitle: "Nuestras credenciales, verificadas por las organizaciones que marcan el estándar de la práctica inmobiliaria en México.",
     },
   },
 };

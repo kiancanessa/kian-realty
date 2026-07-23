@@ -17,6 +17,7 @@ function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [requestedRole, setRequestedRole] = useState<"client" | "team">("client");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -27,13 +28,13 @@ function SignupForm() {
     const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, requestedRole }),
     });
     setLoading(false);
     if (res.ok) {
       const { user } = await res.json();
       const explicitNext = searchParams.get("next");
-      const next = explicitNext || (user.is_admin || user.is_developer ? "/admin/reviews" : "/");
+      const next = explicitNext || (user.role !== "client" || user.is_developer ? "/admin" : "/");
       router.push(next);
       router.refresh();
     } else {
@@ -71,6 +72,24 @@ function SignupForm() {
         <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontSize: "1.9rem", color: "rgb(var(--ink))" }}>
           {t.auth.signupTitle}
         </h1>
+
+        <div style={{ display: "flex", border: "1px solid rgba(var(--accent),0.2)", padding: 3, gap: 2 }}>
+          {(["client", "team"] as const).map(role => (
+            <button key={role} type="button" onClick={() => setRequestedRole(role)}
+              style={{ flex: 1, padding: "9px 0", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", transition: "all 0.25s",
+                background: requestedRole === role ? "rgb(var(--accent))" : "transparent",
+                color: requestedRole === role ? "#FAF6EE" : "rgba(var(--ink),0.55)",
+              }}>
+              {role === "client" ? t.auth.accountTypeClient : t.auth.accountTypeTeam}
+            </button>
+          ))}
+        </div>
+        {requestedRole === "team" && (
+          <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", color: "rgba(var(--ink),0.5)", lineHeight: 1.5, marginTop: -8 }}>
+            {t.auth.accountTypeNote}
+          </p>
+        )}
+
         <input type="text" placeholder={t.auth.name} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required style={inputStyle} />
         <input type="email" placeholder={t.auth.email} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required style={inputStyle} />
         <input type="password" placeholder={t.auth.password} value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required minLength={8} style={inputStyle} />

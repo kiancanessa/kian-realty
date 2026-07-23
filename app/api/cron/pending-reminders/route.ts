@@ -20,7 +20,8 @@ export async function GET(request: NextRequest) {
     return Response.json({ ok: true, notified: false, count: 0 });
   }
 
-  const recipients = await sql`SELECT email FROM users WHERE is_admin = true OR is_developer = true`;
+  // Only developers moderate reviews now, so only they need the reminder.
+  const recipients = await sql`SELECT email FROM users WHERE is_developer = true`;
 
   if (WEB3FORMS_ACCESS_KEY && recipients.length > 0) {
     const adminUrl = `${request.nextUrl.origin}/admin/reviews`;

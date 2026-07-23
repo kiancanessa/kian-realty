@@ -120,8 +120,8 @@ export default function Navbar() {
                     style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgb(var(--ink))", textDecoration: "none", borderBottom: "1px solid rgba(var(--accent),0.1)" }}>
                     <Heart size={15} color="rgb(var(--accent))" /> {t.favorites.navLabel}
                   </a>
-                  {(user.is_admin || user.is_developer) && (
-                    <a href="/admin/reviews" onClick={() => setAccountOpen(false)}
+                  {(user.role !== "client" || user.is_developer) && (
+                    <a href="/admin" onClick={() => setAccountOpen(false)}
                       style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgb(var(--ink))", textDecoration: "none", borderBottom: "1px solid rgba(var(--accent),0.1)" }}>
                       <ShieldCheck size={15} color="rgb(var(--accent))" /> {t.auth.adminPanel}
                     </a>
@@ -188,8 +188,8 @@ export default function Navbar() {
                 style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgb(var(--accent))", textDecoration: "none" }}>
                 <Heart size={15} /> {t.favorites.navLabel}
               </a>
-              {(user.is_admin || user.is_developer) && (
-                <a href="/admin/reviews" onClick={() => setOpen(false)}
+              {(user.role !== "client" || user.is_developer) && (
+                <a href="/admin" onClick={() => setOpen(false)}
                   style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", color: "rgb(var(--accent))", textDecoration: "none" }}>
                   <ShieldCheck size={15} /> {t.auth.adminPanel}
                 </a>

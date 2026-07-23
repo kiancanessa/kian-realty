@@ -7,6 +7,6 @@ export async function GET() {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const rows = await sql`SELECT id, email, name, is_admin, is_developer, created_at FROM users ORDER BY created_at DESC`;
+  const rows = await sql`SELECT id, email, name, role, is_developer, requested_role, created_at FROM users ORDER BY (requested_role = 'team') DESC, created_at DESC`;
   return Response.json({ users: rows });
 }

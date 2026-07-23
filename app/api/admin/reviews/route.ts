@@ -3,7 +3,7 @@ import { getSessionUser } from "../../../lib/auth";
 
 export async function GET() {
   const user = await getSessionUser();
-  if (!user?.is_admin && !user?.is_developer) {
+  if (!user?.is_developer) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 

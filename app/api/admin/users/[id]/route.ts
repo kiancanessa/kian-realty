@@ -1,6 +1,8 @@
 import { sql } from "../../../../lib/db";
 import { getSessionUser } from "../../../../lib/auth";
 
+const VALID_ROLES = ["client", "admin", "vendedor"];
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -15,11 +17,11 @@ export async function PATCH(
     return Response.json({ error: "cannot_change_self" }, { status: 400 });
   }
 
-  const { is_admin } = await request.json();
-  if (typeof is_admin !== "boolean") {
+  const { role } = await request.json();
+  if (typeof role !== "string" || !VALID_ROLES.includes(role)) {
     return Response.json({ error: "invalid_payload" }, { status: 400 });
   }
 
-  await sql`UPDATE users SET is_admin = ${is_admin} WHERE id = ${id}`;
+  await sql`UPDATE users SET role = ${role} WHERE id = ${id}`;
   return Response.json({ ok: true });
 }

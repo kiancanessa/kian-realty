@@ -4,6 +4,6 @@ import AdminUsersClient from "./AdminUsersClient";
 
 export default async function AdminUsersPage() {
   const user = await getSessionUser();
-  if (!user?.is_developer) redirect("/admin/reviews");
+  if (!user?.is_developer) redirect("/admin/announcements");
   return <AdminUsersClient />;
 }

@@ -1,6 +1,7 @@
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Stats from "./components/Stats";
+import Certifications from "./components/Certifications";
 import Services from "./components/Services";
 import Featured from "./components/Featured";
 import About from "./components/About";
@@ -20,6 +21,7 @@ export default async function Home() {
       <Hero />
       <Stats activeListings={properties.length} />
       <Services />
+      <Certifications />
       <Featured properties={properties} />
       <About />
       <Location />

@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { useLang } from "../lib/LangContext";
-import { Home, TrendingUp, Key, BarChart2, Scale, Hammer } from "lucide-react";
+import { Home, TrendingUp, Key, BarChart2, Scale, Hammer, ArrowRight } from "lucide-react";
 
 export default function Services() {
   const { t } = useLang();
@@ -30,6 +31,11 @@ export default function Services() {
     { icon: Hammer, key: "development" as const },
   ];
 
+  const LINKS: Partial<Record<typeof items[number]["key"], { href: string; label: string }>> = {
+    sell: { href: "/ventas", label: t.services.viewSales },
+    development: { href: "/desarrollo", label: t.services.viewProjects },
+  };
+
   return (
     <section id="services" ref={sectionRef} style={{ padding: "112px 24px", background: "rgb(var(--bg))" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
@@ -50,25 +56,36 @@ export default function Services() {
 
         {/* Grid */}
         <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20 }}>
-          {items.map(({ icon: Icon, key }, i) => (
-            <div key={i} className="reveal" style={{ position: "relative", padding: 32, border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))", overflow: "hidden", cursor: "default", transition: "border-color 0.4s, background 0.4s" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(var(--accent),0.4)"; (e.currentTarget as HTMLElement).style.background = "rgba(var(--accent),0.05)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(var(--accent),0.1)"; (e.currentTarget as HTMLElement).style.background = "rgb(var(--surface))"; }}>
-              {/* Number */}
-              <div style={{ position: "absolute", top: 16, right: 20, fontFamily: "'Cormorant Garamond', serif", fontSize: "4rem", fontWeight: 300, color: "rgba(var(--accent),0.06)", userSelect: "none" }}>
-                {String(i + 1).padStart(2, "0")}
-              </div>
-              <div style={{ width: 40, height: 40, border: "1px solid rgba(var(--accent),0.2)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
-                <Icon size={17} color="rgba(var(--accent),0.7)" />
-              </div>
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", color: "rgb(var(--ink))", fontSize: "1.5rem", fontWeight: 400, marginBottom: 12 }}>
-                {t.services[key].title}
-              </h3>
-              <p style={{ fontFamily: "'Jost', sans-serif", color: "rgba(var(--ink),0.38)", fontSize: "0.83rem", lineHeight: 1.7 }}>
-                {t.services[key].desc}
-              </p>
-            </div>
-          ))}
+          {items.map(({ icon: Icon, key }, i) => {
+            const link = LINKS[key];
+            const linked = !!link;
+            const CardTag = linked ? Link : "div";
+            const cardProps = linked ? { href: link.href } : {};
+            return (
+              <CardTag key={i} {...(cardProps as any)} className="reveal" style={{ position: "relative", padding: 32, border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))", overflow: "hidden", cursor: linked ? "pointer" : "default", textDecoration: "none", display: "block", transition: "border-color 0.4s, background 0.4s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(var(--accent),0.4)"; (e.currentTarget as HTMLElement).style.background = "rgba(var(--accent),0.05)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(var(--accent),0.1)"; (e.currentTarget as HTMLElement).style.background = "rgb(var(--surface))"; }}>
+                {/* Number */}
+                <div style={{ position: "absolute", top: 16, right: 20, fontFamily: "'Cormorant Garamond', serif", fontSize: "4rem", fontWeight: 300, color: "rgba(var(--accent),0.06)", userSelect: "none" }}>
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <div style={{ width: 40, height: 40, border: "1px solid rgba(var(--accent),0.2)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
+                  <Icon size={17} color="rgba(var(--accent),0.7)" />
+                </div>
+                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", color: "rgb(var(--ink))", fontSize: "1.5rem", fontWeight: 400, marginBottom: 12 }}>
+                  {t.services[key].title}
+                </h3>
+                <p style={{ fontFamily: "'Jost', sans-serif", color: "rgba(var(--ink),0.38)", fontSize: "0.83rem", lineHeight: 1.7 }}>
+                  {t.services[key].desc}
+                </p>
+                {link && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 18, color: "rgb(var(--accent))", fontFamily: "'Jost', sans-serif", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                    {link.label} <ArrowRight size={13} />
+                  </div>
+                )}
+              </CardTag>
+            );
+          })}
         </div>
       </div>
     </section>

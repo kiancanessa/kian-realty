@@ -3,7 +3,7 @@ import { getSessionUser } from "../../../lib/auth";
 
 export async function GET() {
   const user = await getSessionUser();
-  if (!user?.is_admin && !user?.is_developer) {
+  if (user?.role !== "admin" && !user?.is_developer) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
@@ -13,7 +13,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const user = await getSessionUser();
-  if (!user?.is_admin && !user?.is_developer) {
+  if (user?.role !== "admin" && !user?.is_developer) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 

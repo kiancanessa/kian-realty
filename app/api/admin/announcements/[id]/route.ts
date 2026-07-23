@@ -6,7 +6,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await getSessionUser();
-  if (!user?.is_admin && !user?.is_developer) {
+  if (user?.role !== "admin" && !user?.is_developer) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
@@ -34,7 +34,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await getSessionUser();
-  if (!user?.is_admin && !user?.is_developer) {
+  if (user?.role !== "admin" && !user?.is_developer) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 

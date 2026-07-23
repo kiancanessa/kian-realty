@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
-export type SessionUser = { id: number; email: string; name: string; is_admin: boolean; is_developer: boolean };
+export type UserRole = "client" | "admin" | "vendedor";
+export type SessionUser = { id: number; email: string; name: string; role: UserRole; is_developer: boolean };
 
 export function useSession() {
   const [user, setUser] = useState<SessionUser | null>(null);

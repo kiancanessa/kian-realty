@@ -5,11 +5,11 @@ import AdminNav from "./AdminNav";
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getSessionUser();
   if (!user) redirect("/login?next=/admin/reviews");
-  if (!user.is_admin && !user.is_developer) redirect("/");
+  if (user.role === "client" && !user.is_developer) redirect("/");
 
   return (
     <div style={{ minHeight: "100vh", background: "rgb(var(--bg))" }}>
-      <AdminNav userName={user.name} isDeveloper={user.is_developer} />
+      <AdminNav userName={user.name} role={user.role} isDeveloper={user.is_developer} />
       {children}
     </div>
   );

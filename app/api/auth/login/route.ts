@@ -14,5 +14,5 @@ export async function POST(request: Request) {
 
   await createSession(user.id);
 
-  return Response.json({ user: { id: user.id, email: user.email, name: user.name, is_admin: user.is_admin, is_developer: user.is_developer } });
+  return Response.json({ user: { id: user.id, email: user.email, name: user.name, role: user.role, is_developer: user.is_developer } });
 }

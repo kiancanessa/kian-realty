@@ -17,6 +17,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [form, setForm] = useState({ email: "", password: "" });
+  const [loginAs, setLoginAs] = useState<"client" | "team">("client");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -33,7 +34,7 @@ function LoginForm() {
     if (res.ok) {
       const { user } = await res.json();
       const explicitNext = searchParams.get("next");
-      const next = explicitNext || (user.is_admin || user.is_developer ? "/admin/reviews" : "/");
+      const next = explicitNext || (user.role !== "client" || user.is_developer ? "/admin" : "/");
       router.push(next);
       router.refresh();
     } else {
@@ -70,6 +71,24 @@ function LoginForm() {
         <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontSize: "1.9rem", color: "rgb(var(--ink))" }}>
           {t.auth.loginTitle}
         </h1>
+
+        <div style={{ display: "flex", border: "1px solid rgba(var(--accent),0.2)", padding: 3, gap: 2 }}>
+          {(["client", "team"] as const).map(role => (
+            <button key={role} type="button" onClick={() => setLoginAs(role)}
+              style={{ flex: 1, padding: "9px 0", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", transition: "all 0.25s",
+                background: loginAs === role ? "rgb(var(--accent))" : "transparent",
+                color: loginAs === role ? "#FAF6EE" : "rgba(var(--ink),0.55)",
+              }}>
+              {role === "client" ? t.auth.accountTypeClient : t.auth.accountTypeTeam}
+            </button>
+          ))}
+        </div>
+        {loginAs === "team" && (
+          <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", color: "rgba(var(--ink),0.5)", lineHeight: 1.5, marginTop: -8 }}>
+            {t.auth.loginTeamNote}
+          </p>
+        )}
+
         <input type="email" placeholder={t.auth.email} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required style={inputStyle} />
         <input type="password" placeholder={t.auth.password} value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required style={inputStyle} />
         {error && <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgb(var(--error))" }}>{error}</p>}

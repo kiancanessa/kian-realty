@@ -4,6 +4,8 @@ import { Heart, X } from "lucide-react";
 import { useLang } from "../lib/LangContext";
 import { useSession } from "../lib/useSession";
 import { useFavoritesContext } from "../lib/FavoritesContext";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function FavoritesPage() {
   const { t } = useLang();
@@ -11,8 +13,9 @@ export default function FavoritesPage() {
   const { favorites, loading, toggle } = useFavoritesContext();
 
   return (
-    <div style={{ minHeight: "100vh", background: "rgb(var(--bg))", padding: "140px 24px 80px" }}>
-      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+    <div style={{ minHeight: "100vh", background: "rgb(var(--bg))" }}>
+      <Navbar />
+      <div style={{ padding: "140px 24px 80px", maxWidth: 900, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
           <Heart size={22} color="rgb(var(--accent))" />
           <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontSize: "2.2rem", color: "rgb(var(--ink))" }}>
@@ -67,6 +70,7 @@ export default function FavoritesPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }
