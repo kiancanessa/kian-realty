@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useLang } from "../lib/LangContext";
-import { Newspaper } from "lucide-react";
-import type { PostContent } from "../lib/posts";
+import type { Post } from "../lib/posts";
+import NewsCard from "./templates/NewsCard";
 
-type PublicPost = { id: number; image_url: string | null; content: PostContent; created_at: string };
+type PublicPost = Pick<Post, "id" | "image_url" | "template" | "content" | "created_at">;
 
 export default function News() {
   const { locale, t } = useLang();
@@ -36,33 +36,16 @@ export default function News() {
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 24 }}>
-          {posts.map(p => {
-            const c = p.content[locale];
-            return (
-              <div key={p.id} style={{ border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))", overflow: "hidden" }}>
-                {p.image_url ? (
-                  <div style={{ height: 160, background: "rgb(var(--bg-alt))" }}>
-                    <img src={p.image_url} alt={c.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  </div>
-                ) : (
-                  <div style={{ height: 100, display: "flex", alignItems: "center", justifyContent: "center", background: "rgb(var(--bg-alt))" }}>
-                    <Newspaper size={24} color="rgba(var(--accent),0.4)" />
-                  </div>
-                )}
-                <div style={{ padding: 24 }}>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", color: "rgba(var(--ink),0.35)", marginBottom: 8 }}>
-                    {new Date(p.created_at).toLocaleDateString(locale === "es" ? "es-MX" : "en-US", { day: "numeric", month: "short", year: "numeric" })}
-                  </div>
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.25rem", color: "rgb(var(--ink))", marginBottom: 10 }}>
-                    {c.title}
-                  </h3>
-                  <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.6)", lineHeight: 1.6, whiteSpace: "pre-line" }}>
-                    {c.body}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+          {posts.map(p => (
+            <NewsCard
+              key={p.id}
+              content={p.content}
+              imageUrl={p.image_url}
+              template={p.template}
+              locale={locale}
+              dateLabel={new Date(p.created_at).toLocaleDateString(locale === "es" ? "es-MX" : "en-US", { day: "numeric", month: "short", year: "numeric" })}
+            />
+          ))}
         </div>
       </div>
     </section>

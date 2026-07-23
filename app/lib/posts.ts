@@ -8,9 +8,17 @@ export type PostContent = {
   es: PostLocaleContent;
 };
 
+export type PostTemplateKey = "image" | "text";
+
+export const POST_TEMPLATES: { key: PostTemplateKey; label: string }[] = [
+  { key: "image", label: "Con imagen" },
+  { key: "text", label: "Solo texto" },
+];
+
 export type Post = {
   id: number;
   published: boolean;
+  template: PostTemplateKey;
   image_url: string | null;
   content: PostContent;
   created_at: string;

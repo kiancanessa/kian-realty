@@ -19,7 +19,11 @@ export async function PATCH(
   }
 
   if (body.content) {
-    await sql`UPDATE announcements SET content = ${JSON.stringify(body.content)}, video_url = ${body.video_url || null}, updated_at = now() WHERE id = ${id}`;
+    await sql`
+      UPDATE announcements
+      SET content = ${JSON.stringify(body.content)}, video_url = ${body.video_url || null}, image_url = ${body.image_url || null}, template = ${body.template || "classic"}, updated_at = now()
+      WHERE id = ${id}
+    `;
   }
 
   return Response.json({ ok: true });

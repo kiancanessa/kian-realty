@@ -17,14 +17,14 @@ export async function POST(request: Request) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const { content, image_url } = await request.json();
+  const { content, image_url, template } = await request.json();
   if (!content?.en?.title || !content?.es?.title) {
     return Response.json({ error: "invalid_payload" }, { status: 400 });
   }
 
   const rows = await sql`
-    INSERT INTO posts (published, image_url, content, created_by)
-    VALUES (false, ${image_url || null}, ${JSON.stringify(content)}, ${user.id})
+    INSERT INTO posts (published, image_url, template, content, created_by)
+    VALUES (false, ${image_url || null}, ${template || "image"}, ${JSON.stringify(content)}, ${user.id})
     RETURNING *
   `;
 

@@ -196,3 +196,17 @@ body {
 @media (min-width: 560px) {
   .event-layout { grid-template-columns: 1.15fr 1fr !important; }
 }
+
+/* Canva-style inline editing: dashed hint on hover, placeholder text when empty */
+.editable-field:empty::before {
+  content: attr(data-placeholder);
+  opacity: 0.35;
+}
+.editable-field:hover {
+  background: rgba(var(--accent), 0.08);
+  box-shadow: 0 0 0 4px rgba(var(--accent), 0.08);
+}
+.editable-field:focus {
+  background: rgba(var(--accent), 0.12);
+  box-shadow: 0 0 0 4px rgba(var(--accent), 0.14);
+}
