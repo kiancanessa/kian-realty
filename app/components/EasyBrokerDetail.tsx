@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Bed, Bath, Car, Square, ExternalLink, Check, MessageSquare, Quote } from "lucide-react";
 import Link from "next/link";
 import type { EBPropertyDetail } from "../lib/easybroker";
@@ -11,7 +11,7 @@ import StarRating from "./StarRating";
 import Avatar from "./Avatar";
 import FavoriteButton from "./FavoriteButton";
 
-type PropertyReview = { id: number; name: string; rating: number; comment: string; language: "en" | "es" };
+type PropertyReview = { id: number; name: string; rating: number; comment_en: string; comment_es: string; language: "en" | "es" };
 
 const WHATSAPP_NUMBER = "526611256107";
 const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER}`;
@@ -38,11 +38,6 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
       .then(data => setReviews(data.reviews ?? []))
       .catch(() => {});
   }, [property.public_id]);
-
-  const visibleReviews = useMemo(() => {
-    const inLocale = reviews.filter(r => r.language === locale);
-    return inLocale.length > 0 ? inLocale : reviews;
-  }, [reviews, locale]);
 
   const images = property.property_images.length > 0
     ? property.property_images
@@ -261,11 +256,11 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
                 <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", fontWeight: 300, color: "rgb(var(--ink))" }}>
                   {t.property.reviewsTitle}
                 </h3>
-                {visibleReviews.length > 0 && (
+                {reviews.length > 0 && (
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <StarRating value={Math.round(visibleReviews.reduce((sum, r) => sum + r.rating, 0) / visibleReviews.length)} size={14} />
+                    <StarRating value={Math.round(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length)} size={14} />
                     <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgba(var(--ink),0.55)" }}>
-                      {(visibleReviews.reduce((sum, r) => sum + r.rating, 0) / visibleReviews.length).toFixed(1)} ({visibleReviews.length})
+                      {(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)} ({reviews.length})
                     </span>
                   </div>
                 )}
@@ -278,9 +273,9 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
               )}
             </div>
 
-            {visibleReviews.length > 0 && (
+            {reviews.length > 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
-                {visibleReviews.map(r => (
+                {reviews.map(r => (
                   <div key={r.id} style={{ padding: 18, border: "1px solid rgba(var(--accent),0.1)", background: "rgba(var(--bg-alt),0.5)" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, gap: 12, flexWrap: "wrap" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -291,14 +286,14 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
                     </div>
                     <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.65)", lineHeight: 1.6 }}>
                       <Quote size={13} color="rgba(var(--accent),0.4)" style={{ marginRight: 4, verticalAlign: "-1px" }} />
-                      {r.comment}
+                      {locale === "es" ? r.comment_es : r.comment_en}
                     </p>
                   </div>
                 ))}
               </div>
             )}
 
-            {visibleReviews.length === 0 && !showReviewForm && !reviewSent && (
+            {reviews.length === 0 && !showReviewForm && !reviewSent && (
               <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.4)", lineHeight: 1.6 }}>
                 {t.property.reviewsEmpty}
               </p>

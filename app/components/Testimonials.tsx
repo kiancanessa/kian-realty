@@ -1,12 +1,12 @@
 "use client";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLang } from "../lib/LangContext";
 import { useSession } from "../lib/useSession";
 import Avatar from "./Avatar";
 import StarRating from "./StarRating";
 import { Quote, CheckCircle } from "lucide-react";
 
-type Review = { id: number; name: string; rating: number; comment: string; language: "en" | "es" };
+type Review = { id: number; name: string; rating: number; comment_en: string; comment_es: string; language: "en" | "es" };
 
 export default function Testimonials() {
   const { t, locale } = useLang();
@@ -26,11 +26,6 @@ export default function Testimonials() {
       .then(data => setReviews(data.reviews ?? []))
       .catch(() => {});
   }, []);
-
-  const visibleReviews = useMemo(() => {
-    const inLocale = reviews.filter(r => r.language === locale);
-    return inLocale.length > 0 ? inLocale : reviews;
-  }, [reviews, locale]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -86,13 +81,13 @@ export default function Testimonials() {
         </div>
 
         {/* Cards */}
-        {visibleReviews.length > 0 ? (
+        {reviews.length > 0 ? (
           <div className="testimonials-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20, marginBottom: 48 }}>
-            {visibleReviews.map(r => (
+            {reviews.map(r => (
               <div key={r.id} className="reveal" style={{ position: "relative", padding: 32, border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))" }}>
                 <Quote size={22} color="rgba(var(--accent),0.35)" style={{ marginBottom: 14 }} />
                 <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.9rem", color: "rgba(var(--ink),0.65)", lineHeight: 1.7, marginBottom: 20 }}>
-                  {r.comment}
+                  {locale === "es" ? r.comment_es : r.comment_en}
                 </p>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

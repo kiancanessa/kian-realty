@@ -6,8 +6,12 @@ import Logo from "./Logo";
 
 const ABOUT_PHOTOS = [
   { src: "/images/about/rosarito-beach.jpg", alt: "Playas de Rosarito" },
+  { src: "/images/about/rosarito-pier.jpg", alt: "Muelle de Rosarito al atardecer" },
   { src: "/images/about/rosarito-coastline.jpg", alt: "Costa de Rosarito" },
+  { src: "/images/about/rosarito-walk.jpg", alt: "Paseo por la playa de Rosarito" },
+  { src: "/images/about/rosarito-cliffs.jpg", alt: "Acantilados de la costa de Rosarito" },
   { src: "/images/about/rosarito-cristo.jpg", alt: "Cristo del Sagrado Corazón, Rosarito" },
+  { src: "/images/about/rosarito-skyline.jpg", alt: "Desarrollo costero de Rosarito al atardecer" },
 ];
 
 function AboutCarousel() {
