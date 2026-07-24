@@ -67,11 +67,11 @@ export default function CertificationEditor({
               style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgba(250,246,238,0.6)", lineHeight: 1.7, display: "block" }} />
           </div>
           <div style={{ flexShrink: 0, textAlign: "center" }}>
-            <div style={{ width: 100, height: 100, margin: "0 auto", borderRadius: "50%", background: "rgba(250,246,238,0.08)", border: "1px solid rgba(250,246,238,0.25)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+            <div style={{ width: 100, height: 100, margin: "0 auto", borderRadius: "50%", background: "#FAF6EE", border: "1px solid rgba(250,246,238,0.25)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: 14 }}>
               {form.image_url ? (
                 <img src={form.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
               ) : (
-                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.55rem", color: "rgba(250,246,238,0.4)" }}>Sello</span>
+                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.55rem", color: "rgba(14,38,32,0.4)" }}>Sello</span>
               )}
             </div>
             <input value={form.image_url} placeholder={locale === "es" ? "URL del sello…" : "Seal image URL…"}

@@ -1,15 +1,15 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useLang } from "../lib/LangContext";
 import { useSession } from "../lib/useSession";
 import Avatar from "./Avatar";
 import StarRating from "./StarRating";
 import { Quote, CheckCircle } from "lucide-react";
 
-type Review = { id: number; name: string; rating: number; comment: string };
+type Review = { id: number; name: string; rating: number; comment: string; language: "en" | "es" };
 
 export default function Testimonials() {
-  const { t } = useLang();
+  const { t, locale } = useLang();
   const { user } = useSession();
   const sectionRef = useRef<HTMLElement>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -26,6 +26,11 @@ export default function Testimonials() {
       .then(data => setReviews(data.reviews ?? []))
       .catch(() => {});
   }, []);
+
+  const visibleReviews = useMemo(() => {
+    const inLocale = reviews.filter(r => r.language === locale);
+    return inLocale.length > 0 ? inLocale : reviews;
+  }, [reviews, locale]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -51,7 +56,7 @@ export default function Testimonials() {
       const res = await fetch("/api/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "testimonial", name: user?.name ?? form.name, email: user?.email ?? form.email, rating, comment: form.comment }),
+        body: JSON.stringify({ type: "testimonial", name: user?.name ?? form.name, email: user?.email ?? form.email, rating, comment: form.comment, language: locale }),
       });
       if (res.ok) setSent(true); else setFailed(true);
     } catch {
@@ -81,9 +86,9 @@ export default function Testimonials() {
         </div>
 
         {/* Cards */}
-        {reviews.length > 0 ? (
+        {visibleReviews.length > 0 ? (
           <div className="testimonials-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20, marginBottom: 48 }}>
-            {reviews.map(r => (
+            {visibleReviews.map(r => (
               <div key={r.id} className="reveal" style={{ position: "relative", padding: 32, border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))" }}>
                 <Quote size={22} color="rgba(var(--accent),0.35)" style={{ marginBottom: 14 }} />
                 <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.9rem", color: "rgba(var(--ink),0.65)", lineHeight: 1.7, marginBottom: 20 }}>

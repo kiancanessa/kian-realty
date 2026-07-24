@@ -14,12 +14,12 @@ export async function GET(request: NextRequest) {
 
   const rows = type === "property"
     ? await sql`
-        SELECT id, name, rating, comment, created_at FROM reviews
+        SELECT id, name, rating, comment, language, created_at FROM reviews
         WHERE type = 'property' AND property_id = ${propertyId} AND status = 'approved'
         ORDER BY created_at DESC
       `
     : await sql`
-        SELECT id, name, rating, comment, created_at FROM reviews
+        SELECT id, name, rating, comment, language, created_at FROM reviews
         WHERE type = 'testimonial' AND status = 'approved'
         ORDER BY created_at DESC
       `;
@@ -30,13 +30,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const sessionUser = await getSessionUser();
   const body = await request.json();
-  const { type, propertyId, propertyTitle, rating, comment } = body ?? {};
+  const { type, propertyId, propertyTitle, rating, comment, language } = body ?? {};
 
   // Logged-in users' reviews are tied to their real account name/email,
   // rather than trusting whatever the client sends, so a review can't be
   // spoofed under someone else's identity.
   const name = sessionUser ? sessionUser.name : body?.name;
   const email = sessionUser ? sessionUser.email : body?.email;
+  const reviewLanguage = language === "en" ? "en" : "es";
 
   if (
     (type !== "testimonial" && type !== "property") ||
@@ -49,8 +50,8 @@ export async function POST(request: NextRequest) {
   }
 
   await sql`
-    INSERT INTO reviews (type, property_id, property_title, name, email, rating, comment, status, user_id)
-    VALUES (${type}, ${type === "property" ? propertyId : null}, ${type === "property" ? propertyTitle : null}, ${name.trim()}, ${email.trim()}, ${rating}, ${comment.trim()}, 'pending', ${sessionUser?.id ?? null})
+    INSERT INTO reviews (type, property_id, property_title, name, email, rating, comment, language, status, user_id)
+    VALUES (${type}, ${type === "property" ? propertyId : null}, ${type === "property" ? propertyTitle : null}, ${name.trim()}, ${email.trim()}, ${rating}, ${comment.trim()}, ${reviewLanguage}, 'pending', ${sessionUser?.id ?? null})
   `;
 
   if (WEB3FORMS_ACCESS_KEY) {

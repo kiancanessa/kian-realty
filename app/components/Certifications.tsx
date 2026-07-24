@@ -63,7 +63,7 @@ export default function Certifications() {
                     {c.description}
                   </p>
                 </div>
-                <div className="badge-pulse" style={{ flexShrink: 0, width: 130, height: 130, borderRadius: "50%", background: "rgba(var(--accent),0.14)", border: "1px solid rgba(var(--accent),0.3)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                <div className="badge-pulse" style={{ flexShrink: 0, width: 130, height: 130, borderRadius: "50%", background: "#FAF6EE", border: "1px solid rgba(var(--accent),0.3)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: 20 }}>
                   {item.image_url ? (
                     <img src={item.image_url} alt={c.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                   ) : (
