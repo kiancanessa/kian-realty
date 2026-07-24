@@ -34,24 +34,32 @@ export default function EventAnnouncement() {
     if (announcement) sessionStorage.setItem(seenKey(announcement.id), "1");
   };
 
-  if (!announcement || !visible) return null;
+  if (!announcement) return null;
 
   return (
     <div
-      style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, background: "rgba(10,10,8,0.72)" }}
+      style={{
+        position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
+        background: "rgba(10,10,8,0.72)",
+        opacity: visible ? 1 : 0,
+        pointerEvents: visible ? "auto" : "none",
+        transition: "opacity 0.4s ease",
+      }}
       onClick={dismiss}
     >
-      <AnnouncementCard
-        content={announcement.content}
-        videoUrl={announcement.video_url}
-        imageUrl={announcement.image_url}
-        ctaUrl={announcement.content.ctaUrl}
-        template={announcement.template}
-        locale={locale}
-        onLocaleChange={setLocale}
-        onClose={dismiss}
-        onWatchVideo={() => setVideoOpen(true)}
-      />
+      <div style={{ width: "min(600px, 100%)", transform: visible ? "scale(1) translateY(0)" : "scale(0.94) translateY(12px)", transition: "transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)" }}>
+        <AnnouncementCard
+          content={announcement.content}
+          videoUrl={announcement.video_url}
+          imageUrl={announcement.image_url}
+          ctaUrl={announcement.content.ctaUrl}
+          template={announcement.template}
+          locale={locale}
+          onLocaleChange={setLocale}
+          onClose={dismiss}
+          onWatchVideo={() => setVideoOpen(true)}
+        />
+      </div>
 
       {videoOpen && announcement.video_url && (
         <div

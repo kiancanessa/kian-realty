@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c9c9c9"/>
+      <stop offset="35%" stop-color="#e8e8e8"/>
+      <stop offset="50%" stop-color="#ffffff"/>
+      <stop offset="65%" stop-color="#e8e8e8"/>
+      <stop offset="100%" stop-color="#b8b8b8"/>
+    </linearGradient>
+    <clipPath id="face">
+      <circle cx="150" cy="150" r="120"/>
+    </clipPath>
+  </defs>
+
+  <circle cx="150" cy="150" r="148" fill="url(#ring)"/>
+  <circle cx="150" cy="150" r="120" fill="#ffffff" stroke="#1c7a3e" stroke-width="4"/>
+
+  <g clip-path="url(#face)">
+    <!-- Mark -->
+    <g transform="translate(150,96)">
+      <rect x="-27" y="-20" width="12" height="58" fill="#1c7a3e"/>
+      <path d="M -15 -20 H 9 A 21 21 0 0 1 9 22 H -1 V 10 H 7 A 9 9 0 0 0 7 -8 H -15 Z" fill="#1c7a3e"/>
+    </g>
+
+    <text x="150" y="165" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="24" letter-spacing="1.5" fill="#1c7a3e">A.M.P.I.</text>
+    <text x="150" y="192" text-anchor="middle" font-family="Arial, sans-serif" font-weight="600" font-size="11.5" fill="#1a1a1a">Asociación Mexicana de</text>
+    <text x="150" y="207" text-anchor="middle" font-family="Arial, sans-serif" font-weight="600" font-size="11.5" fill="#1a1a1a">Profesionales</text>
+    <text x="150" y="222" text-anchor="middle" font-family="Arial, sans-serif" font-weight="600" font-size="11.5" fill="#1a1a1a">Inmobiliarios, A.C.</text>
+
+    <path d="M 25 230 L 95 300 L 55 300 L 15 255 Z" fill="#ffffff" opacity="0.35"/>
+  </g>
+
+  <circle cx="213" cy="58" r="12" fill="none" stroke="#1c7a3e" stroke-width="1.4"/>
+  <text x="213" y="62" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#1c7a3e">MR</text>
+</svg>

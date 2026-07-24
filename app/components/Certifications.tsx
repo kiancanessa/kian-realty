@@ -41,34 +41,39 @@ export default function Certifications() {
           </span>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
           {items.map(item => {
             const c = item.content[locale] ?? item.content.en;
             return (
               <div key={item.id} className="reveal certification-card" style={{
-                display: "flex", alignItems: "center", gap: 40, flexWrap: "wrap",
-                background: "#0E2620", borderRadius: 20, padding: "48px 56px",
+                position: "relative", overflow: "hidden",
+                display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
+                background: "#0E2620", borderRadius: 20, padding: "44px 32px",
                 transition: "transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease",
               }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-6px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 20px 48px rgba(0,0,0,0.22)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}>
-                <div style={{ flex: "1 1 380px" }}>
-                  <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "1.05rem", color: "#FAF6EE", marginBottom: 18 }}>
+                {/* Watermark */}
+                <BadgeCheck size={220} strokeWidth={0.8} color="#FAF6EE"
+                  style={{ position: "absolute", bottom: -50, right: -50, opacity: 0.05, transform: "rotate(-12deg)", zIndex: 0, pointerEvents: "none" }} />
+
+                <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div className="badge-pulse" style={{ flexShrink: 0, width: 110, height: 110, borderRadius: "50%", background: "#FAF6EE", border: "1px solid rgba(var(--accent),0.3)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: 18, marginBottom: 24 }}>
+                    {item.image_url ? (
+                      <img src={item.image_url} alt={c.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                    ) : (
+                      <BadgeCheck size={50} color="rgb(var(--accent))" strokeWidth={1.3} />
+                    )}
+                  </div>
+                  <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.95rem", color: "#FAF6EE", marginBottom: 14 }}>
                     {locale === "es" ? "Certificados por" : "All certified by"}
                   </div>
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "clamp(1.6rem, 3vw, 2.15rem)", color: "#FAF6EE", marginBottom: 18, lineHeight: 1.2 }}>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "1.5rem", color: "#FAF6EE", marginBottom: 14, lineHeight: 1.2 }}>
                     {c.name}
                   </h3>
-                  <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(250,246,238,0.55)", lineHeight: 1.8, maxWidth: 540 }}>
+                  <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.82rem", color: "rgba(250,246,238,0.55)", lineHeight: 1.75 }}>
                     {c.description}
                   </p>
-                </div>
-                <div className="badge-pulse" style={{ flexShrink: 0, width: 130, height: 130, borderRadius: "50%", background: "#FAF6EE", border: "1px solid rgba(var(--accent),0.3)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: 20 }}>
-                  {item.image_url ? (
-                    <img src={item.image_url} alt={c.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-                  ) : (
-                    <BadgeCheck size={58} color="rgb(var(--accent))" strokeWidth={1.3} />
-                  )}
                 </div>
               </div>
             );

@@ -33,11 +33,22 @@ export default function Stats({ activeListings }: { activeListings: number }) {
     { value: 300, suffix: "+", label: t.stats.clients },
     { value: 15,  suffix: "+", label: t.stats.exp },
   ];
+  const sectionRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.querySelectorAll(".reveal").forEach((el, i) => setTimeout(() => el.classList.add("visible"), i * 90));
+      });
+    }, { threshold: 0.2 });
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section style={{ borderTop: "1px solid rgba(var(--accent),0.12)", borderBottom: "1px solid rgba(var(--accent),0.12)", background: "rgb(var(--bg-alt))" }}>
+    <section ref={sectionRef} style={{ borderTop: "1px solid rgba(var(--accent),0.12)", borderBottom: "1px solid rgba(var(--accent),0.12)", background: "rgb(var(--bg-alt))" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 24px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 32 }} className="stats-grid">
         {stats.map((s, i) => (
-          <div key={i} style={{ textAlign: "center" }}>
+          <div key={i} className="reveal" style={{ textAlign: "center" }}>
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "rgb(var(--accent))", fontSize: "clamp(2.5rem, 5vw, 4rem)" }}>
               <CountUp target={s.value} />{s.suffix}
             </div>

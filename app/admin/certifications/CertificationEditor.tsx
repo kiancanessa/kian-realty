@@ -54,30 +54,26 @@ export default function CertificationEditor({
       </div>
 
       <div style={{ padding: "32px 20px", display: "flex", justifyContent: "center", background: "rgb(var(--bg))" }}>
-        <div style={{ width: "min(560px, 100%)", borderRadius: 20, background: "#0E2620", overflow: "hidden", display: "flex", alignItems: "center", gap: 32, flexWrap: "wrap", padding: "36px 32px" }}>
-          <div style={{ flex: "1 1 260px" }}>
-            <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.95rem", color: "#FAF6EE", marginBottom: 14 }}>
-              {locale === "es" ? "Certificados por" : "All certified by"}
-            </div>
-            <Editable value={c.name} onChange={v => updateField(locale, "name", v)}
-              placeholder={locale === "es" ? "Nombre de la certificación" : "Certification name"}
-              style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.5rem", color: "#FAF6EE", marginBottom: 14, display: "block" }} />
-            <Editable value={c.description} onChange={v => updateField(locale, "description", v)} multiline
-              placeholder={locale === "es" ? "Qué significa esta certificación" : "What this certification means"}
-              style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgba(250,246,238,0.6)", lineHeight: 1.7, display: "block" }} />
+        <div style={{ width: "min(300px, 100%)", borderRadius: 20, background: "#0E2620", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "40px 28px" }}>
+          <div style={{ width: 100, height: 100, borderRadius: "50%", background: "#FAF6EE", border: "1px solid rgba(250,246,238,0.25)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: 14, marginBottom: 20 }}>
+            {form.image_url ? (
+              <img src={form.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            ) : (
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.55rem", color: "rgba(14,38,32,0.4)" }}>Sello</span>
+            )}
           </div>
-          <div style={{ flexShrink: 0, textAlign: "center" }}>
-            <div style={{ width: 100, height: 100, margin: "0 auto", borderRadius: "50%", background: "#FAF6EE", border: "1px solid rgba(250,246,238,0.25)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: 14 }}>
-              {form.image_url ? (
-                <img src={form.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-              ) : (
-                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.55rem", color: "rgba(14,38,32,0.4)" }}>Sello</span>
-              )}
-            </div>
-            <input value={form.image_url} placeholder={locale === "es" ? "URL del sello…" : "Seal image URL…"}
-              onChange={e => setForm(prev => ({ ...prev, image_url: e.target.value }))}
-              style={{ width: 130, marginTop: 12, padding: "8px 10px", background: "rgba(250,246,238,0.08)", color: "#FAF6EE", border: "1px solid rgba(250,246,238,0.15)", outline: "none", fontFamily: "'Jost', sans-serif", fontSize: "0.65rem", textAlign: "center" }} />
+          <input value={form.image_url} placeholder={locale === "es" ? "URL del sello…" : "Seal image URL…"}
+            onChange={e => setForm(prev => ({ ...prev, image_url: e.target.value }))}
+            style={{ width: 160, marginBottom: 20, padding: "8px 10px", background: "rgba(250,246,238,0.08)", color: "#FAF6EE", border: "1px solid rgba(250,246,238,0.15)", outline: "none", fontFamily: "'Jost', sans-serif", fontSize: "0.65rem", textAlign: "center" }} />
+          <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.95rem", color: "#FAF6EE", marginBottom: 14 }}>
+            {locale === "es" ? "Certificados por" : "All certified by"}
           </div>
+          <Editable value={c.name} onChange={v => updateField(locale, "name", v)}
+            placeholder={locale === "es" ? "Nombre de la certificación" : "Certification name"}
+            style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", color: "#FAF6EE", marginBottom: 14, display: "block" }} />
+          <Editable value={c.description} onChange={v => updateField(locale, "description", v)} multiline
+            placeholder={locale === "es" ? "Qué significa esta certificación" : "What this certification means"}
+            style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgba(250,246,238,0.6)", lineHeight: 1.7, display: "block" }} />
         </div>
       </div>
 
