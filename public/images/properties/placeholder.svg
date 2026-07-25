@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#F0E7D8"/>
+  <g transform="translate(400,270)" fill="none" stroke="#6B8A42" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M -60 20 L 0 -35 L 60 20" />
+    <path d="M -40 5 V 45 H 40 V 5" />
+  </g>
+  <text x="400" y="360" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="22" fill="#6B8A42">El Casa Rosarito</text>
+  <text x="400" y="386" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" letter-spacing="2" fill="#8A8578">SIN FOTO DISPONIBLE</text>
+</svg>

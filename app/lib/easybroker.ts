@@ -122,7 +122,7 @@ export type PropertyCard = {
   image: string;
 };
 
-const PLACEHOLDER_IMAGE = "/images/properties/placeholder.jpg";
+const PLACEHOLDER_IMAGE = "/images/properties/placeholder.svg";
 
 export function toCard(item: EBPropertyListItem): PropertyCard {
   const op = primaryOperation(item.operations);
