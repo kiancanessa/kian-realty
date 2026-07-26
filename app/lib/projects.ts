@@ -13,6 +13,7 @@ export type Project = {
   id: number;
   published: boolean;
   image_url: string | null;
+  images: string[];
   content: ProjectContent;
   created_at: string;
   updated_at: string;

@@ -18,7 +18,8 @@ export async function PATCH(
   }
 
   if (body.content) {
-    await sql`UPDATE projects SET content = ${JSON.stringify(body.content)}, image_url = ${body.image_url || null}, updated_at = now() WHERE id = ${id}`;
+    const imageList: string[] = Array.isArray(body.images) ? body.images.filter((s: unknown): s is string => typeof s === "string" && s.trim() !== "") : [];
+    await sql`UPDATE projects SET content = ${JSON.stringify(body.content)}, image_url = ${imageList[0] ?? null}, images = ${JSON.stringify(imageList)}, updated_at = now() WHERE id = ${id}`;
   }
 
   return Response.json({ ok: true });
