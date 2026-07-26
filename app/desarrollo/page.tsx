@@ -10,7 +10,7 @@ import type { Project, ProjectContent } from "../lib/projects";
 type PublicProject = Pick<Project, "id" | "image_url" | "images" | "content" | "created_at">;
 
 export default function DevelopmentPage() {
-  const { locale, setLocale, t } = useLang();
+  const { locale, t } = useLang();
   const [projects, setProjects] = useState<PublicProject[]>([]);
   const [loading, setLoading] = useState(true);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -39,25 +39,11 @@ export default function DevelopmentPage() {
       <Navbar />
       <div ref={sectionRef} style={{ padding: "140px 24px 96px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div className="reveal" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <div className="sage-line" />
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgb(var(--accent))" }}>
-                {t.services.development.title}
-              </span>
-            </div>
-            <div style={{ display: "flex", border: "1px solid rgba(var(--accent),0.25)", borderRadius: 999, padding: 3, gap: 2 }}>
-              {(["en", "es"] as const).map(lang => (
-                <button key={lang} onClick={() => setLocale(lang)}
-                  style={{ padding: "5px 16px", borderRadius: 999, border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", transition: "all 0.3s",
-                    background: locale === lang ? "rgb(var(--accent))" : "transparent",
-                    color: locale === lang ? "#FAF6EE" : "rgba(var(--ink),0.5)",
-                    fontWeight: locale === lang ? 600 : 400,
-                  }}>
-                  {lang}
-                </button>
-              ))}
-            </div>
+          <div className="reveal" style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+            <div className="sage-line" />
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgb(var(--accent))" }}>
+              {t.services.development.title}
+            </span>
           </div>
           <h1 className="reveal" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "rgb(var(--ink))", fontSize: "clamp(2.4rem, 5vw, 4rem)", letterSpacing: "-0.02em", marginBottom: 16 }}>
             {t.development.title}
