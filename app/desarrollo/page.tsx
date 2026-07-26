@@ -10,7 +10,7 @@ import type { Project, ProjectContent } from "../lib/projects";
 type PublicProject = Pick<Project, "id" | "image_url" | "images" | "content" | "created_at">;
 
 export default function DevelopmentPage() {
-  const { locale, t } = useLang();
+  const { locale, setLocale, t } = useLang();
   const [projects, setProjects] = useState<PublicProject[]>([]);
   const [loading, setLoading] = useState(true);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -39,11 +39,25 @@ export default function DevelopmentPage() {
       <Navbar />
       <div ref={sectionRef} style={{ padding: "140px 24px 96px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div className="reveal" style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-            <div className="sage-line" />
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgb(var(--accent))" }}>
-              {t.services.development.title}
-            </span>
+          <div className="reveal" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div className="sage-line" />
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgb(var(--accent))" }}>
+                {t.services.development.title}
+              </span>
+            </div>
+            <div style={{ display: "flex", border: "1px solid rgba(var(--accent),0.25)", borderRadius: 999, padding: 3, gap: 2 }}>
+              {(["en", "es"] as const).map(lang => (
+                <button key={lang} onClick={() => setLocale(lang)}
+                  style={{ padding: "5px 16px", borderRadius: 999, border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", transition: "all 0.3s",
+                    background: locale === lang ? "rgb(var(--accent))" : "transparent",
+                    color: locale === lang ? "#FAF6EE" : "rgba(var(--ink),0.5)",
+                    fontWeight: locale === lang ? 600 : 400,
+                  }}>
+                  {lang}
+                </button>
+              ))}
+            </div>
           </div>
           <h1 className="reveal" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "rgb(var(--ink))", fontSize: "clamp(2.4rem, 5vw, 4rem)", letterSpacing: "-0.02em", marginBottom: 16 }}>
             {t.development.title}
@@ -70,30 +84,26 @@ export default function DevelopmentPage() {
               const images = p.images && p.images.length > 0 ? p.images : (p.image_url ? [p.image_url] : []);
               return (
                 <div key={p.id} className="reveal" style={{
-                  display: "grid", gridTemplateColumns: "1fr", gap: 0,
-                  border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))", overflow: "hidden",
+                  position: "relative", border: "1px solid rgba(var(--accent),0.1)", overflow: "hidden",
                   transition: "transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.5s ease",
                 }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 24px 56px rgba(0,0,0,0.14)"; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 28px 64px rgba(0,0,0,0.28)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}>
-                  <ProjectGallery images={images} alt={c.title} height={460} />
-                  <div style={{ padding: "36px 40px 40px" }}>
-                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontSize: "2rem", color: "rgb(var(--ink))", marginBottom: 14 }}>
-                      {c.title}
-                    </h3>
-                    <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.92rem", color: "rgba(var(--ink),0.6)", lineHeight: 1.75, marginBottom: 22, whiteSpace: "pre-line", maxWidth: 720 }}>
-                      {c.description}
-                    </p>
-                    {c.results && (
-                      <div style={{ borderTop: "1px solid rgba(var(--accent),0.1)", paddingTop: 16 }}>
-                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.4)", marginBottom: 6 }}>
-                          {locale === "es" ? "Estatus" : "Status"}
-                        </div>
-                        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.35rem", color: "rgb(var(--accent))" }}>
+                  <ProjectGallery images={images} alt={c.title} height={560} showDots={false} strongScrim />
+                  <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "24px 28px 28px", pointerEvents: "none" }}>
+                    <div style={{ display: "inline-block", pointerEvents: "auto", maxWidth: 640 }}>
+                      {c.results && (
+                        <div style={{ display: "inline-block", marginBottom: 14, padding: "6px 16px", border: "1px solid rgba(250,246,238,0.4)", borderRadius: 999, fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#FAF6EE", background: "rgba(10,10,8,0.35)", backdropFilter: "blur(6px)" }}>
                           {c.results}
                         </div>
-                      </div>
-                    )}
+                      )}
+                      <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontSize: "clamp(1.9rem, 3.6vw, 2.7rem)", color: "#FAF6EE", letterSpacing: "-0.01em", marginBottom: 12 }}>
+                        {c.title}
+                      </h3>
+                      <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.9rem", color: "rgba(250,246,238,0.8)", lineHeight: 1.7, whiteSpace: "pre-line" }}>
+                        {c.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
               );

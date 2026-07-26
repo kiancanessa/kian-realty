@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Building2 } from "lucide-react";
 
-export default function ProjectGallery({ images, alt, height = 420 }: { images: string[]; alt: string; height?: number }) {
+export default function ProjectGallery({ images, alt, height = 420, showDots = true, strongScrim = false }: { images: string[]; alt: string; height?: number; showDots?: boolean; strongScrim?: boolean }) {
   const [index, setIndex] = useState(0);
   const hovering = useRef(false);
 
@@ -42,7 +42,7 @@ export default function ProjectGallery({ images, alt, height = 420 }: { images: 
 
       {images.length > 1 && (
         <>
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,8,0.35), transparent 40%)", pointerEvents: "none" }} />
+          <div style={{ position: "absolute", inset: 0, background: strongScrim ? "linear-gradient(to top, rgba(10,10,8,0.9) 0%, rgba(10,10,8,0.45) 42%, rgba(10,10,8,0.05) 70%, transparent 100%)" : "linear-gradient(to top, rgba(10,10,8,0.35), transparent 40%)", pointerEvents: "none" }} />
           <button aria-label="Previous photo" onClick={() => goTo(index - 1)}
             style={{ position: "absolute", top: "50%", left: 16, transform: "translateY(-50%)", width: 40, height: 40, borderRadius: "50%", border: "1px solid rgba(250,246,238,0.4)", background: "rgba(10,10,8,0.4)", color: "#FAF6EE", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)" }}>
             <ChevronLeft size={20} />
@@ -51,12 +51,14 @@ export default function ProjectGallery({ images, alt, height = 420 }: { images: 
             style={{ position: "absolute", top: "50%", right: 16, transform: "translateY(-50%)", width: 40, height: 40, borderRadius: "50%", border: "1px solid rgba(250,246,238,0.4)", background: "rgba(10,10,8,0.4)", color: "#FAF6EE", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)" }}>
             <ChevronRight size={20} />
           </button>
-          <div style={{ position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 8 }}>
-            {images.map((src, i) => (
-              <button key={src + i} aria-label={`Go to photo ${i + 1}`} onClick={() => goTo(i)}
-                style={{ width: i === index ? 20 : 7, height: 7, borderRadius: 999, border: "none", padding: 0, cursor: "pointer", background: i === index ? "#FAF6EE" : "rgba(250,246,238,0.45)", transition: "width 0.3s ease" }} />
-            ))}
-          </div>
+          {showDots && (
+            <div style={{ position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 8 }}>
+              {images.map((src, i) => (
+                <button key={src + i} aria-label={`Go to photo ${i + 1}`} onClick={() => goTo(i)}
+                  style={{ width: i === index ? 20 : 7, height: 7, borderRadius: 999, border: "none", padding: 0, cursor: "pointer", background: i === index ? "#FAF6EE" : "rgba(250,246,238,0.45)", transition: "width 0.3s ease" }} />
+              ))}
+            </div>
+          )}
         </>
       )}
     </div>
