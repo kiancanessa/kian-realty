@@ -17,6 +17,7 @@ const DEVELOPER_TABS = [
   { href: "/admin/reviews", label: "Reseñas" },
   { href: "/admin/announcements", label: "Anuncios" },
   { href: "/admin/news", label: "Noticias" },
+  { href: "/admin/social", label: "Redes sociales" },
   { href: "/admin/contacts", label: "Contactos" },
   { href: "/admin/projects", label: "Proyectos" },
   { href: "/admin/sales", label: "Ventas" },
