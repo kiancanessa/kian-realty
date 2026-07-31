@@ -142,18 +142,29 @@ export default function About() {
         <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgb(var(--accent))", marginBottom: 32, textAlign: "center" }}>
           {t.about.teamTitle}
         </div>
-        <div className="team-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 28, maxWidth: 960, margin: "0 auto" }}>
-          {t.about.team.map((member, i) => (
-            <div key={i} style={{ textAlign: "center", padding: 32, border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))" }}>
-              <TeamAvatar photo={member.photo} name={member.name} />
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.15rem", color: "rgb(var(--ink))", fontWeight: 400, marginBottom: 4 }}>
-                {member.name}
-              </div>
-              <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(var(--ink),0.4)" }}>
-                {member.role}
-              </div>
-            </div>
-          ))}
+        {/* Rendered twice so the marquee can loop without a visible seam. The
+            second copy is decorative, hence aria-hidden. */}
+        <div className="team-marquee">
+          <div className="team-marquee-track">
+            {[0, 1].map(copy =>
+              t.about.team.map((member, i) => (
+                <div
+                  key={`${copy}-${i}`}
+                  className="team-marquee-card"
+                  aria-hidden={copy === 1 || undefined}
+                  style={{ flexShrink: 0, width: 250, textAlign: "center", padding: "32px 24px", border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))" }}
+                >
+                  <TeamAvatar photo={member.photo} name={member.name} />
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.15rem", color: "rgb(var(--ink))", fontWeight: 400, marginBottom: 4, lineHeight: 1.3 }}>
+                    {member.name}
+                  </div>
+                  <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(var(--ink),0.4)", lineHeight: 1.5 }}>
+                    {member.role}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </section>

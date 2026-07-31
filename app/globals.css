@@ -133,6 +133,43 @@ body {
 }
 .badge-pulse { animation: badgePulse 2.8s ease-in-out infinite; }
 
+/* Team marquee: the track holds two copies of the roster. Half the track width
+   lands *half a gap* short of the duplicate's first card (the gap joining the
+   two copies is counted once, not twice), so add that half-gap back — otherwise
+   the loop visibly jumps by 14px on every pass. Keep in sync with the gap below. */
+@keyframes teamMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-50% - 14px)); }
+}
+.team-marquee {
+  overflow: hidden;
+  /* Fade the cards out at both edges instead of clipping them hard. */
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.team-marquee-track {
+  display: flex;
+  gap: 28px;
+  width: max-content;
+  animation: teamMarquee 55s linear infinite;
+}
+/* Hovering any card freezes the whole strip so it can be read. */
+.team-marquee:hover .team-marquee-track { animation-play-state: paused; }
+
+.team-marquee-card {
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.team-marquee-card:hover {
+  transform: scale(1.06);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.18);
+  border-color: rgba(var(--accent), 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-marquee-track { animation: none; }
+  .team-marquee { overflow-x: auto; }
+}
+
 /* ===== RESPONSIVE LAYOUT HELPERS ===== */
 
 /* Mobile: hide desktop nav, show burger */
@@ -163,14 +200,6 @@ body {
 /* Contact: 2 cols on desktop */
 @media (min-width: 1024px) {
   .contact-grid { grid-template-columns: 1fr 1.2fr !important; }
-}
-
-/* Team: 2 cols on tablet, 3 cols (3 top / 3 bottom) on desktop */
-@media (min-width: 640px) {
-  .team-grid { grid-template-columns: repeat(2, 1fr) !important; }
-}
-@media (min-width: 900px) {
-  .team-grid { grid-template-columns: repeat(3, 1fr) !important; }
 }
 
 /* Featured properties: up to 3 cols, larger cards */
