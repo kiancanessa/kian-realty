@@ -176,16 +176,16 @@ export default function TeamSection() {
                   </div>
 
                   <div style={{ minWidth: 0, flex: 1 }}>
-                    <h4 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "1.3rem", color: "rgb(var(--ink))", lineHeight: 1.25, marginBottom: 5 }}>
+                    <h4 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "1.5rem", color: "rgb(var(--ink))", lineHeight: 1.25, marginBottom: 6 }}>
                       {member.name}
                     </h4>
-                    <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.76rem", color: "rgba(var(--ink),0.42)", lineHeight: 1.5 }}>
+                    <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.48)", lineHeight: 1.5 }}>
                       {member.role}
                     </div>
 
                     <div className="team-reveal">
                       <div>
-                        <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.83rem", lineHeight: 1.7, color: "rgba(var(--ink),0.58)", paddingTop: 14 }}>
+                        <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.92rem", lineHeight: 1.7, color: "rgba(var(--ink),0.6)", paddingTop: 14 }}>
                           {member.bio}
                         </p>
                         <div style={{ display: "flex", gap: 10, paddingTop: 16 }}>
