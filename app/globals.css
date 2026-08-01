@@ -133,41 +133,180 @@ body {
 }
 .badge-pulse { animation: badgePulse 2.8s ease-in-out infinite; }
 
-/* Team marquee: the track holds two copies of the roster. Half the track width
-   lands *half a gap* short of the duplicate's first card (the gap joining the
-   two copies is counted once, not twice), so add that half-gap back — otherwise
-   the loop visibly jumps by 14px on every pass. Keep in sync with the gap below. */
-@keyframes teamMarquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(calc(-50% - 14px)); }
-}
-.team-marquee {
-  overflow: hidden;
-  /* Fade the cards out at both edges instead of clipping them hard. */
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-.team-marquee-track {
-  display: flex;
-  gap: 28px;
-  width: max-content;
-  animation: teamMarquee 55s linear infinite;
-}
-/* Hovering any card freezes the whole strip so it can be read. */
-.team-marquee:hover .team-marquee-track { animation-play-state: paused; }
+/* ===== MEET THE TEAM ===== */
 
-.team-marquee-card {
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease, border-color 0.4s ease;
+/* Ambient depth: large, heavily blurred blobs drifting on their own cycles.
+   Transform-only so they stay on the compositor. */
+@keyframes blobDriftA {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%      { transform: translate3d(6%, -8%, 0) scale(1.12); }
+  66%      { transform: translate3d(-5%, 6%, 0) scale(0.94); }
 }
-.team-marquee-card:hover {
-  transform: scale(1.06);
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.18);
+@keyframes blobDriftB {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+  40%      { transform: translate3d(-8%, 5%, 0) scale(0.92); }
+  75%      { transform: translate3d(5%, 8%, 0) scale(1.1); }
+}
+@keyframes blobDriftC {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.96); }
+  50%      { transform: translate3d(7%, 7%, 0) scale(1.14); }
+}
+.team-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  will-change: transform;
+}
+.team-blob-a { animation: blobDriftA 34s ease-in-out infinite; }
+.team-blob-b { animation: blobDriftB 43s ease-in-out infinite; }
+.team-blob-c { animation: blobDriftC 52s ease-in-out infinite; }
+
+/* Lead card: float + breathe combined in one keyframe so the two effects
+   share a single transform and never fight each other. */
+@keyframes leadFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(0, -12px, 0) scale(1.012); }
+}
+.lead-float { animation: leadFloat 7s ease-in-out infinite; will-change: transform; }
+
+/* Parallax lives on its own layer, driven by --tilt-x/--tilt-y from JS, so it
+   composes with the float animation above instead of overwriting it. */
+.lead-parallax {
+  transform: perspective(1200px)
+             rotateX(var(--tilt-x, 0deg))
+             rotateY(var(--tilt-y, 0deg));
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+@keyframes leadBorderSpin {
+  to { transform: rotate(1turn); }
+}
+.lead-card {
+  position: relative;
+  border-radius: 32px;
+  overflow: hidden;
+  isolation: isolate;
+}
+/* Rotating conic sweep = animated gradient border. Oversized so the corners
+   stay covered through the full rotation. */
+.lead-card::before {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  z-index: 0;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(var(--accent), 0.75) 45deg,
+    rgba(var(--accent-light), 0.35) 90deg,
+    transparent 165deg,
+    transparent 360deg
+  );
+  animation: leadBorderSpin 9s linear infinite;
+  will-change: transform;
+}
+/* Inset fill leaves a 1.5px rim of the sweep visible as the border. */
+.lead-card::after {
+  content: "";
+  position: absolute;
+  inset: 1.5px;
+  z-index: 0;
+  border-radius: 30.5px;
+  background: rgba(var(--surface), 0.72);
+  /* Prefixed first, standard last: the CSS minifier de-dupes to the final
+     declaration, so the standard property has to come second to survive. */
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  backdrop-filter: blur(22px) saturate(1.4);
+}
+.lead-card > * { position: relative; z-index: 1; }
+
+/* Radial glow tracking the cursor. */
+.lead-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 32px;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  background: radial-gradient(
+    260px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    rgba(var(--accent), 0.22),
+    transparent 70%
+  );
+}
+.lead-card:hover .lead-glow { opacity: 1; }
+
+/* Member cards: scroll-in reveal (fade + rise + blur-to-sharp + scale).
+   Stagger comes from an inline --i index. */
+.team-member {
+  opacity: 0;
+  transform: translate3d(0, 38px, 0) scale(0.965);
+  filter: blur(10px);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i, 0) * 90ms);
+  will-change: transform, opacity;
+}
+.team-member.in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+}
+
+.team-member-card {
+  border-radius: 24px;
+  overflow: hidden;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s ease,
+    border-color 0.45s ease;
+}
+.team-member-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.16);
   border-color: rgba(var(--accent), 0.35);
 }
+.team-member-photo { transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+.team-member-card:hover .team-member-photo { transform: scale(1.08); }
+
+/* Smooth auto-height reveal without a fixed max-height: 0fr -> 1fr is
+   interpolatable, so the panel grows to exactly its content height. */
+.team-reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+}
+.team-reveal > div { overflow: hidden; min-height: 0; }
+.team-member-card:hover .team-reveal { grid-template-rows: 1fr; opacity: 1; }
+
+/* Action chips rise and fade in slightly after the panel opens. */
+.team-action {
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease, color 0.3s ease;
+}
+.team-member-card:hover .team-action { opacity: 1; transform: translateY(0) scale(1); }
+.team-member-card:hover .team-action:nth-child(1) { transition-delay: 0.10s; }
+.team-member-card:hover .team-action:nth-child(2) { transition-delay: 0.16s; }
+.team-member-card:hover .team-action:nth-child(3) { transition-delay: 0.22s; }
+.team-member-card:hover .team-action:nth-child(4) { transition-delay: 0.28s; }
 
 @media (prefers-reduced-motion: reduce) {
-  .team-marquee-track { animation: none; }
-  .team-marquee { overflow-x: auto; }
+  .team-blob, .lead-float, .lead-card::before { animation: none; }
+  .lead-parallax { transform: none; }
+  .team-member {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+  .team-member-card:hover { transform: none; }
+  .team-member-card:hover .team-member-photo { transform: none; }
 }
 
 /* ===== RESPONSIVE LAYOUT HELPERS ===== */
@@ -200,6 +339,13 @@ body {
 /* Contact: 2 cols on desktop */
 @media (min-width: 1024px) {
   .contact-grid { grid-template-columns: 1fr 1.2fr !important; }
+}
+
+/* Team: lead card sticky beside the cascading stack on desktop only.
+   Below this width the layout stacks and the sticky is released. */
+@media (min-width: 1024px) {
+  .team-layout { grid-template-columns: 0.95fr 1.05fr !important; align-items: start !important; }
+  .team-lead-col { position: sticky !important; top: 96px !important; }
 }
 
 /* Featured properties: up to 3 cols, larger cards */

@@ -3,6 +3,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { useLang } from "../lib/LangContext";
 import { CheckCircle, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Logo from "./Logo";
+import TeamSection from "./TeamSection";
 
 const ABOUT_PHOTOS = [
   { src: "/images/about/rosarito-beach.jpg", alt: "Playas de Rosarito" },
@@ -53,28 +54,6 @@ function AboutCarousel() {
       </div>
       {/* Frame */}
       <div style={{ position: "absolute", bottom: -16, right: -16, width: "100%", height: "100%", border: "1px solid rgba(var(--accent),0.2)", pointerEvents: "none" }} />
-    </div>
-  );
-}
-
-function TeamAvatar({ photo, name }: { photo?: string; name: string }) {
-  const [loaded, setLoaded] = useState(false);
-  useEffect(() => {
-    if (!photo) return;
-    setLoaded(false);
-    const img = new window.Image();
-    img.onload = () => setLoaded(true);
-    img.src = photo;
-  }, [photo]);
-
-  return (
-    <div style={{ position: "relative", width: 88, height: 88, borderRadius: "50%", border: "1px solid rgba(var(--accent),0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", overflow: "hidden", background: "rgb(var(--bg-alt))" }}>
-      <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.6rem", color: "rgb(var(--accent))" }}>
-        {name.split(" ").map(w => w[0]).slice(0, 2).join("")}
-      </span>
-      {loaded && (
-        <img src={photo} alt={name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-      )}
     </div>
   );
 }
@@ -138,35 +117,7 @@ export default function About() {
       </div>
 
       {/* Team */}
-      <div className="reveal" style={{ maxWidth: 1280, margin: "80px auto 0", paddingTop: 64, borderTop: "1px solid rgba(var(--accent),0.1)" }}>
-        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgb(var(--accent))", marginBottom: 32, textAlign: "center" }}>
-          {t.about.teamTitle}
-        </div>
-        {/* Rendered twice so the marquee can loop without a visible seam. The
-            second copy is decorative, hence aria-hidden. */}
-        <div className="team-marquee">
-          <div className="team-marquee-track">
-            {[0, 1].map(copy =>
-              t.about.team.map((member, i) => (
-                <div
-                  key={`${copy}-${i}`}
-                  className="team-marquee-card"
-                  aria-hidden={copy === 1 || undefined}
-                  style={{ flexShrink: 0, width: 250, textAlign: "center", padding: "32px 24px", border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))" }}
-                >
-                  <TeamAvatar photo={member.photo} name={member.name} />
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.15rem", color: "rgb(var(--ink))", fontWeight: 400, marginBottom: 4, lineHeight: 1.3 }}>
-                    {member.name}
-                  </div>
-                  <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(var(--ink),0.4)", lineHeight: 1.5 }}>
-                    {member.role}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
+      <TeamSection />
     </section>
   );
 }
