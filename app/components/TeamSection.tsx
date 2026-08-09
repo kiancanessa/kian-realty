@@ -108,7 +108,6 @@ function MemberCard({ member, chip, ariaHidden }: { member: TeamMember; chip: Re
   );
 }
 
-const WHEEL_SPEED_PX_PER_SEC = 30; // slow enough to read a card as it passes
 
 export default function TeamSection() {
   const { t } = useLang();
@@ -118,7 +117,6 @@ export default function TeamSection() {
   const gridRef = useRef<HTMLDivElement>(null);
   const leadRef = useRef<HTMLDivElement>(null);
   const leadCardRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
 
   // Reveal each member card once, then leave it on screen.
@@ -140,53 +138,25 @@ export default function TeamSection() {
     return () => observer.disconnect();
   }, [team.length]);
 
-  // Both measurements have to be reactive, not one-shot: portraits and webfonts
-  // land after mount and change these numbers. A stale travel value is the
-  // difference between a seamless loop and a visible jump every pass.
+  // The loop distance needs no JS — the stylesheet makes -50% exact. All that
+  // is left is publishing the lead card's height so the wheel can end level
+  // with it on desktop; the stylesheet decides whether to use it, since
+  // branching on matchMedia here raced the resize and left a stale height.
   useEffect(() => {
-    const track = trackRef.current;
     const leadCard = leadCardRef.current;
-    if (!track || !leadCard) return;
+    if (!leadCard) return;
 
     const sync = () => {
-      // Publish the lead card's height and let the stylesheet decide whether to
-      // use it. Branching on matchMedia here raced the resize and left a stale
-      // desktop height on narrow screens.
       const leadH = leadCard.offsetHeight;
       if (leadH > 0) wheelRef.current?.style.setProperty("--lead-h", `${leadH}px`);
-
-      // Distance from a card to its duplicate = one full roster plus the gap
-      // joining the two copies. Measured rather than a percentage, so a card
-      // expanding on hover can't change the loop distance mid-animation.
-      const first = track.children[0] as HTMLElement | undefined;
-      const dup = track.children[rest.length] as HTMLElement | undefined;
-      if (!first || !dup) return;
-      // offsetTop, not getBoundingClientRect: the reveal wrapper scales this
-      // subtree and the track itself is mid-animation, both of which distort
-      // rect readings. offsetTop ignores transforms.
-      const travel = dup.offsetTop - first.offsetTop;
-      if (travel <= 0) return;
-      track.style.setProperty("--wheel-travel", `${travel}px`);
-      track.style.setProperty("--wheel-duration", `${travel / WHEEL_SPEED_PX_PER_SEC}s`);
     };
 
     sync();
     const ro = new ResizeObserver(sync);
     ro.observe(leadCard);
-    ro.observe(track);
     window.addEventListener("resize", sync);
-    // Portraits and webfonts land after mount and nudge the card heights; a
-    // stale travel value here shows up as a jump at the loop seam.
-    window.addEventListener("load", sync);
-    if (document.fonts?.ready) document.fonts.ready.then(sync).catch(() => {});
-    const settle = setTimeout(sync, 1200);
-    return () => {
-      ro.disconnect();
-      clearTimeout(settle);
-      window.removeEventListener("resize", sync);
-      window.removeEventListener("load", sync);
-    };
-  }, [rest.length, t]);
+    return () => { ro.disconnect(); window.removeEventListener("resize", sync); };
+  }, [t]);
 
   // Parallax tilt + cursor glow, both written as CSS custom properties inside a
   // rAF so pointermove never triggers a React re-render.
@@ -285,17 +255,19 @@ export default function TeamSection() {
             <div className="team-wheel" ref={wheelRef}>
               {/* Two copies so the wheel can turn without a visible seam; the
                   second is decorative, hence aria-hidden. */}
-              <div className="team-wheel-track" ref={trackRef}>
-                {[0, 1].map(copy =>
-                  rest.map(member => (
-                    <MemberCard
-                      key={`${copy}-${member.name}`}
-                      member={member}
-                      chip={chip}
-                      ariaHidden={copy === 1}
-                    />
-                  ))
-                )}
+              <div className="team-wheel-track">
+                {[0, 1].map(copy => (
+                  <div className="team-wheel-copy" key={copy} aria-hidden={copy === 1 || undefined}>
+                    {rest.map(member => (
+                      <MemberCard
+                        key={`${copy}-${member.name}`}
+                        member={member}
+                        chip={chip}
+                        ariaHidden={copy === 1}
+                      />
+                    ))}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
