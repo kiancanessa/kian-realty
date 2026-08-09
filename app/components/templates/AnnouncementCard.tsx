@@ -50,6 +50,10 @@ export default function AnnouncementCard({
   const removeActivity = (i: number) => onActivitiesChange?.(locale, activities.filter((_, idx) => idx !== i));
   const addActivity = () => onActivitiesChange?.(locale, [...activities, locale === "es" ? "Nueva actividad" : "New activity"]);
 
+  // Optional photo strip: first image is the hero, the next few sit under it as
+  // thumbnails. Only rendered when the announcement actually carries photos.
+  const gallery = content.images ?? [];
+
   return (
     <div
       onClick={e => e.stopPropagation()}
@@ -89,7 +93,24 @@ export default function AnnouncementCard({
           </div>
         </div>
 
-        {template === "image" && (
+        {gallery.length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ height: 190, borderRadius: 18, overflow: "hidden", background: "rgba(var(--accent),0.08)" }}>
+              <img src={gallery[0]} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            </div>
+            {gallery.length > 1 && (
+              <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(gallery.length - 1, 4)}, 1fr)`, gap: 8, marginTop: 8 }}>
+                {gallery.slice(1, 5).map((src, i) => (
+                  <div key={src + i} style={{ height: 62, borderRadius: 10, overflow: "hidden", background: "rgba(var(--accent),0.08)" }}>
+                    <img src={src} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {template === "image" && gallery.length === 0 && (
           <div style={{ position: "relative", height: 180, borderRadius: 18, overflow: "hidden", marginBottom: 20, background: "rgba(var(--accent),0.08)", border: "1px dashed rgba(var(--accent),0.25)" }}>
             {imageUrl && <img src={imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
             {editable && (

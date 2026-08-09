@@ -16,6 +16,9 @@ export type AnnouncementContent = {
   en: AnnouncementLocaleContent;
   es: AnnouncementLocaleContent;
   ctaUrl: string;
+  /** Optional photo strip (first entry is the hero). Locale-independent, so it
+   *  lives alongside ctaUrl rather than inside the per-locale blocks. */
+  images?: string[];
 };
 
 export type AnnouncementTemplateKey = "classic" | "image" | "minimal";
