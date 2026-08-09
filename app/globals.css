@@ -257,6 +257,37 @@ body {
   filter: blur(0);
 }
 
+/* Circular roster wheel: the track holds two copies of the roster and slides
+   *down* by exactly one copy (plus the gap joining the copies), so the loop is
+   seamless and reads as a wheel turning backwards. --wheel-travel is measured
+   in JS from the real card positions rather than using a percentage, so a card
+   expanding on hover can't shift the loop distance under the animation. */
+@keyframes teamWheel {
+  from { transform: translate3d(0, calc(var(--wheel-travel, 0px) * -1), 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+.team-wheel {
+  overflow: hidden;
+  /* Stacked layout: a fixed window. On desktop the wheel instead ends level
+     with the lead card, whose height JS publishes as --lead-h. */
+  height: 520px;
+  /* Fade both ends so cards appear to curve away over the rim. */
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+}
+@media (min-width: 1024px) {
+  .team-wheel { height: var(--lead-h, 620px); }
+}
+.team-wheel-track {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: teamWheel var(--wheel-duration, 48s) linear infinite;
+  will-change: transform;
+}
+/* Freeze the wheel while a card is being read or hovered. */
+.team-wheel:hover .team-wheel-track { animation-play-state: paused; }
+
 .team-member-card {
   border-radius: 24px;
   overflow: hidden;
@@ -298,6 +329,9 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .team-blob, .lead-float, .lead-card::before { animation: none; }
+  /* No auto-rotation: fall back to a plain scrollable list of the roster. */
+  .team-wheel-track { animation: none; }
+  .team-wheel { overflow-y: auto; -webkit-mask-image: none; mask-image: none; }
   .lead-parallax { transform: none; }
   .team-member {
     opacity: 1;

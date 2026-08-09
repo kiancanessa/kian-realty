@@ -44,6 +44,72 @@ function Portrait({ photo, name, rounded }: { photo?: string; name: string; roun
   );
 }
 
+type TeamMember = { name: string; role: string; photo?: string; bio: string };
+
+/** One roster card. Rendered twice per roster (once per wheel copy). */
+function MemberCard({ member, chip, ariaHidden }: { member: TeamMember; chip: React.CSSProperties; ariaHidden?: boolean }) {
+  const hoverIn = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const el = e.currentTarget;
+    el.style.background = "rgb(var(--accent))";
+    el.style.color = "#FAF6EE";
+  };
+  const hoverOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const el = e.currentTarget;
+    el.style.background = "transparent";
+    el.style.color = "rgb(var(--accent))";
+  };
+
+  return (
+    <div
+      aria-hidden={ariaHidden || undefined}
+      className="team-member-card"
+      style={{ display: "flex", gap: 22, alignItems: "flex-start", padding: 22, border: "1px solid rgba(var(--accent),0.12)", background: "rgba(var(--surface),0.82)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", flexShrink: 0 }}
+    >
+      <div style={{ position: "relative", width: 104, height: 124, borderRadius: 18, overflow: "hidden", flexShrink: 0 }}>
+        <Portrait photo={member.photo} name={member.name} rounded={18} />
+      </div>
+
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <h4 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "1.5rem", color: "rgb(var(--ink))", lineHeight: 1.25, marginBottom: 6 }}>
+          {member.name}
+        </h4>
+        <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.48)", lineHeight: 1.5 }}>
+          {member.role}
+        </div>
+
+        <div className="team-reveal">
+          <div>
+            <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.92rem", lineHeight: 1.7, color: "rgba(var(--ink),0.6)", paddingTop: 14 }}>
+              {member.bio}
+            </p>
+            <div style={{ display: "flex", gap: 10, paddingTop: 16 }}>
+              <a className="team-action" style={chip} href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer"
+                aria-label={`WhatsApp — ${member.name}`} tabIndex={ariaHidden ? -1 : undefined}
+                onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+                <MessageCircle size={15} />
+              </a>
+              <a className="team-action" style={chip} href={EMAIL_HREF}
+                aria-label={`Email — ${member.name}`} tabIndex={ariaHidden ? -1 : undefined}
+                onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+                <Mail size={15} />
+              </a>
+              {SOCIAL_LINKS.map(({ name, href, Icon }) => (
+                <a key={name} className="team-action" style={chip} href={href} target="_blank" rel="noopener noreferrer"
+                  aria-label={name} tabIndex={ariaHidden ? -1 : undefined}
+                  onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+                  <Icon size={15} />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const WHEEL_SPEED_PX_PER_SEC = 30; // slow enough to read a card as it passes
+
 export default function TeamSection() {
   const { t } = useLang();
   const team = t.about.team;
@@ -51,6 +117,9 @@ export default function TeamSection() {
 
   const gridRef = useRef<HTMLDivElement>(null);
   const leadRef = useRef<HTMLDivElement>(null);
+  const leadCardRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const wheelRef = useRef<HTMLDivElement>(null);
 
   // Reveal each member card once, then leave it on screen.
   useEffect(() => {
@@ -70,6 +139,54 @@ export default function TeamSection() {
     nodes.forEach(n => observer.observe(n));
     return () => observer.disconnect();
   }, [team.length]);
+
+  // Both measurements have to be reactive, not one-shot: portraits and webfonts
+  // land after mount and change these numbers. A stale travel value is the
+  // difference between a seamless loop and a visible jump every pass.
+  useEffect(() => {
+    const track = trackRef.current;
+    const leadCard = leadCardRef.current;
+    if (!track || !leadCard) return;
+
+    const sync = () => {
+      // Publish the lead card's height and let the stylesheet decide whether to
+      // use it. Branching on matchMedia here raced the resize and left a stale
+      // desktop height on narrow screens.
+      const leadH = leadCard.offsetHeight;
+      if (leadH > 0) wheelRef.current?.style.setProperty("--lead-h", `${leadH}px`);
+
+      // Distance from a card to its duplicate = one full roster plus the gap
+      // joining the two copies. Measured rather than a percentage, so a card
+      // expanding on hover can't change the loop distance mid-animation.
+      const first = track.children[0] as HTMLElement | undefined;
+      const dup = track.children[rest.length] as HTMLElement | undefined;
+      if (!first || !dup) return;
+      // offsetTop, not getBoundingClientRect: the reveal wrapper scales this
+      // subtree and the track itself is mid-animation, both of which distort
+      // rect readings. offsetTop ignores transforms.
+      const travel = dup.offsetTop - first.offsetTop;
+      if (travel <= 0) return;
+      track.style.setProperty("--wheel-travel", `${travel}px`);
+      track.style.setProperty("--wheel-duration", `${travel / WHEEL_SPEED_PX_PER_SEC}s`);
+    };
+
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(leadCard);
+    ro.observe(track);
+    window.addEventListener("resize", sync);
+    // Portraits and webfonts land after mount and nudge the card heights; a
+    // stale travel value here shows up as a jump at the loop seam.
+    window.addEventListener("load", sync);
+    if (document.fonts?.ready) document.fonts.ready.then(sync).catch(() => {});
+    const settle = setTimeout(sync, 1200);
+    return () => {
+      ro.disconnect();
+      clearTimeout(settle);
+      window.removeEventListener("resize", sync);
+      window.removeEventListener("load", sync);
+    };
+  }, [rest.length, t]);
 
   // Parallax tilt + cursor glow, both written as CSS custom properties inside a
   // rAF so pointermove never triggers a React re-render.
@@ -134,7 +251,7 @@ export default function TeamSection() {
                 onPointerMove={onPointerMove}
                 onPointerLeave={onPointerLeave}
               >
-                <div className="lead-card" style={{ padding: 2 }}>
+                <div className="lead-card" ref={leadCardRef} style={{ padding: 2 }}>
                   <div className="lead-glow" aria-hidden />
                   <div style={{ padding: "36px 34px 34px" }}>
                     <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 5", borderRadius: 24, overflow: "hidden", marginBottom: 28 }}>
@@ -163,56 +280,24 @@ export default function TeamSection() {
             </div>
           </div>
 
-          {/* ---- Cascading stack ---- */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            {rest.map((member, i) => (
-              <div key={member.name} className="team-member" style={{ ["--i" as string]: i }}>
-                <div
-                  className="team-member-card"
-                  style={{ display: "flex", gap: 22, alignItems: "flex-start", padding: 22, border: "1px solid rgba(var(--accent),0.12)", background: "rgba(var(--surface),0.82)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
-                >
-                  <div style={{ position: "relative", width: 104, height: 124, borderRadius: 18, overflow: "hidden", flexShrink: 0 }}>
-                    <Portrait photo={member.photo} name={member.name} rounded={18} />
-                  </div>
-
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <h4 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "1.5rem", color: "rgb(var(--ink))", lineHeight: 1.25, marginBottom: 6 }}>
-                      {member.name}
-                    </h4>
-                    <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.48)", lineHeight: 1.5 }}>
-                      {member.role}
-                    </div>
-
-                    <div className="team-reveal">
-                      <div>
-                        <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.92rem", lineHeight: 1.7, color: "rgba(var(--ink),0.6)", paddingTop: 14 }}>
-                          {member.bio}
-                        </p>
-                        <div style={{ display: "flex", gap: 10, paddingTop: 16 }}>
-                          <a className="team-action" style={chip} href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp — ${member.name}`}
-                            onMouseEnter={e => { const el = e.currentTarget; el.style.background = "rgb(var(--accent))"; el.style.color = "#FAF6EE"; }}
-                            onMouseLeave={e => { const el = e.currentTarget; el.style.background = "transparent"; el.style.color = "rgb(var(--accent))"; }}>
-                            <MessageCircle size={15} />
-                          </a>
-                          <a className="team-action" style={chip} href={EMAIL_HREF} aria-label={`Email — ${member.name}`}
-                            onMouseEnter={e => { const el = e.currentTarget; el.style.background = "rgb(var(--accent))"; el.style.color = "#FAF6EE"; }}
-                            onMouseLeave={e => { const el = e.currentTarget; el.style.background = "transparent"; el.style.color = "rgb(var(--accent))"; }}>
-                            <Mail size={15} />
-                          </a>
-                          {SOCIAL_LINKS.map(({ name, href, Icon }) => (
-                            <a key={name} className="team-action" style={chip} href={href} target="_blank" rel="noopener noreferrer" aria-label={name}
-                              onMouseEnter={e => { const el = e.currentTarget; el.style.background = "rgb(var(--accent))"; el.style.color = "#FAF6EE"; }}
-                              onMouseLeave={e => { const el = e.currentTarget; el.style.background = "transparent"; el.style.color = "rgb(var(--accent))"; }}>
-                              <Icon size={15} />
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          {/* ---- Circular roster wheel ---- */}
+          <div className="team-member">
+            <div className="team-wheel" ref={wheelRef}>
+              {/* Two copies so the wheel can turn without a visible seam; the
+                  second is decorative, hence aria-hidden. */}
+              <div className="team-wheel-track" ref={trackRef}>
+                {[0, 1].map(copy =>
+                  rest.map(member => (
+                    <MemberCard
+                      key={`${copy}-${member.name}`}
+                      member={member}
+                      chip={chip}
+                      ariaHidden={copy === 1}
+                    />
+                  ))
+                )}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
