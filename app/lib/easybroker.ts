@@ -144,17 +144,59 @@ export function toCard(item: EBPropertyListItem): PropertyCard {
   };
 }
 
-// Hand-picked listings to always surface first in "Featured Properties".
-// Order below is the priority order within each category.
-const FEATURED_PROPERTY_IDS = [
-  // Houses / condos
-  "EB-VV4976", "EB-QT1711", "EB-UC4180", "EB-WI0472", "EB-RX5660",
-  "EB-UT8365", "EB-PG6498", "EB-WE0804", "EB-UT3992", "EB-UY1695",
-  // Land
-  "EB-VX6734", "EB-UU7947", "EB-SC4594",
+// Hand-picked listings to always surface first. A single flat list works for
+// both the unfiltered view and the per-category filters: within any category
+// the pinned ids still rank ahead of every un-pinned one.
+const FEATURED_HOUSE_IDS = [
+  "EB-WP7422", "EB-VV4976", "EB-QT1711", "EB-UC4180", "EB-VY6690",
 ];
+const FEATURED_LAND_IDS = [
+  "EB-WR3158", "EB-WR3138", "EB-WR3121", "EB-UM2192", "EB-VX6734", "EB-WN5050",
+];
+const FEATURED_PROPERTY_IDS = [...FEATURED_HOUSE_IDS, ...FEATURED_LAND_IDS];
 
-export function sortFeatured(cards: PropertyCard[]): PropertyCard[] {
+// Rentals rotate so the same few don't always sit at the top. The order is
+// seeded by a time bucket rather than Math.random() so server and client agree
+// (no hydration mismatch) while still changing on its own.
+const RENTAL_ROTATION_MS = 30 * 60 * 1000;
+
+/** Small deterministic PRNG — same seed always yields the same sequence. */
+function seededRandom(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Pinned listings first, then everything else. Rentals that aren't pinned keep
+ * their slots but rotate among themselves each `RENTAL_ROTATION_MS` window.
+ */
+export function orderProperties(cards: PropertyCard[], now: number = Date.now()): PropertyCard[] {
   const rank = new Map(FEATURED_PROPERTY_IDS.map((id, i) => [id, i]));
-  return [...cards].sort((a, b) => (rank.get(a.id) ?? Infinity) - (rank.get(b.id) ?? Infinity));
+  const ordered = [...cards].sort(
+    (a, b) => (rank.get(a.id) ?? Infinity) - (rank.get(b.id) ?? Infinity)
+  );
+
+  // Pinned entries keep their exact position, so only un-pinned rentals rotate.
+  const slots: number[] = [];
+  const rentals: PropertyCard[] = [];
+  ordered.forEach((card, i) => {
+    if (card.operation === "rental" && !rank.has(card.id)) {
+      slots.push(i);
+      rentals.push(card);
+    }
+  });
+  if (rentals.length < 2) return ordered;
+
+  const rnd = seededRandom(Math.floor(now / RENTAL_ROTATION_MS));
+  for (let i = rentals.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [rentals[i], rentals[j]] = [rentals[j], rentals[i]];
+  }
+  slots.forEach((slot, k) => { ordered[slot] = rentals[k]; });
+  return ordered;
 }

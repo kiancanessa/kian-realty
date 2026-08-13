@@ -257,19 +257,13 @@ body {
   filter: blur(0);
 }
 
-/* Circular roster wheel: the track holds two copies and slides *down* by
-   exactly one copy, so the loop is seamless and reads as a wheel turning
-   backwards.
+/* Circular roster wheel. It does not turn on its own — scrolling the page
+   drives it, and it holds still otherwise (see TeamSection).
 
    The gap lives inside each copy (as a trailing padding) instead of between
-   the two copies, which makes the track exactly 2x one copy — so -50% lands
-   precisely on the duplicate's first card. Measuring that distance in JS
-   instead was fragile: portraits and fonts land after mount and left a stale
-   number, which showed up as a jump every pass. */
-@keyframes teamWheel {
-  from { transform: translate3d(0, -50%, 0); }
-  to   { transform: translate3d(0, 0, 0); }
-}
+   the two copies, which makes the track exactly 2x one copy. That means the
+   wheel wraps at exactly -50% with no measurement: JS only has to emit a
+   percentage in [0, 50). */
 .team-wheel {
   overflow: hidden;
   /* Stacked layout: a fixed window. On desktop the wheel instead ends level
@@ -285,9 +279,8 @@ body {
 .team-wheel-track {
   display: flex;
   flex-direction: column;
-  /* No gap here — see the keyframe note; each copy carries its own trailing gap. */
+  /* No gap here — see the note above; each copy carries its own trailing gap. */
   gap: 0;
-  animation: teamWheel 52s linear infinite;
   will-change: transform;
 }
 .team-wheel-copy {
@@ -296,8 +289,6 @@ body {
   gap: 20px;
   padding-bottom: 20px;
 }
-/* Freeze the wheel while a card is being read or hovered. */
-.team-wheel:hover .team-wheel-track { animation-play-state: paused; }
 
 .team-member-card {
   border-radius: 24px;
@@ -340,8 +331,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .team-blob, .lead-float, .lead-card::before { animation: none; }
-  /* No auto-rotation: fall back to a plain scrollable list of the roster. */
-  .team-wheel-track { animation: none; }
+  /* No scroll-linked motion: fall back to a plain scrollable list. */
   .team-wheel { overflow-y: auto; -webkit-mask-image: none; mask-image: none; }
   .lead-parallax { transform: none; }
   .team-member {

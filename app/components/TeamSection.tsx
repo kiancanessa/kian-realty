@@ -109,6 +109,10 @@ function MemberCard({ member, chip, ariaHidden }: { member: TeamMember; chip: Re
 }
 
 
+// Percent of the track travelled per pixel of page scroll. 50% is one full
+// roster, so this turns the wheel once per ~1400px scrolled.
+const WHEEL_PERCENT_PER_PX = 50 / 1400;
+
 export default function TeamSection() {
   const { t } = useLang();
   const team = t.about.team;
@@ -118,6 +122,7 @@ export default function TeamSection() {
   const leadRef = useRef<HTMLDivElement>(null);
   const leadCardRef = useRef<HTMLDivElement>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   // Reveal each member card once, then leave it on screen.
   useEffect(() => {
@@ -157,6 +162,30 @@ export default function TeamSection() {
     window.addEventListener("resize", sync);
     return () => { ro.disconnect(); window.removeEventListener("resize", sync); };
   }, [t]);
+
+  // The wheel turns only while the page scrolls, and holds still otherwise.
+  // Expressed as a percentage: the track is exactly two copies of the roster,
+  // so wrapping at 50% lands on the duplicate and needs no measurement.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let raf: number | null = null;
+    const apply = () => {
+      raf = null;
+      const pct = (((window.scrollY * WHEEL_PERCENT_PER_PX) % 50) + 50) % 50;
+      track.style.transform = `translate3d(0, -${pct}%, 0)`;
+    };
+    const onScroll = () => { if (raf === null) raf = requestAnimationFrame(apply); };
+
+    apply(); // honour the scroll position on load (refresh, deep link, back nav)
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf !== null) cancelAnimationFrame(raf);
+    };
+  }, []);
 
   // Parallax tilt + cursor glow, both written as CSS custom properties inside a
   // rAF so pointermove never triggers a React re-render.
@@ -255,7 +284,7 @@ export default function TeamSection() {
             <div className="team-wheel" ref={wheelRef}>
               {/* Two copies so the wheel can turn without a visible seam; the
                   second is decorative, hence aria-hidden. */}
-              <div className="team-wheel-track">
+              <div className="team-wheel-track" ref={trackRef}>
                 {[0, 1].map(copy => (
                   <div className="team-wheel-copy" key={copy} aria-hidden={copy === 1 || undefined}>
                     {rest.map(member => (

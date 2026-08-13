@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PropertyGrid from "../components/PropertyGrid";
 import PropiedadesHeader from "../components/PropiedadesHeader";
-import { getAllProperties, toCard } from "../lib/easybroker";
+import { getAllProperties, toCard, orderProperties } from "../lib/easybroker";
 
 export const metadata: Metadata = {
   title: "Casas, Departamentos y Terrenos en Rosarito",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PropiedadesPage() {
-  const properties = (await getAllProperties()).map(toCard);
+  const properties = orderProperties((await getAllProperties()).map(toCard));
 
   return (
     <main>
