@@ -109,9 +109,11 @@ function MemberCard({ member, chip, ariaHidden }: { member: TeamMember; chip: Re
 }
 
 
-// Percent of the track travelled per pixel of page scroll. 50% is one full
-// roster, so this turns the wheel once per ~1400px scrolled.
+// Percent of the track travelled per pixel of wheel/drag movement. 50% is one
+// full roster, so a ~1400px gesture turns the wheel exactly once.
 const WHEEL_PERCENT_PER_PX = 50 / 1400;
+// Movement below this is treated as a tap, so cards stay clickable.
+const DRAG_THRESHOLD_PX = 6;
 
 export default function TeamSection() {
   const { t } = useLang();
@@ -163,27 +165,69 @@ export default function TeamSection() {
     return () => { ro.disconnect(); window.removeEventListener("resize", sync); };
   }, [t]);
 
-  // The wheel turns only while the page scrolls, and holds still otherwise.
-  // Expressed as a percentage: the track is exactly two copies of the roster,
-  // so wrapping at 50% lands on the duplicate and needs no measurement.
+  // The wheel is driven only by the pointer that is actually over it, never by
+  // page scroll — otherwise the cards slide past while you are just navigating
+  // down the page and never settle long enough to read.
+  //
+  // Position is a percentage of the track. The track is exactly two copies of
+  // the roster, so wrapping at 50% lands on the duplicate with no measurement.
   useEffect(() => {
+    const wheelEl = wheelRef.current;
     const track = trackRef.current;
-    if (!track) return;
+    if (!wheelEl || !track) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let raf: number | null = null;
-    const apply = () => {
-      raf = null;
-      const pct = (((window.scrollY * WHEEL_PERCENT_PER_PX) % 50) + 50) % 50;
-      track.style.transform = `translate3d(0, -${pct}%, 0)`;
-    };
-    const onScroll = () => { if (raf === null) raf = requestAnimationFrame(apply); };
+    let offset = 0;
+    const wrap = (v: number) => ((v % 50) + 50) % 50;
+    const apply = () => { track.style.transform = `translate3d(0, -${offset}%, 0)`; };
+    apply();
 
-    apply(); // honour the scroll position on load (refresh, deep link, back nav)
-    window.addEventListener("scroll", onScroll, { passive: true });
+    // Wheel/trackpad: turn the roster and hold the page still, but only while
+    // the cursor is over this section. Anywhere else the page scrolls normally.
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      offset = wrap(offset + e.deltaY * WHEEL_PERCENT_PER_PX);
+      apply();
+    };
+
+    // Phones have no hover, so there the roster is browsed by dragging it.
+    let startY = 0, lastY = 0, tracking = false, dragging = false;
+    const onPointerDown = (e: PointerEvent) => {
+      tracking = true; dragging = false; startY = lastY = e.clientY;
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      if (!tracking) return;
+      // Stay out of the way until it is clearly a drag, so taps still open cards.
+      if (!dragging && Math.abs(e.clientY - startY) < DRAG_THRESHOLD_PX) return;
+      // Capture keeps the drag alive if the finger leaves the card, but throws
+      // for a pointer the element never owned — losing capture is survivable.
+      if (!dragging) {
+        dragging = true;
+        try { wheelEl.setPointerCapture(e.pointerId); } catch { /* drag still works */ }
+      }
+      offset = wrap(offset + (lastY - e.clientY) * WHEEL_PERCENT_PER_PX);
+      lastY = e.clientY;
+      apply();
+    };
+    const endDrag = (e: PointerEvent) => {
+      tracking = false;
+      if (dragging && wheelEl.hasPointerCapture(e.pointerId)) {
+        try { wheelEl.releasePointerCapture(e.pointerId); } catch { /* already released */ }
+      }
+      dragging = false;
+    };
+
+    wheelEl.addEventListener("wheel", onWheel, { passive: false });
+    wheelEl.addEventListener("pointerdown", onPointerDown);
+    wheelEl.addEventListener("pointermove", onPointerMove);
+    wheelEl.addEventListener("pointerup", endDrag);
+    wheelEl.addEventListener("pointercancel", endDrag);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (raf !== null) cancelAnimationFrame(raf);
+      wheelEl.removeEventListener("wheel", onWheel);
+      wheelEl.removeEventListener("pointerdown", onPointerDown);
+      wheelEl.removeEventListener("pointermove", onPointerMove);
+      wheelEl.removeEventListener("pointerup", endDrag);
+      wheelEl.removeEventListener("pointercancel", endDrag);
     };
   }, []);
 

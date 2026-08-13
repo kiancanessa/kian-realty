@@ -266,6 +266,10 @@ body {
    percentage in [0, 50). */
 .team-wheel {
   overflow: hidden;
+  /* Vertical gestures belong to the wheel, not the page — that is what lets it
+     be dragged on phones, where there is no hover to scope it. */
+  touch-action: pan-x;
+  cursor: grab;
   /* Stacked layout: a fixed window. On desktop the wheel instead ends level
      with the lead card, whose height JS publishes as --lead-h. */
   height: 520px;
@@ -332,7 +336,13 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .team-blob, .lead-float, .lead-card::before { animation: none; }
   /* No scroll-linked motion: fall back to a plain scrollable list. */
-  .team-wheel { overflow-y: auto; -webkit-mask-image: none; mask-image: none; }
+  .team-wheel {
+    overflow-y: auto;
+    touch-action: auto;
+    cursor: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
   .lead-parallax { transform: none; }
   .team-member {
     opacity: 1;
