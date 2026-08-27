@@ -1,5 +1,6 @@
 import { sql } from "../../lib/db";
 import { getSessionUser } from "../../lib/auth";
+import { sendLeadAlert } from "../../lib/whatsapp";
 
 export async function POST(request: Request) {
   const sessionUser = await getSessionUser();
@@ -18,6 +19,14 @@ export async function POST(request: Request) {
     INSERT INTO inquiries (source, user_id, name, email, phone, interest, property_id, property_title, message)
     VALUES (${source}, ${sessionUser?.id ?? null}, ${name.trim()}, ${email.trim()}, ${phone || null}, ${interest || null}, ${propertyId || null}, ${propertyTitle || null}, ${message || null})
   `;
+
+  // Best-effort: a WhatsApp outage should never block the inquiry from saving.
+  sendLeadAlert({
+    name: name.trim(),
+    contact: [email.trim(), phone].filter(Boolean).join(" / "),
+    interest: propertyTitle || interest || "Contacto general",
+    message: message || "",
+  }).catch(() => {});
 
   return Response.json({ ok: true });
 }
