@@ -2,10 +2,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { ArrowRight, Mail, MessageCircle } from "lucide-react";
 import { useLang } from "../lib/LangContext";
-import { SOCIAL_LINKS } from "../lib/social";
-
-const WHATSAPP_HREF = "https://wa.me/526611256107";
-const EMAIL_HREF = "mailto:jorgeelcasarosarito@gmail.com";
 
 function initials(name: string) {
   return name
@@ -44,10 +40,17 @@ function Portrait({ photo, name, rounded }: { photo?: string; name: string; roun
   );
 }
 
-type TeamMember = { name: string; role: string; photo?: string; bio: string };
+type TeamMember = { name: string; role: string; photo?: string; bio: string; whatsapp?: string; email?: string };
 
 /** One roster card. Rendered twice per roster (once per wheel copy). */
-function MemberCard({ member, chip, ariaHidden }: { member: TeamMember; chip: React.CSSProperties; ariaHidden?: boolean }) {
+function MemberCard({ member, ariaHidden }: { member: TeamMember; ariaHidden?: boolean }) {
+  const button: React.CSSProperties = {
+    display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+    flex: 1, minWidth: 0, height: 46, borderRadius: 999,
+    border: "1px solid rgba(var(--accent),0.28)", color: "rgb(var(--accent))",
+    textDecoration: "none", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem",
+    fontWeight: 500, letterSpacing: "0.04em", whiteSpace: "nowrap",
+  };
   const hoverIn = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const el = e.currentTarget;
     el.style.background = "rgb(var(--accent))";
@@ -58,6 +61,10 @@ function MemberCard({ member, chip, ariaHidden }: { member: TeamMember; chip: Re
     el.style.background = "transparent";
     el.style.color = "rgb(var(--accent))";
   };
+
+  // Peter and Eduardo have no personal contact channel yet, so no action row
+  // for them at all — a lone empty panel would read as broken, not minimal.
+  const hasContact = !!(member.whatsapp || member.email);
 
   return (
     <div
@@ -82,25 +89,24 @@ function MemberCard({ member, chip, ariaHidden }: { member: TeamMember; chip: Re
             <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.92rem", lineHeight: 1.7, color: "rgba(var(--ink),0.6)", paddingTop: 14 }}>
               {member.bio}
             </p>
-            <div style={{ display: "flex", gap: 10, paddingTop: 16 }}>
-              <a className="team-action" style={chip} href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer"
-                aria-label={`WhatsApp — ${member.name}`} tabIndex={ariaHidden ? -1 : undefined}
-                onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
-                <MessageCircle size={15} />
-              </a>
-              <a className="team-action" style={chip} href={EMAIL_HREF}
-                aria-label={`Email — ${member.name}`} tabIndex={ariaHidden ? -1 : undefined}
-                onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
-                <Mail size={15} />
-              </a>
-              {SOCIAL_LINKS.map(({ name, href, Icon }) => (
-                <a key={name} className="team-action" style={chip} href={href} target="_blank" rel="noopener noreferrer"
-                  aria-label={name} tabIndex={ariaHidden ? -1 : undefined}
-                  onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
-                  <Icon size={15} />
-                </a>
-              ))}
-            </div>
+            {hasContact && (
+              <div style={{ display: "flex", gap: 10, paddingTop: 16 }}>
+                {member.whatsapp && (
+                  <a className="team-action" style={button} href={`https://wa.me/${member.whatsapp}`} target="_blank" rel="noopener noreferrer"
+                    aria-label={`WhatsApp — ${member.name}`} tabIndex={ariaHidden ? -1 : undefined}
+                    onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+                    <MessageCircle size={17} /> WhatsApp
+                  </a>
+                )}
+                {member.email && (
+                  <a className="team-action" style={button} href={`mailto:${member.email}`}
+                    aria-label={`Email — ${member.name}`} tabIndex={ariaHidden ? -1 : undefined}
+                    onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+                    <Mail size={17} /> Email
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -263,13 +269,6 @@ export default function TeamSection() {
     if (frame.current !== null) cancelAnimationFrame(frame.current);
   }, []);
 
-  const chip: React.CSSProperties = {
-    display: "flex", alignItems: "center", justifyContent: "center",
-    width: 34, height: 34, borderRadius: "50%",
-    border: "1px solid rgba(var(--accent),0.28)", color: "rgb(var(--accent))",
-    textDecoration: "none", flexShrink: 0,
-  };
-
   return (
     <div style={{ position: "relative", maxWidth: 1280, margin: "96px auto 0", paddingTop: 72, borderTop: "1px solid rgba(var(--accent),0.1)", overflow: "hidden" }}>
       {/* Ambient background depth */}
@@ -335,7 +334,6 @@ export default function TeamSection() {
                       <MemberCard
                         key={`${copy}-${member.name}`}
                         member={member}
-                        chip={chip}
                         ariaHidden={copy === 1}
                       />
                     ))}

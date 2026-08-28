@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { sql } from "../../lib/db";
 import { getSessionUser } from "../../lib/auth";
-import { translateText } from "../../lib/translateText";
+import { translateText, detectLanguage } from "../../lib/translateText";
 
 const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
 
@@ -51,14 +51,19 @@ export async function POST(request: NextRequest) {
   }
 
   const trimmedComment = comment.trim();
-  const otherLanguage = reviewLanguage === "es" ? "en" : "es";
-  const translated = await translateText(trimmedComment, reviewLanguage, otherLanguage);
-  const commentEn = reviewLanguage === "en" ? trimmedComment : translated;
-  const commentEs = reviewLanguage === "es" ? trimmedComment : translated;
+  // The site's EN/ES toggle at submission time isn't the reviewer's actual
+  // language — someone can leave it on English and still write in Spanish.
+  // Detect from the text itself, falling back to the toggle only when the
+  // text gives no real signal either way.
+  const detectedLanguage = detectLanguage(trimmedComment, reviewLanguage);
+  const otherLanguage = detectedLanguage === "es" ? "en" : "es";
+  const translated = await translateText(trimmedComment, detectedLanguage, otherLanguage);
+  const commentEn = detectedLanguage === "en" ? trimmedComment : translated;
+  const commentEs = detectedLanguage === "es" ? trimmedComment : translated;
 
   await sql`
     INSERT INTO reviews (type, property_id, property_title, name, email, rating, comment, comment_en, comment_es, language, status, user_id)
-    VALUES (${type}, ${type === "property" ? propertyId : null}, ${type === "property" ? propertyTitle : null}, ${name.trim()}, ${email.trim()}, ${rating}, ${trimmedComment}, ${commentEn}, ${commentEs}, ${reviewLanguage}, 'pending', ${sessionUser?.id ?? null})
+    VALUES (${type}, ${type === "property" ? propertyId : null}, ${type === "property" ? propertyTitle : null}, ${name.trim()}, ${email.trim()}, ${rating}, ${trimmedComment}, ${commentEn}, ${commentEs}, ${detectedLanguage}, 'pending', ${sessionUser?.id ?? null})
   `;
 
   if (WEB3FORMS_ACCESS_KEY) {
