@@ -1,8 +1,50 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLang } from "../lib/LangContext";
 import { Home, TrendingUp, Key, BarChart2, Scale, Hammer, ArrowRight } from "lucide-react";
+
+type ServiceKey = "buy" | "sell" | "rent" | "invest" | "legal" | "development";
+
+// Drop a photo at these paths to replace the icon placeholder — the card picks
+// it up automatically, no code change needed.
+const ITEMS: { icon: typeof Home; key: ServiceKey; photo: string }[] = [
+  { icon: Home, key: "buy", photo: "/images/services/buy.jpg" },
+  { icon: TrendingUp, key: "sell", photo: "/images/services/sell.jpg" },
+  { icon: Key, key: "rent", photo: "/images/services/rent.jpg" },
+  { icon: BarChart2, key: "invest", photo: "/images/services/invest.jpg" },
+  { icon: Scale, key: "legal", photo: "/images/services/legal.jpg" },
+  { icon: Hammer, key: "development", photo: "/images/services/development.jpg" },
+];
+
+/** Photo when one exists, otherwise a large icon on the brand gradient, so the
+ *  section looks finished before any photography has been supplied. */
+function ServiceVisual({ photo, icon: Icon, alt }: { photo: string; icon: typeof Home; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    const img = new window.Image();
+    img.onload = () => { if (alive) setLoaded(true); };
+    img.src = photo;
+    return () => { alive = false; };
+  }, [photo]);
+
+  return (
+    <>
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(150deg, rgba(var(--accent),0.30), rgba(var(--accent-dark),0.55))" }} />
+      {!loaded && (
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Icon size={54} color="rgba(250,246,238,0.5)" strokeWidth={1} />
+        </div>
+      )}
+      {loaded && (
+        <img className="svc-photo" src={photo} alt={alt}
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+      )}
+    </>
+  );
+}
 
 export default function Services() {
   const { t } = useLang();
@@ -22,16 +64,7 @@ export default function Services() {
     return () => observer.disconnect();
   }, []);
 
-  const items = [
-    { icon: Home, key: "buy" as const },
-    { icon: TrendingUp, key: "sell" as const },
-    { icon: Key, key: "rent" as const },
-    { icon: BarChart2, key: "invest" as const },
-    { icon: Scale, key: "legal" as const },
-    { icon: Hammer, key: "development" as const },
-  ];
-
-  const LINKS: Partial<Record<typeof items[number]["key"], { href: string; label: string }>> = {
+  const LINKS: Partial<Record<ServiceKey, { href: string; label: string }>> = {
     sell: { href: "/ventas", label: t.services.viewSales },
     development: { href: "/desarrollo", label: t.services.viewProjects },
   };
@@ -40,7 +73,7 @@ export default function Services() {
     <section id="services" ref={sectionRef} style={{ padding: "112px 24px", background: "rgb(var(--bg))" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         {/* Header */}
-        <div className="reveal" style={{ textAlign: "center", marginBottom: 80 }}>
+        <div className="reveal" style={{ textAlign: "center", marginBottom: 72 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 24 }}>
             <div className="sage-line" />
             <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgb(var(--accent))" }}>{t.labels.services}</span>
@@ -56,35 +89,52 @@ export default function Services() {
 
         {/* Grid */}
         <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20 }}>
-          {items.map(({ icon: Icon, key }, i) => {
+          {ITEMS.map(({ icon: Icon, key, photo }, i) => {
             const link = LINKS[key];
-            const linked = !!link;
-            const CardTag = linked ? Link : "div";
-            const cardProps = linked ? { href: link.href } : {};
-            return (
-              <CardTag key={i} {...(cardProps as any)} className="reveal" style={{ position: "relative", padding: 32, border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))", overflow: "hidden", cursor: linked ? "pointer" : "default", textDecoration: "none", display: "block", transition: "border-color 0.4s, background 0.4s" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(var(--accent),0.4)"; (e.currentTarget as HTMLElement).style.background = "rgba(var(--accent),0.05)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(var(--accent),0.1)"; (e.currentTarget as HTMLElement).style.background = "rgb(var(--surface))"; }}>
-                {/* Number */}
-                <div style={{ position: "absolute", top: 16, right: 20, fontFamily: "'Cormorant Garamond', serif", fontSize: "4rem", fontWeight: 300, color: "rgba(var(--accent),0.06)", userSelect: "none" }}>
+            const cardStyle: React.CSSProperties = {
+              position: "relative", aspectRatio: "4 / 5", textDecoration: "none",
+              display: "block", cursor: link ? "pointer" : "default",
+            };
+
+            const inner = (
+              <>
+                <ServiceVisual photo={photo} icon={Icon} alt={t.services[key].title} />
+
+                {/* Scrim keeps the copy legible over any photograph. */}
+                <div className="svc-scrim" style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,8,0.92) 12%, rgba(10,10,8,0.45) 48%, rgba(10,10,8,0.12) 100%)" }} />
+
+                <div style={{ position: "absolute", top: 18, right: 22, fontFamily: "'Cormorant Garamond', serif", fontSize: "3.4rem", fontWeight: 300, color: "rgba(250,246,238,0.13)", userSelect: "none", lineHeight: 1 }}>
                   {String(i + 1).padStart(2, "0")}
                 </div>
-                <div style={{ width: 40, height: 40, border: "1px solid rgba(var(--accent),0.2)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
-                  <Icon size={17} color="rgba(var(--accent),0.7)" />
-                </div>
-                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", color: "rgb(var(--ink))", fontSize: "1.5rem", fontWeight: 400, marginBottom: 12 }}>
-                  {t.services[key].title}
-                </h3>
-                <p style={{ fontFamily: "'Jost', sans-serif", color: "rgba(var(--ink),0.38)", fontSize: "0.83rem", lineHeight: 1.7 }}>
-                  {t.services[key].desc}
-                </p>
-                {link && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 18, color: "rgb(var(--accent))", fontFamily: "'Jost', sans-serif", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase" }}>
-                    {link.label} <ArrowRight size={13} />
+
+                <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "26px 24px 24px" }}>
+                  <div style={{ width: 38, height: 38, border: "1px solid rgba(250,246,238,0.35)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
+                    <Icon size={16} color="#FAF6EE" />
                   </div>
-                )}
-              </CardTag>
+
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", color: "#FAF6EE", fontSize: "1.6rem", fontWeight: 400, lineHeight: 1.2 }}>
+                    {t.services[key].title}
+                  </h3>
+
+                  <div className="svc-reveal">
+                    <div>
+                      <p style={{ fontFamily: "'Jost', sans-serif", color: "rgba(250,246,238,0.72)", fontSize: "0.82rem", lineHeight: 1.65, paddingTop: 10 }}>
+                        {t.services[key].desc}
+                      </p>
+                      {link && (
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14, color: "#FAF6EE", fontFamily: "'Jost', sans-serif", fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                          {link.label} <ArrowRight size={13} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </>
             );
+
+            return link
+              ? <Link key={key} href={link.href} className="reveal svc-card" style={cardStyle}>{inner}</Link>
+              : <div key={key} className="reveal svc-card" style={cardStyle}>{inner}</div>;
           })}
         </div>
       </div>

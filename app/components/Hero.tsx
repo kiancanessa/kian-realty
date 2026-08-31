@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useLang } from "../lib/LangContext";
-import { ChevronDown } from "lucide-react";
+import { useQuiz } from "../lib/QuizContext";
+import { ChevronDown, Sparkles } from "lucide-react";
 
 export default function Hero() {
   const { t } = useLang();
+  const { openQuiz } = useQuiz();
   const headlineRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -79,6 +81,17 @@ export default function Hero() {
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(var(--ink),0.2)"; (e.currentTarget as HTMLElement).style.color = "rgba(var(--ink),0.65)"; }}>
             {t.hero.cta2}
           </a>
+        </div>
+
+        {/* Quiz CTA. Repeated here because on phones — most of the traffic —
+            the navbar version is hidden behind the burger menu. */}
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 22 }}>
+          <button onClick={openQuiz} className="quiz-cta"
+            style={{ display: "flex", alignItems: "center", gap: 10, padding: "15px 32px", border: "none", borderRadius: 999, background: "rgb(var(--accent))", cursor: "pointer", color: "#FAF6EE", fontFamily: "'Jost', sans-serif", fontWeight: 600, fontSize: "0.78rem", letterSpacing: "0.18em", textTransform: "uppercase" }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent-light))"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent))"; }}>
+            <Sparkles size={15} /> {t.nav.cta}
+          </button>
         </div>
       </div>
 

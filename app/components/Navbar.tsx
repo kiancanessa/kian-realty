@@ -7,7 +7,7 @@ import { useSession } from "../lib/useSession";
 import { Menu, X, Sun, Moon, User, LogOut, ShieldCheck, Heart, Sparkles } from "lucide-react";
 import Logo from "./Logo";
 import Avatar from "./Avatar";
-import PropertyQuiz from "./PropertyQuiz";
+import { useQuiz } from "../lib/QuizContext";
 
 export default function Navbar() {
   const { locale, setLocale, t } = useLang();
@@ -17,7 +17,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
-  const [quizOpen, setQuizOpen] = useState(false);
+  const { openQuiz } = useQuiz();
   const accountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function Navbar() {
             </a>
           )}
 
-          <button onClick={() => setQuizOpen(true)} className="quiz-cta"
+          <button onClick={openQuiz} className="quiz-cta"
             style={{ display: "flex", alignItems: "center", gap: 9, padding: "12px 26px", border: "none", borderRadius: 999, background: "rgb(var(--accent))", cursor: "pointer", color: "#FAF6EE", fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", whiteSpace: "nowrap" }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent-light))"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent))"; }}>
@@ -168,7 +168,7 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
-          <button onClick={() => { setOpen(false); setQuizOpen(true); }} className="quiz-cta"
+          <button onClick={() => { setOpen(false); openQuiz(); }} className="quiz-cta"
             style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 9, padding: "14px 0", border: "none", borderRadius: 999, background: "rgb(var(--accent))", cursor: "pointer", color: "#FAF6EE", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase" }}>
             <Sparkles size={15} /> {t.nav.cta}
           </button>
@@ -216,7 +216,6 @@ export default function Navbar() {
         </div>
       )}
     </nav>
-    <PropertyQuiz open={quizOpen} onClose={() => setQuizOpen(false)} />
     </>
   );
 }

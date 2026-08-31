@@ -3,6 +3,7 @@ import "./globals.css";
 import { LangProvider } from "./lib/LangContext";
 import { ThemeProvider } from "./lib/ThemeContext";
 import { FavoritesProvider } from "./lib/FavoritesContext";
+import { QuizProvider } from "./lib/QuizContext";
 import PublicWidgets from "./components/PublicWidgets";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -82,8 +83,10 @@ export default function RootLayout({
         <ThemeProvider>
           <LangProvider>
             <FavoritesProvider>
-              {children}
-              <PublicWidgets />
+              <QuizProvider>
+                {children}
+                <PublicWidgets />
+              </QuizProvider>
             </FavoritesProvider>
           </LangProvider>
         </ThemeProvider>
