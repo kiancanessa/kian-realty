@@ -1,8 +1,7 @@
 "use client";
 import { SOCIAL_LINKS, WhatsAppIcon } from "../lib/social";
-
 // Jorge's personal WhatsApp — the site's main point of contact.
-const JORGE_WHATSAPP = "18186175047";
+import { JORGE_WHATSAPP } from "../lib/contact";
 
 export default function SocialFloat() {
   return (

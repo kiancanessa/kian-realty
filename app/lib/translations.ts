@@ -1,3 +1,5 @@
+import { JORGE_WHATSAPP } from "./contact";
+
 export type Locale = "en" | "es";
 
 export const translations = {
@@ -137,7 +139,7 @@ export const translations = {
       teamLeadCta: "Talk with Jorge",
       // The first entry is rendered as the featured lead card.
       team: [
-        { name: "Lic. Jorge L. Juarez Arellano", role: "President", photo: "/images/team/jorge.jpg", bio: "Leads El Casa Rosarito across real estate, construction, and legal advisory — guiding clients from the first visit through closing and move-in day.", whatsapp: "18186175047" },
+        { name: "Lic. Jorge L. Juarez Arellano", role: "President", photo: "/images/team/jorge.jpg", bio: "Leads El Casa Rosarito across real estate, construction, and legal advisory — guiding clients from the first visit through closing and move-in day.", whatsapp: JORGE_WHATSAPP },
         { name: "Lic. Eduardo L. Molina Herrera", role: "Attorney at Law", photo: "/images/team/eduardo.jpeg", bio: "Handles contracts, permits, and closing support under Mexican property law." },
         { name: "Veronica Ruiz Olvera", role: "Office Manager · Legal Advisor", photo: "/images/team/veronica.jpg", bio: "Coordinates day-to-day operations and keeps legal paperwork moving.", whatsapp: "5214951202716" },
         { name: "Irving Berron Mena", role: "Real Estate Sales Manager", photo: "/images/team/irving.jpeg", bio: "Leads the sales team across Rosarito and the Baja California coast.", whatsapp: "5216645640037" },
@@ -470,7 +472,7 @@ export const translations = {
       teamLeadCta: "Habla con Jorge",
       // La primera entrada se renderiza como la tarjeta principal destacada.
       team: [
-        { name: "Lic. Jorge L. Juarez Arellano", role: "Presidente", photo: "/images/team/jorge.jpg", bio: "Dirige El Casa Rosarito en bienes raíces, construcción y asesoría legal — acompañando a cada cliente desde la primera visita hasta el día de entrega.", whatsapp: "18186175047" },
+        { name: "Lic. Jorge L. Juarez Arellano", role: "Presidente", photo: "/images/team/jorge.jpg", bio: "Dirige El Casa Rosarito en bienes raíces, construcción y asesoría legal — acompañando a cada cliente desde la primera visita hasta el día de entrega.", whatsapp: JORGE_WHATSAPP },
         { name: "Lic. Eduardo L. Molina Herrera", role: "Abogado", photo: "/images/team/eduardo.jpeg", bio: "Se encarga de contratos, permisos y cierres conforme a la ley inmobiliaria mexicana." },
         { name: "Veronica Ruiz Olvera", role: "Gerente de Oficina · Asesora Legal", photo: "/images/team/veronica.jpg", bio: "Coordina la operación diaria y da seguimiento a toda la documentación legal.", whatsapp: "5214951202716" },
         { name: "Irving Berron Mena", role: "Gerente de Ventas Inmobiliarias", photo: "/images/team/irving.jpeg", bio: "Dirige al equipo de ventas en Rosarito y la costa de Baja California.", whatsapp: "5216645640037" },

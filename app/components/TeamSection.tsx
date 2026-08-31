@@ -308,14 +308,29 @@ export default function TeamSection() {
                     <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.92rem", lineHeight: 1.8, color: "rgba(var(--ink),0.55)", marginBottom: 30 }}>
                       {lead.bio}
                     </p>
-                    <a
-                      href="#contact"
-                      style={{ display: "inline-flex", alignItems: "center", gap: 12, padding: "15px 30px", borderRadius: 999, background: "rgb(var(--accent))", color: "#FAF6EE", fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.75rem", letterSpacing: "0.16em", textTransform: "uppercase", textDecoration: "none", transition: "background 0.3s ease, transform 0.3s ease" }}
-                      onMouseEnter={e => { const el = e.currentTarget; el.style.background = "rgb(var(--accent-light))"; el.style.transform = "translateY(-2px)"; }}
-                      onMouseLeave={e => { const el = e.currentTarget; el.style.background = "rgb(var(--accent))"; el.style.transform = "translateY(0)"; }}
-                    >
-                      {t.about.teamLeadCta} <ArrowRight size={14} />
-                    </a>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                      <a
+                        href="#contact"
+                        style={{ display: "inline-flex", alignItems: "center", gap: 12, padding: "15px 30px", borderRadius: 999, background: "rgb(var(--accent))", color: "#FAF6EE", fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.75rem", letterSpacing: "0.16em", textTransform: "uppercase", textDecoration: "none", transition: "background 0.3s ease, transform 0.3s ease" }}
+                        onMouseEnter={e => { const el = e.currentTarget; el.style.background = "rgb(var(--accent-light))"; el.style.transform = "translateY(-2px)"; }}
+                        onMouseLeave={e => { const el = e.currentTarget; el.style.background = "rgb(var(--accent))"; el.style.transform = "translateY(0)"; }}
+                      >
+                        {t.about.teamLeadCta} <ArrowRight size={14} />
+                      </a>
+                      {lead.whatsapp && (
+                        <a
+                          href={`https://wa.me/${lead.whatsapp}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`WhatsApp — ${lead.name}`}
+                          style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "15px 26px", borderRadius: 999, border: "1px solid rgba(var(--accent),0.35)", background: "transparent", color: "rgb(var(--accent))", fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.75rem", letterSpacing: "0.16em", textTransform: "uppercase", textDecoration: "none", transition: "background 0.3s ease, color 0.3s ease, transform 0.3s ease" }}
+                          onMouseEnter={e => { const el = e.currentTarget; el.style.background = "rgb(var(--accent))"; el.style.color = "#FAF6EE"; el.style.transform = "translateY(-2px)"; }}
+                          onMouseLeave={e => { const el = e.currentTarget; el.style.background = "transparent"; el.style.color = "rgb(var(--accent))"; el.style.transform = "translateY(0)"; }}
+                        >
+                          <MessageCircle size={15} /> WhatsApp
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
