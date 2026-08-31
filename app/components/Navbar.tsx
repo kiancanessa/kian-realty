@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useLang } from "../lib/LangContext";
 import { useTheme } from "../lib/ThemeContext";
 import { useSession } from "../lib/useSession";
-import { Menu, X, Sun, Moon, User, LogOut, ShieldCheck, Heart } from "lucide-react";
+import { Menu, X, Sun, Moon, User, LogOut, ShieldCheck, Heart, Sparkles } from "lucide-react";
 import Logo from "./Logo";
 import Avatar from "./Avatar";
 import PropertyQuiz from "./PropertyQuiz";
@@ -145,10 +145,11 @@ export default function Navbar() {
             </a>
           )}
 
-          <button onClick={() => setQuizOpen(true)} style={{ padding: "10px 22px", border: "1px solid rgb(var(--accent))", background: "transparent", cursor: "pointer", color: "rgb(var(--accent))", fontFamily: "'Jost', sans-serif", fontSize: "0.7rem", letterSpacing: "0.22em", textTransform: "uppercase", transition: "all 0.3s" }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent))"; (e.currentTarget as HTMLElement).style.color = "#FAF6EE"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "rgb(var(--accent))"; }}>
-            {t.nav.cta}
+          <button onClick={() => setQuizOpen(true)} className="quiz-cta"
+            style={{ display: "flex", alignItems: "center", gap: 9, padding: "12px 26px", border: "none", borderRadius: 999, background: "rgb(var(--accent))", cursor: "pointer", color: "#FAF6EE", fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", whiteSpace: "nowrap" }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent-light))"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent))"; }}>
+            <Sparkles size={14} /> {t.nav.cta}
           </button>
         </div>
 
@@ -167,9 +168,9 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
-          <button onClick={() => { setOpen(false); setQuizOpen(true); }}
-            style={{ padding: "12px 0", border: "1px solid rgb(var(--accent))", background: "transparent", cursor: "pointer", color: "rgb(var(--accent))", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
-            {t.nav.cta}
+          <button onClick={() => { setOpen(false); setQuizOpen(true); }} className="quiz-cta"
+            style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 9, padding: "14px 0", border: "none", borderRadius: 999, background: "rgb(var(--accent))", cursor: "pointer", color: "#FAF6EE", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+            <Sparkles size={15} /> {t.nav.cta}
           </button>
           <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(var(--accent),0.1)" }}>
             {(["en", "es"] as const).map((lang) => (

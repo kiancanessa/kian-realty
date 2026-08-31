@@ -10,6 +10,7 @@ const ADMIN_TABS = [
 ];
 
 const VENDEDOR_TABS = [
+  { href: "/admin/properties", label: "Propiedades" },
   { href: "/admin/contacts", label: "Contactos" },
 ];
 
@@ -18,6 +19,7 @@ const DEVELOPER_TABS = [
   { href: "/admin/announcements", label: "Anuncios" },
   { href: "/admin/news", label: "Noticias" },
   { href: "/admin/social", label: "Redes sociales" },
+  { href: "/admin/properties", label: "Propiedades" },
   { href: "/admin/contacts", label: "Contactos" },
   { href: "/admin/projects", label: "Proyectos" },
   { href: "/admin/sales", label: "Ventas" },

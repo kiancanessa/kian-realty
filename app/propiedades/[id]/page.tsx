@@ -1,13 +1,24 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import EasyBrokerDetail from "../../components/EasyBrokerDetail";
-import { getProperty, primaryOperation } from "../../lib/easybroker";
+import { getProperty, primaryOperation, type EBPropertyDetail } from "../../lib/easybroker";
+import { isOwnPropertyId, getOwnProperty, ownToDetail } from "../../lib/ownProperties";
 
 type Props = { params: Promise<{ id: string }> };
 
+// Own listings are mapped into the EasyBroker detail shape, so everything
+// downstream (metadata, JSON-LD, the detail component) stays source-agnostic.
+async function loadProperty(id: string): Promise<EBPropertyDetail | null> {
+  if (isOwnPropertyId(id)) {
+    const row = await getOwnProperty(id);
+    return row ? ownToDetail(row) : null;
+  }
+  return getProperty(id);
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const property = await getProperty(id);
+  const property = await loadProperty(id);
   if (!property) return { title: "Propiedad no encontrada" };
 
   const op = primaryOperation(property.operations);
@@ -29,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PropertyPage({ params }: Props) {
   const { id } = await params;
-  const property = await getProperty(id);
+  const property = await loadProperty(id);
   if (!property) notFound();
 
   const op = primaryOperation(property.operations);

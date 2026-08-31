@@ -1,8 +1,11 @@
 import { NextRequest } from "next/server";
-import { getAllProperties, toCard, categoryFor, primaryOperation, orderProperties, type PropertyCategory, type OperationType } from "../../../lib/easybroker";
+import { orderProperties, type PropertyCategory, type OperationType } from "../../../lib/easybroker";
+import { getAllListings, type Listing } from "../../../lib/listings";
 
 // Server-only route: keeps EASYBROKER_API_KEY off the client while letting the
 // quiz ask "what matches?" without shipping the whole catalog to the browser.
+// Reads through the merged listings layer, so the agency's own properties are
+// matchable exactly like the EasyBroker ones.
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const operation = params.get("operation") as OperationType | null;
@@ -10,17 +13,13 @@ export async function GET(request: NextRequest) {
   const budgetMax = params.get("budgetMax");
   const budgetMaxNum = budgetMax ? Number(budgetMax) : null;
 
-  const raw = await getAllProperties();
+  const listings = await getAllListings();
 
-  // Filter on the raw EasyBroker items (which still carry the numeric
-  // operation amount) rather than PropertyCard, whose `price` is already a
-  // formatted display string ("$400,000 USD") and can't be compared.
   const matchesFilters = (strict: boolean) =>
-    raw.filter(item => {
-      const op = primaryOperation(item.operations);
-      if (operation && op?.type !== operation) return false;
-      if (strict && type && type !== "any" && categoryFor(item.property_type) !== type) return false;
-      if (strict && budgetMaxNum && op && op.amount > budgetMaxNum) return false;
+    listings.filter(({ card, amount }: Listing) => {
+      if (operation && card.operation !== operation) return false;
+      if (strict && type && type !== "any" && card.type !== type) return false;
+      if (strict && budgetMaxNum && amount !== null && amount > budgetMaxNum) return false;
       return true;
     });
 
@@ -29,8 +28,8 @@ export async function GET(request: NextRequest) {
   // than a slightly broader one. Relax type/budget before giving up.
   let filtered = matchesFilters(true);
   if (filtered.length === 0) filtered = matchesFilters(false);
-  if (filtered.length === 0) filtered = raw;
+  if (filtered.length === 0) filtered = listings;
 
-  const cards = orderProperties(filtered.map(toCard)).slice(0, 3);
+  const cards = orderProperties(filtered.map(l => l.card)).slice(0, 3);
   return Response.json({ properties: cards });
 }

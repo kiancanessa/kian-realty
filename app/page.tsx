@@ -10,10 +10,10 @@ import News from "./components/News";
 import Testimonials from "./components/Testimonials";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
-import { getAllProperties, toCard, orderProperties } from "./lib/easybroker";
+import { getOrderedPropertyCards } from "./lib/listings";
 
 export default async function Home() {
-  const properties = orderProperties((await getAllProperties()).map(toCard));
+  const properties = await getOrderedPropertyCards();
 
   return (
     <main>

@@ -346,13 +346,16 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
             )}
           </div>
 
-          {/* EasyBroker source link */}
-          <a href={property.public_url} target="_blank" rel="noopener noreferrer"
-            style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "rgba(var(--ink),0.4)", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", textDecoration: "none" }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "rgb(var(--accent))"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(var(--ink),0.4)"}>
-            {t.property.viewOnEasyBroker} <ExternalLink size={13} />
-          </a>
+          {/* EasyBroker source link — absent on the agency's own listings,
+              which have no external page to point at. */}
+          {property.public_url && (
+            <a href={property.public_url} target="_blank" rel="noopener noreferrer"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "rgba(var(--ink),0.4)", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", textDecoration: "none" }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "rgb(var(--accent))"}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(var(--ink),0.4)"}>
+              {t.property.viewOnEasyBroker} <ExternalLink size={13} />
+            </a>
+          )}
         </div>
 
         {/* Right: contact card */}
