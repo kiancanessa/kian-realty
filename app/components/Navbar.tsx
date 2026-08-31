@@ -7,6 +7,7 @@ import { useSession } from "../lib/useSession";
 import { Menu, X, Sun, Moon, User, LogOut, ShieldCheck, Heart } from "lucide-react";
 import Logo from "./Logo";
 import Avatar from "./Avatar";
+import PropertyQuiz from "./PropertyQuiz";
 
 export default function Navbar() {
   const { locale, setLocale, t } = useLang();
@@ -16,6 +17,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,6 +50,7 @@ export default function Navbar() {
   ];
 
   return (
+    <>
     <nav style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
       transition: "all 0.5s ease",
@@ -142,11 +145,11 @@ export default function Navbar() {
             </a>
           )}
 
-          <a href="/#contact" style={{ padding: "10px 22px", border: "1px solid rgb(var(--accent))", color: "rgb(var(--accent))", fontFamily: "'Jost', sans-serif", fontSize: "0.7rem", letterSpacing: "0.22em", textTransform: "uppercase", textDecoration: "none", transition: "all 0.3s" }}
+          <button onClick={() => setQuizOpen(true)} style={{ padding: "10px 22px", border: "1px solid rgb(var(--accent))", background: "transparent", cursor: "pointer", color: "rgb(var(--accent))", fontFamily: "'Jost', sans-serif", fontSize: "0.7rem", letterSpacing: "0.22em", textTransform: "uppercase", transition: "all 0.3s" }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent))"; (e.currentTarget as HTMLElement).style.color = "#FAF6EE"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "rgb(var(--accent))"; }}>
             {t.nav.cta}
-          </a>
+          </button>
         </div>
 
         {/* Mobile burger */}
@@ -164,6 +167,10 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
+          <button onClick={() => { setOpen(false); setQuizOpen(true); }}
+            style={{ padding: "12px 0", border: "1px solid rgb(var(--accent))", background: "transparent", cursor: "pointer", color: "rgb(var(--accent))", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+            {t.nav.cta}
+          </button>
           <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(var(--accent),0.1)" }}>
             {(["en", "es"] as const).map((lang) => (
               <button key={lang} onClick={() => setLocale(lang)}
@@ -208,5 +215,7 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+    <PropertyQuiz open={quizOpen} onClose={() => setQuizOpen(false)} />
+    </>
   );
 }
