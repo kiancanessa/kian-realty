@@ -48,8 +48,8 @@ export const translations = {
         desc: "Strategic pricing, professional photography, and targeted marketing to maximize your property's value.",
       },
       rent: {
-        title: "Rent",
-        desc: "Vacation rentals and long-term leases — curated for comfort, location, and lifestyle.",
+        title: "Rent & Property Management",
+        desc: "Vacation rentals and long-term leases — plus full management of your property: tenants, maintenance, and collections.",
       },
       invest: {
         title: "Invest",
@@ -381,8 +381,8 @@ export const translations = {
         desc: "Precio estratégico, fotografía profesional y marketing dirigido para maximizar el valor de tu propiedad.",
       },
       rent: {
-        title: "Rentar",
-        desc: "Rentas vacacionales y contratos a largo plazo — seleccionados por comodidad, ubicación y estilo de vida.",
+        title: "Renta y Administración de Propiedades",
+        desc: "Rentas vacacionales y contratos a largo plazo — además de la administración completa de tu propiedad: inquilinos, mantenimiento y cobranza.",
       },
       invest: {
         title: "Invertir",
