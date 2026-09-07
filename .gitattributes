@@ -1,0 +1,8 @@
+# Git detectó el PDF del tutorial como texto y avisó que le cambiaría los
+# saltos de línea, lo que lo dejaría corrupto al clonar en Windows.
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.svg text eol=lf
