@@ -1,6 +1,8 @@
 // Server-only: fetches live listings from the agency's EasyBroker account.
 // Never import this from a "use client" component — EASYBROKER_API_KEY must
 // stay off the client bundle.
+import { PLACEHOLDER_IMAGE } from "./propertyFormat";
+
 const API_BASE = "https://api.easybroker.com/v1";
 const PAGE_LIMIT = 20;
 
@@ -122,7 +124,6 @@ export type PropertyCard = {
   image: string;
 };
 
-const PLACEHOLDER_IMAGE = "/images/properties/placeholder.svg";
 
 export function toCard(item: EBPropertyListItem): PropertyCard {
   const op = primaryOperation(item.operations);

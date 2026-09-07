@@ -519,3 +519,12 @@ body {
   background: rgba(var(--accent), 0.12);
   box-shadow: 0 0 0 4px rgba(var(--accent), 0.14);
 }
+
+/* Admin property editor: form on the left, live card preview pinned on the
+   right. Stacks on narrow screens with the preview first, so on a phone you
+   still lead with "this is how it will look". */
+.prop-editor-layout { grid-template-columns: 1fr; }
+@media (min-width: 1024px) {
+  .prop-editor-layout { grid-template-columns: minmax(0, 1fr) 460px; align-items: start; }
+  .prop-editor-preview { order: 2; }
+}

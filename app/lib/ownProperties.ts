@@ -6,6 +6,7 @@
 import { sql } from "./db";
 import type { PropertyCard, EBPropertyDetail, OperationType } from "./easybroker";
 import { categoryFor } from "./easybroker";
+import { formatOwnPrice, PLACEHOLDER_IMAGE } from "./propertyFormat";
 import type { SessionUser } from "./auth";
 
 /** Sales staff manage the agency's own listings — same access rule as the
@@ -58,19 +59,13 @@ function num(v: string | number | null): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-function formatPrice(price: number | null, currency: string, operation: OperationType): string | null {
-  if (price === null) return null;
-  const amount = price.toLocaleString("en-US");
-  return operation === "rental" ? `$${amount} ${currency}/mo` : `$${amount} ${currency}`;
-}
-
 export function ownToCard(row: OwnPropertyRow): PropertyCard {
   const price = num(row.price);
   return {
     id: `${OWN_ID_PREFIX}${row.id}`,
     title: row.title,
     location: row.location,
-    price: formatPrice(price, row.currency, row.operation),
+    price: formatOwnPrice(price, row.currency, row.operation),
     operation: row.operation,
     type: categoryFor(row.property_type),
     propertyType: row.property_type,
@@ -79,7 +74,7 @@ export function ownToCard(row: OwnPropertyRow): PropertyCard {
     parkingSpaces: row.parking_spaces,
     constructionSize: num(row.construction_size),
     lotSize: num(row.lot_size),
-    image: row.images[0] ?? "/images/properties/placeholder.svg",
+    image: row.images[0] ?? PLACEHOLDER_IMAGE,
   };
 }
 
@@ -101,7 +96,7 @@ export function ownToDetail(row: OwnPropertyRow): EBPropertyDetail {
       type: row.operation,
       amount: price,
       currency: row.currency,
-      formatted_amount: formatPrice(price, row.currency, row.operation) ?? "",
+      formatted_amount: formatOwnPrice(price, row.currency, row.operation) ?? "",
     }],
     bedrooms: row.bedrooms,
     bathrooms: row.bathrooms,

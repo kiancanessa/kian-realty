@@ -76,7 +76,7 @@ export default function AdminPropertiesClient() {
 
   return (
     <div style={{ minHeight: "100vh", background: "rgb(var(--bg))", padding: "40px 24px" }}>
-      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+      <div style={{ maxWidth: editingId === null ? 900 : 1240, margin: "0 auto", transition: "max-width 0.3s" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 16 }}>
           <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontSize: "2rem", color: "rgb(var(--ink))" }}>
             Propiedades propias
