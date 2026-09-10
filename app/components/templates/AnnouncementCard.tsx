@@ -207,9 +207,11 @@ export default function AnnouncementCard({
                 </div>
               </div>
 
-              <CtaButton editable={editable} ctaUrl={ctaUrl} onMetaChange={onMetaChange} ui={ui}>
-                {field("cta", { color: "#FAF6EE" }, locale === "es" ? "Texto del botón" : "Button text")}
-              </CtaButton>
+              <div className="announce-video-cta">
+                <CtaButton editable={editable} ctaUrl={ctaUrl} onMetaChange={onMetaChange} ui={ui}>
+                  {field("cta", { color: "#FAF6EE" }, locale === "es" ? "Texto del botón" : "Button text")}
+                </CtaButton>
+              </div>
             </div>
           </div>
         )}

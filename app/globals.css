@@ -510,10 +510,19 @@ body {
    once there is room for a 9:16 frame plus a readable column. */
 .announce-video-layout { grid-template-columns: 1fr; }
 .announce-video-stage { max-height: 38vh; }
-/* Stacked on a phone the reel has to give up height, or the price and the
-   button — the reason the popup exists — land below the fold. */
+/* Stacked on a phone the reel has to give up height, and the button — the
+   reason the popup exists — is pinned to the bottom of the card so it stays
+   tappable however long the copy runs. The chips carry an inline display, so
+   hiding the overflow ones needs to win on specificity. */
 @media (max-width: 719px) {
-  .announce-video-chip:nth-of-type(n + 4) { display: none; }
+  .announce-video-chip:nth-of-type(n + 4) { display: none !important; }
+  .announce-video-cta {
+    position: sticky;
+    bottom: -32px;
+    padding: 10px 0 32px;
+    margin-top: 4px;
+    background: linear-gradient(to top, rgb(var(--surface)) 76%, rgba(var(--surface), 0));
+  }
 }
 @media (min-width: 720px) {
   .announce-video-layout { grid-template-columns: 300px minmax(0, 1fr) !important; }
