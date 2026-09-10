@@ -506,6 +506,13 @@ body {
   .event-layout { grid-template-columns: 1.15fr 1fr !important; }
 }
 
+/* Video announcement: the reel sits on top on phones and moves beside the copy
+   once there is room for a 9:16 frame plus a readable column. */
+.announce-video-layout { grid-template-columns: 1fr; }
+@media (min-width: 720px) {
+  .announce-video-layout { grid-template-columns: 300px minmax(0, 1fr) !important; }
+}
+
 /* Canva-style inline editing: dashed hint on hover, placeholder text when empty */
 .editable-field:empty::before {
   content: attr(data-placeholder);

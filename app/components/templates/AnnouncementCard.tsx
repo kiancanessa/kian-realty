@@ -1,13 +1,14 @@
 "use client";
-import { X, Calendar, MapPin, PlayCircle, Plus } from "lucide-react";
+import { useRef, useState } from "react";
+import { X, Calendar, MapPin, PlayCircle, Plus, Volume2, VolumeX } from "lucide-react";
 import { GLASS, GLASS_SOLID } from "../../lib/glass";
 import Editable from "../admin/Editable";
 import type { AnnouncementContent, AnnouncementLocaleContent, AnnouncementTemplateKey } from "../../lib/announcements";
 import type { Locale } from "../../lib/translations";
 
 const UI_TEXT = {
-  en: { watchVideo: "Watch Event Video", close: "Close", addActivity: "+ Add", imageHint: "Paste image URL…", videoHint: "Paste video URL (e.g. /videos/file.mp4)…", ctaHint: "Paste button link (mailto:… or https://…)…" },
-  es: { watchVideo: "Ver Video del Evento", close: "Cerrar", addActivity: "+ Agregar", imageHint: "Pega la URL de la imagen…", videoHint: "Pega la URL del video (ej. /videos/archivo.mp4)…", ctaHint: "Pega el enlace del botón (mailto:… o https://…)…" },
+  en: { watchVideo: "Watch Event Video", close: "Close", addActivity: "+ Add", imageHint: "Paste image URL…", videoHint: "Paste video URL (e.g. /videos/file.mp4)…", ctaHint: "Paste button link (mailto:… or https://…)…", soundOn: "Turn sound on", soundOff: "Mute", noVideo: "Paste a video URL to see it here" },
+  es: { watchVideo: "Ver Video del Evento", close: "Cerrar", addActivity: "+ Agregar", imageHint: "Pega la URL de la imagen…", videoHint: "Pega la URL del video (ej. /videos/archivo.mp4)…", ctaHint: "Pega el enlace del botón (mailto:… o https://…)…", soundOn: "Activar sonido", soundOff: "Silenciar", noVideo: "Pega la URL de un video para verlo aquí" },
 };
 
 export default function AnnouncementCard({
@@ -51,15 +52,20 @@ export default function AnnouncementCard({
   const addActivity = () => onActivitiesChange?.(locale, [...activities, locale === "es" ? "Nueva actividad" : "New activity"]);
 
   // Optional photo strip: first image is the hero, the next few sit under it as
-  // thumbnails. Only rendered when the announcement actually carries photos.
-  const gallery = content.images ?? [];
+  // thumbnails. The video template leads with the reel instead, so the strip
+  // would only make the popup taller without adding anything.
+  const isVideo = template === "video";
+  const gallery = isVideo ? [] : content.images ?? [];
 
   return (
     <div
       onClick={e => e.stopPropagation()}
       style={{
         ...GLASS_SOLID,
-        position: "relative", width: "min(600px, 100%)", maxHeight: editable ? undefined : "90vh", overflowY: editable ? "visible" : "auto",
+        // The video template puts a 9:16 reel beside the copy, so it needs the
+        // extra width to avoid a very tall, narrow popup.
+        position: "relative", width: isVideo ? "min(880px, 100%)" : "min(600px, 100%)",
+        maxHeight: editable ? undefined : "90vh", overflowY: editable ? "visible" : "auto",
         borderRadius: 30,
         boxShadow: "0 24px 64px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.35)",
       }}
@@ -120,12 +126,93 @@ export default function AnnouncementCard({
           </div>
         )}
 
-        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "rgb(var(--ink))", fontSize: template === "minimal" ? "clamp(1.7rem, 5vw, 2.3rem)" : "clamp(1.9rem, 5vw, 2.6rem)", letterSpacing: "-0.01em", lineHeight: 1.15, marginBottom: 8, textAlign: template === "minimal" ? "center" : "left" }}>
-          {field("title", { display: "block" }, locale === "es" ? "Título" : "Title")}
-        </h2>
-        <div style={{ fontFamily: "'Jost', sans-serif", fontStyle: "italic", color: "rgba(var(--ink),0.5)", fontSize: "0.9rem", marginBottom: 28, textAlign: template === "minimal" ? "center" : "left" }}>
-          {field("subtitle", {}, locale === "es" ? "Subtítulo" : "Subtitle")}
-        </div>
+        {/* In the video template the heading belongs beside the reel, so it is
+            rendered inside that block instead of above every template. */}
+        {!isVideo && (
+          <>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "rgb(var(--ink))", fontSize: template === "minimal" ? "clamp(1.7rem, 5vw, 2.3rem)" : "clamp(1.9rem, 5vw, 2.6rem)", letterSpacing: "-0.01em", lineHeight: 1.15, marginBottom: 8, textAlign: template === "minimal" ? "center" : "left" }}>
+              {field("title", { display: "block" }, locale === "es" ? "Título" : "Title")}
+            </h2>
+            <div style={{ fontFamily: "'Jost', sans-serif", fontStyle: "italic", color: "rgba(var(--ink),0.5)", fontSize: "0.9rem", marginBottom: 28, textAlign: template === "minimal" ? "center" : "left" }}>
+              {field("subtitle", {}, locale === "es" ? "Subtítulo" : "Subtitle")}
+            </div>
+          </>
+        )}
+
+        {isVideo && (
+          <div className={forceMobile === undefined ? "announce-video-layout" : undefined}
+            // Both columns can give ground: in the admin preview the panel can
+            // be far narrower than a real screen, and a fixed 300px video
+            // column would squeeze the copy down to one letter per line.
+            style={{ display: "grid", gridTemplateColumns: twoCol === undefined ? "1fr" : twoCol ? "minmax(0, 300px) minmax(200px, 1fr)" : "1fr", gap: 26, alignItems: "start" }}>
+            <VideoStage videoUrl={videoUrl} posterUrl={imageUrl} editable={editable} onMetaChange={onMetaChange} ui={ui} />
+
+            <div style={{ minWidth: 0 }}>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "rgb(var(--ink))", fontSize: "clamp(1.8rem, 4.5vw, 2.4rem)", letterSpacing: "-0.01em", lineHeight: 1.15, marginBottom: 8 }}>
+                {field("title", { display: "block" }, locale === "es" ? "Título" : "Title")}
+              </h2>
+              <div style={{ fontFamily: "'Jost', sans-serif", fontStyle: "italic", color: "rgba(var(--ink),0.5)", fontSize: "0.88rem", marginBottom: 20 }}>
+                {field("subtitle", {}, locale === "es" ? "Subtítulo" : "Subtitle")}
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 18 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Calendar size={15} color="rgb(var(--accent))" style={{ flexShrink: 0 }} />
+                  {field("dates", { fontFamily: "'Jost', sans-serif", fontSize: "0.86rem", color: "rgb(var(--ink))", fontWeight: 500 }, locale === "es" ? "Fechas" : "Dates")}
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <MapPin size={15} color="rgb(var(--accent))" style={{ flexShrink: 0 }} />
+                  {field("venue", { fontFamily: "'Jost', sans-serif", fontSize: "0.84rem", color: "rgba(var(--ink),0.65)" }, locale === "es" ? "Lugar" : "Venue")}
+                </div>
+              </div>
+
+              {/* Only the headline features — the reel is already doing the
+                  selling, and a long chip list would push the CTA off screen. */}
+              {(activities.length > 0 || editable) && (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 18 }}>
+                  {activities.slice(0, 6).map((a, i) => (
+                    <div key={i} style={{ ...GLASS, display: "flex", alignItems: "center", borderRadius: 999 }}>
+                      {editable ? (
+                        <Editable value={a} onChange={v => setActivity(i, v)} as="span"
+                          style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.71rem", color: "rgb(var(--ink))", padding: "5px 11px" }} />
+                      ) : (
+                        <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.71rem", color: "rgb(var(--ink))", padding: "5px 11px" }}>{a}</span>
+                      )}
+                      {editable && (
+                        <button onClick={() => removeActivity(i)}
+                          style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(var(--error),0.8)", paddingRight: 8, display: "flex" }}>
+                          <X size={12} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {editable && (
+                    <button onClick={addActivity}
+                      style={{ display: "flex", alignItems: "center", gap: 4, borderRadius: 999, border: "1px dashed rgba(var(--accent),0.4)", background: "none", cursor: "pointer", color: "rgb(var(--accent))", padding: "5px 11px", fontFamily: "'Jost', sans-serif", fontSize: "0.71rem" }}>
+                      <Plus size={12} /> {ui.addActivity}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              <div style={{ ...GLASS, borderRadius: 18, padding: "14px 18px", marginBottom: 14 }}>
+                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.58rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.5)", marginBottom: 4 }}>
+                  {field("priceLabel", {}, locale === "es" ? "Etiqueta de precio" : "Price label")}
+                </div>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.9rem", color: "rgb(var(--accent))", marginBottom: 6 }}>
+                  {field("price", {}, locale === "es" ? "Precio" : "Price")}
+                </div>
+                <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.66rem", color: "rgba(var(--ink),0.45)", lineHeight: 1.5 }}>
+                  {field("priceNote", { display: "block" }, locale === "es" ? "Nota de precio" : "Price note")}
+                </div>
+              </div>
+
+              <CtaButton editable={editable} ctaUrl={ctaUrl} onMetaChange={onMetaChange} ui={ui}>
+                {field("cta", { color: "#FAF6EE" }, locale === "es" ? "Texto del botón" : "Button text")}
+              </CtaButton>
+            </div>
+          </div>
+        )}
 
         {template === "classic" && (
           <div className={forceMobile === undefined ? "event-layout" : undefined} style={{ display: "grid", gridTemplateColumns: twoCol === undefined ? "1fr" : twoCol ? "1.15fr 1fr" : "1fr", gap: 24 }}>
@@ -246,6 +333,64 @@ function CtaButton({ editable, ctaUrl, onMetaChange, ui, children }: {
       {editable && (
         <input value={ctaUrl} placeholder={ui.ctaHint} onChange={e => onMetaChange?.({ ctaUrl: e.target.value })}
           style={{ width: "100%", marginTop: 4, padding: "6px 10px", background: "rgba(var(--bg-alt),1)", border: "1px solid rgba(var(--accent),0.15)", outline: "none", fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", color: "rgba(var(--ink),0.6)", boxSizing: "border-box" }} />
+      )}
+    </div>
+  );
+}
+
+/** The reel, playing inline as soon as the popup opens.
+ *
+ *  Autoplay only survives browser policy when the video starts muted, so it
+ *  does — with a sound button on top, because the reel has a soundtrack and a
+ *  silent video reads as broken. `playsInline` stops iOS from hijacking it into
+ *  the fullscreen player. */
+function VideoStage({ videoUrl, posterUrl, editable, onMetaChange, ui }: {
+  videoUrl: string | null; posterUrl: string | null; editable: boolean;
+  onMetaChange?: (patch: { video_url?: string }) => void; ui: typeof UI_TEXT["en"];
+}) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [muted, setMuted] = useState(true);
+
+  const toggleSound = () => {
+    const el = ref.current;
+    if (!el) return;
+    const next = !muted;
+    el.muted = next;
+    setMuted(next);
+    // Unmuting counts as the user gesture, so a paused autoplay can start here.
+    if (!next) el.play().catch(() => {});
+  };
+
+  return (
+    <div>
+      <div style={{ position: "relative", aspectRatio: "9 / 16", maxHeight: "58vh", margin: "0 auto", borderRadius: 20, overflow: "hidden", background: "rgba(10,10,8,0.85)" }}>
+        {videoUrl ? (
+          <>
+            <video
+              ref={ref}
+              src={videoUrl}
+              poster={posterUrl ?? undefined}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+            <button onClick={toggleSound} aria-label={muted ? ui.soundOn : ui.soundOff}
+              style={{ ...GLASS, position: "absolute", bottom: 12, right: 12, width: 38, height: 38, borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "rgb(var(--ink))" }}>
+              {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+            </button>
+          </>
+        ) : (
+          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, color: "rgba(250,246,238,0.55)", fontFamily: "'Jost', sans-serif", fontSize: "0.76rem", textAlign: "center", padding: 20 }}>
+            <PlayCircle size={18} /> {ui.noVideo}
+          </div>
+        )}
+      </div>
+      {editable && (
+        <input value={videoUrl ?? ""} placeholder={ui.videoHint} onChange={e => onMetaChange?.({ video_url: e.target.value })}
+          style={{ width: "100%", marginTop: 6, padding: "6px 10px", background: "rgba(var(--bg-alt),1)", border: "1px solid rgba(var(--accent),0.15)", outline: "none", fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", color: "rgba(var(--ink),0.6)", boxSizing: "border-box" }} />
       )}
     </div>
   );

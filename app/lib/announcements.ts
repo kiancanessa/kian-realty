@@ -21,12 +21,13 @@ export type AnnouncementContent = {
   images?: string[];
 };
 
-export type AnnouncementTemplateKey = "classic" | "image" | "minimal";
+export type AnnouncementTemplateKey = "classic" | "image" | "minimal" | "video";
 
 export const ANNOUNCEMENT_TEMPLATES: { key: AnnouncementTemplateKey; label: string }[] = [
   { key: "classic", label: "Clásico" },
   { key: "image", label: "Imagen" },
   { key: "minimal", label: "Minimalista" },
+  { key: "video", label: "Video" },
 ];
 
 export type Announcement = {

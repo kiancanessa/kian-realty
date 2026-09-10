@@ -47,7 +47,7 @@ export default function EventAnnouncement() {
       }}
       onClick={dismiss}
     >
-      <div style={{ width: "min(600px, 100%)", transform: visible ? "scale(1) translateY(0)" : "scale(0.94) translateY(12px)", transition: "transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)" }}>
+      <div style={{ width: announcement.template === "video" ? "min(880px, 100%)" : "min(600px, 100%)", transform: visible ? "scale(1) translateY(0)" : "scale(0.94) translateY(12px)", transition: "transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)" }}>
         <AnnouncementCard
           content={announcement.content}
           videoUrl={announcement.video_url}
