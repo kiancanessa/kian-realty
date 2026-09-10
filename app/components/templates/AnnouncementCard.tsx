@@ -147,7 +147,7 @@ export default function AnnouncementCard({
             style={{ display: "grid", gridTemplateColumns: twoCol === undefined ? "1fr" : twoCol ? "minmax(0, 300px) minmax(200px, 1fr)" : "1fr", gap: 26, alignItems: "start" }}>
             <VideoStage videoUrl={videoUrl} posterUrl={imageUrl} editable={editable} onMetaChange={onMetaChange} ui={ui} />
 
-            <div style={{ minWidth: 0 }}>
+            <div className="announce-video-info" style={{ minWidth: 0 }}>
               <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, color: "rgb(var(--ink))", fontSize: "clamp(1.8rem, 4.5vw, 2.4rem)", letterSpacing: "-0.01em", lineHeight: 1.15, marginBottom: 8 }}>
                 {field("title", { display: "block" }, locale === "es" ? "Título" : "Title")}
               </h2>
@@ -155,7 +155,7 @@ export default function AnnouncementCard({
                 {field("subtitle", {}, locale === "es" ? "Subtítulo" : "Subtitle")}
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 18 }}>
+              <div className="announce-video-meta" style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 18 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <Calendar size={15} color="rgb(var(--accent))" style={{ flexShrink: 0 }} />
                   {field("dates", { fontFamily: "'Jost', sans-serif", fontSize: "0.86rem", color: "rgb(var(--ink))", fontWeight: 500 }, locale === "es" ? "Fechas" : "Dates")}
@@ -169,7 +169,7 @@ export default function AnnouncementCard({
               {/* Only the headline features — the reel is already doing the
                   selling, and a long chip list would push the CTA off screen. */}
               {(activities.length > 0 || editable) && (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 18 }}>
+                <div className="announce-video-chips" style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 18 }}>
                   {activities.slice(0, 6).map((a, i) => (
                     <div key={i} className="announce-video-chip" style={{ ...GLASS, display: "flex", alignItems: "center", borderRadius: 999 }}>
                       {editable ? (
@@ -195,7 +195,7 @@ export default function AnnouncementCard({
                 </div>
               )}
 
-              <div style={{ ...GLASS, borderRadius: 18, padding: "14px 18px", marginBottom: 14 }}>
+              <div className="announce-video-price" style={{ ...GLASS, borderRadius: 18, padding: "14px 18px", marginBottom: 14 }}>
                 <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.58rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(var(--ink),0.5)", marginBottom: 4 }}>
                   {field("priceLabel", {}, locale === "es" ? "Etiqueta de precio" : "Price label")}
                 </div>

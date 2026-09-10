@@ -516,6 +516,13 @@ body {
    hiding the overflow ones needs to win on specificity. */
 @media (max-width: 719px) {
   .announce-video-chip:nth-of-type(n + 4) { display: none !important; }
+  /* On a phone only the top of the card is visible without scrolling, so the
+     discounted price — the whole pitch — moves up under the title. */
+  .announce-video-info { display: flex; flex-direction: column; }
+  .announce-video-price { order: 1; }
+  .announce-video-meta { order: 2; }
+  .announce-video-chips { order: 3; }
+  .announce-video-cta { order: 4; }
   .announce-video-cta {
     position: sticky;
     bottom: -32px;
