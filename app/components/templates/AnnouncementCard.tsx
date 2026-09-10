@@ -171,7 +171,7 @@ export default function AnnouncementCard({
               {(activities.length > 0 || editable) && (
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 18 }}>
                   {activities.slice(0, 6).map((a, i) => (
-                    <div key={i} style={{ ...GLASS, display: "flex", alignItems: "center", borderRadius: 999 }}>
+                    <div key={i} className="announce-video-chip" style={{ ...GLASS, display: "flex", alignItems: "center", borderRadius: 999 }}>
                       {editable ? (
                         <Editable value={a} onChange={v => setActivity(i, v)} as="span"
                           style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.71rem", color: "rgb(var(--ink))", padding: "5px 11px" }} />
@@ -363,7 +363,10 @@ function VideoStage({ videoUrl, posterUrl, editable, onMetaChange, ui }: {
 
   return (
     <div>
-      <div style={{ position: "relative", aspectRatio: "9 / 16", maxHeight: "58vh", margin: "0 auto", borderRadius: 20, overflow: "hidden", background: "rgba(10,10,8,0.85)" }}>
+      {/* The height cap is what keeps the phone layout honest: a 9:16 frame at
+          full card width would push the price and the CTA below the fold. */}
+      <div className="announce-video-stage"
+        style={{ position: "relative", aspectRatio: "9 / 16", margin: "0 auto", borderRadius: 20, overflow: "hidden", background: "rgba(10,10,8,0.85)" }}>
         {videoUrl ? (
           <>
             <video

@@ -509,8 +509,15 @@ body {
 /* Video announcement: the reel sits on top on phones and moves beside the copy
    once there is room for a 9:16 frame plus a readable column. */
 .announce-video-layout { grid-template-columns: 1fr; }
+.announce-video-stage { max-height: 38vh; }
+/* Stacked on a phone the reel has to give up height, or the price and the
+   button — the reason the popup exists — land below the fold. */
+@media (max-width: 719px) {
+  .announce-video-chip:nth-of-type(n + 4) { display: none; }
+}
 @media (min-width: 720px) {
   .announce-video-layout { grid-template-columns: 300px minmax(0, 1fr) !important; }
+  .announce-video-stage { max-height: 58vh; }
 }
 
 /* Canva-style inline editing: dashed hint on hover, placeholder text when empty */
