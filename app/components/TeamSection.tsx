@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { ArrowRight, Mail, MessageCircle } from "lucide-react";
+import { ArrowRight, Mail, MessageCircle, ChevronDown } from "lucide-react";
 import { useLang } from "../lib/LangContext";
 
 function initials(name: string) {
@@ -44,6 +44,12 @@ type TeamMember = { name: string; role: string; photo?: string; bio: string; wha
 
 /** One roster card. Rendered twice per roster (once per wheel copy). */
 function MemberCard({ member, ariaHidden }: { member: TeamMember; ariaHidden?: boolean }) {
+  // Hover opens the card on a desktop, but a phone has no hover — without this
+  // the bio and the WhatsApp button are simply unreachable there. The wheel's
+  // drag handler already ignores movement under its threshold, so a tap that
+  // never turns into a drag lands here.
+  const [open, setOpen] = useState(false);
+
   const button: React.CSSProperties = {
     display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
     flex: 1, minWidth: 0, height: 46, borderRadius: 999,
@@ -69,7 +75,12 @@ function MemberCard({ member, ariaHidden }: { member: TeamMember; ariaHidden?: b
   return (
     <div
       aria-hidden={ariaHidden || undefined}
-      className="team-member-card"
+      className={`team-member-card${open ? " is-open" : ""}`}
+      onClick={e => {
+        // Let the WhatsApp and email links do their own job.
+        if ((e.target as HTMLElement).closest("a, button")) return;
+        setOpen(o => !o);
+      }}
       style={{ display: "flex", gap: 22, alignItems: "flex-start", padding: 22, border: "1px solid rgba(var(--accent),0.12)", background: "rgba(var(--surface),0.82)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", flexShrink: 0 }}
     >
       <div style={{ position: "relative", width: 104, height: 124, borderRadius: 18, overflow: "hidden", flexShrink: 0 }}>
@@ -80,8 +91,11 @@ function MemberCard({ member, ariaHidden }: { member: TeamMember; ariaHidden?: b
         <h4 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "1.5rem", color: "rgb(var(--ink))", lineHeight: 1.25, marginBottom: 6 }}>
           {member.name}
         </h4>
-        <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.48)", lineHeight: 1.5 }}>
-          {member.role}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+          <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.48)", lineHeight: 1.5 }}>
+            {member.role}
+          </span>
+          <ChevronDown className="team-caret" size={17} color="rgba(var(--accent),0.65)" style={{ flexShrink: 0 }} />
         </div>
 
         <div className="team-reveal">
