@@ -354,9 +354,9 @@ body {
   cursor: grab;
   /* Stacked layout: a fixed window. On desktop the wheel instead ends level
      with the lead card, whose height JS publishes as --lead-h.
-     600px so the longest bio still fits with the card open — at 520 the
-     attorney's card filled the window edge to edge. */
-  height: 600px;
+     Long bios are clamped to an excerpt, with the full text in the profile
+     dialog, so an open card fits this window whatever its copy. */
+  height: 520px;
   /* Fade both ends so cards appear to curve away over the rim. */
   -webkit-mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
   mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
@@ -403,6 +403,13 @@ body {
   transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
 }
 .team-reveal > div { overflow: hidden; min-height: 0; }
+/* A long bio shows its opening lines on the card; "View profile" has the rest. */
+.team-bio-excerpt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
 .team-member-card:hover .team-reveal,
 .team-member-card.is-open .team-reveal { grid-template-rows: 1fr; opacity: 1; }
 
@@ -573,4 +580,13 @@ body {
 @media (min-width: 1024px) {
   .prop-editor-layout { grid-template-columns: minmax(0, 1fr) 460px; align-items: start; }
   .prop-editor-preview { order: 2; }
+}
+
+/* Team profile dialog */
+@keyframes teamProfileIn { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes teamBackdropIn { from { opacity: 0; } to { opacity: 1; } }
+.team-profile-backdrop { animation: teamBackdropIn 0.25s ease; }
+.team-profile-panel { animation: teamProfileIn 0.35s cubic-bezier(0.22, 1, 0.36, 1); overscroll-behavior: contain; }
+@media (prefers-reduced-motion: reduce) {
+  .team-profile-backdrop, .team-profile-panel { animation: none; }
 }
