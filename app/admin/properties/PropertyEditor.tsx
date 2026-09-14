@@ -2,13 +2,14 @@
 import { useState } from "react";
 import { upload } from "@vercel/blob/client";
 import {
-  ImagePlus, X, Star, Loader2, Monitor, Smartphone, Check, ChevronLeft, ChevronRight, GripVertical,
+  ImagePlus, X, Star, Loader2, Monitor, Smartphone, Check, ChevronLeft, ChevronRight, GripVertical, MapPin,
 } from "lucide-react";
 import { PROPERTY_TYPES } from "../../lib/propertyTypes";
 import { PLACEHOLDER_IMAGE, formatOwnPrice, numOrNull } from "../../lib/propertyFormat";
 import { categoryFor } from "../../lib/easybroker";
 import type { PropertyCard } from "../../lib/easybroker";
 import PropertyCardTile from "../../components/PropertyCardTile";
+import { googleMapEmbedUrl, parseCoordinates, isGoogleShortLink } from "../../lib/maps";
 
 export type PropertyFormState = {
   title: string;
@@ -148,6 +149,8 @@ export default function PropertyEditor({
   const [mobile, setMobile] = useState(false);
   const [dragFrom, setDragFrom] = useState<number | null>(null);
   const [dropping, setDropping] = useState(false);
+  const [mapLink, setMapLink] = useState("");
+  const [mapStatus, setMapStatus] = useState<{ kind: "idle" | "working" | "ok" | "error"; text?: string }>({ kind: "idle" });
 
   const set = <K extends keyof PropertyFormState>(key: K, value: PropertyFormState[K]) =>
     setForm(prev => ({ ...prev, [key]: value }));
@@ -173,6 +176,36 @@ export default function PropertyEditor({
       setUploadError((err as Error).message);
     } finally {
       setUploading(false);
+    }
+  };
+
+  // Agents copy a link from Google Maps far more readily than two numbers from
+  // a right-click menu, so the link is the main input and the fields below are
+  // filled from it. Short links from the phone app are resolved server-side.
+  const applyMapLink = async (raw: string) => {
+    const value = raw.trim();
+    if (!value) { setMapStatus({ kind: "idle" }); return; }
+
+    const direct = parseCoordinates(value);
+    if (direct) {
+      setForm(prev => ({ ...prev, latitude: String(direct.lat), longitude: String(direct.lng) }));
+      setMapStatus({ kind: "ok", text: "Ubicación tomada del link." });
+      return;
+    }
+    if (!isGoogleShortLink(value)) {
+      setMapStatus({ kind: "error", text: "No encontré coordenadas en ese link. Abre la propiedad en Google Maps, marca el punto y copia el link de la barra del navegador, o el de Compartir." });
+      return;
+    }
+
+    setMapStatus({ kind: "working", text: "Leyendo el link…" });
+    try {
+      const res = await fetch(`/api/admin/maps/resolve?url=${encodeURIComponent(value)}`);
+      const data = await res.json();
+      if (!res.ok || typeof data.lat !== "number") throw new Error();
+      setForm(prev => ({ ...prev, latitude: String(data.lat), longitude: String(data.lng) }));
+      setMapStatus({ kind: "ok", text: "Ubicación tomada del link." });
+    } catch {
+      setMapStatus({ kind: "error", text: "Ese link no trae la ubicación de un punto. Mantén presionado el lugar exacto en Google Maps y comparte ese pin." });
     }
   };
 
@@ -402,11 +435,42 @@ export default function PropertyEditor({
               placeholder="Describe la propiedad: acabados, amenidades, ubicación, lo que la hace especial…" />
           </Section>
 
-          <Section step={5} title="Mapa" hint="Opcional. Con estas coordenadas la página de la propiedad muestra el mapa. Para obtenerlas: en Google Maps, clic derecho sobre el punto y copia los dos números.">
+          <Section step={5} title="Mapa" hint="Opcional, pero ayuda mucho: la página de la propiedad muestra el mapa de Google y un botón de Cómo llegar. Busca la propiedad en Google Maps, marca el punto exacto y pega aquí el link.">
+            <Field text="Link de Google Maps">
+              <input style={input} value={mapLink}
+                onChange={e => { setMapLink(e.target.value); if (mapStatus.kind !== "idle") setMapStatus({ kind: "idle" }); }}
+                onPaste={e => { const v = e.clipboardData.getData("text"); setTimeout(() => applyMapLink(v), 0); }}
+                onBlur={e => applyMapLink(e.target.value)}
+                placeholder="https://maps.app.goo.gl/…  o  https://www.google.com/maps/…" />
+            </Field>
+            {mapStatus.kind !== "idle" && (
+              <p style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "'Jost', sans-serif", fontSize: "0.76rem", lineHeight: 1.5, marginTop: -6,
+                color: mapStatus.kind === "error" ? "rgb(var(--error))" : mapStatus.kind === "ok" ? "rgb(var(--accent))" : "rgba(var(--ink),0.5)" }}>
+                {mapStatus.kind === "working" ? <Loader2 size={13} className="spin" /> : mapStatus.kind === "ok" ? <Check size={13} /> : null}
+                {mapStatus.text}
+              </p>
+            )}
+
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <Field text="Latitud"><input style={input} value={form.latitude} onChange={e => set("latitude", e.target.value)} placeholder="32.3345" /></Field>
               <Field text="Longitud"><input style={input} value={form.longitude} onChange={e => set("longitude", e.target.value)} placeholder="-117.0353" /></Field>
             </div>
+
+            {/* The same map the property page will show, so a wrong pin is
+                caught here rather than by a buyer driving to the wrong street. */}
+            {(() => {
+              const lat = numOrNull(form.latitude), lng = numOrNull(form.longitude);
+              return lat !== null && lng !== null && Math.abs(lat) <= 90 && Math.abs(lng) <= 180 ? (
+                <div style={{ border: "1px solid rgba(var(--accent),0.15)", height: 220, overflow: "hidden" }}>
+                  <iframe src={googleMapEmbedUrl({ lat, lng }, "es")} width="100%" height="100%" style={{ border: 0 }}
+                    loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Vista previa del mapa" />
+                </div>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 90, border: "1px dashed rgba(var(--accent),0.25)", color: "rgba(var(--ink),0.4)", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem" }}>
+                  <MapPin size={15} /> El mapa aparece aquí al pegar el link
+                </div>
+              );
+            })()}
           </Section>
         </div>
       </div>

@@ -46,6 +46,12 @@ await page.waitForTimeout(1800);
 await el("03-editor", ".prop-editor-layout");
 await el("04-fotos", ".prop-editor-layout section");
 await el("05-preview", ".prop-editor-preview");
+// the map step: link field, filled coordinates and the live map preview
+const mapSection = page.locator(".prop-editor-layout section").last();
+await mapSection.scrollIntoViewIfNeeded();
+await page.waitForTimeout(3500); // let the Google map tiles paint
+await mapSection.screenshot({ path: `${OUT}/09-mapa.png` });
+console.log("✓ 09-mapa");
 
 await page.locator('button[aria-label="Celular"]').click();
 await page.waitForTimeout(800);

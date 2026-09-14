@@ -230,7 +230,7 @@ for b in bullets([
 ]):
     A(b)
 A(Spacer(1, 10))
-A(figure("03-editor.png", "La pantalla completa: datos a la izquierda, vista previa a la derecha.", width=5.65 * inch))
+A(figure("03-editor.png", "La pantalla completa: datos a la izquierda, vista previa a la derecha.", width=4.55 * inch))
 
 # ─────────────────────────── Paso 4 ───────────────────────────
 A(PageBreak())
@@ -278,11 +278,15 @@ A(Paragraph("<b>04 Descripción</b> — el texto de la página de la propiedad."
 A(Paragraph(
     "Dos o tres frases bastan: qué la hace especial, acabados, amenidades y qué hay cerca.", body))
 A(Spacer(1, 4))
-A(Paragraph("<b>05 Mapa</b> — opcional.", body))
+A(Paragraph("<b>05 Mapa</b> — opcional, pero vale la pena.", body))
 A(Paragraph(
-    "Si pones latitud y longitud, la página muestra el mapa. Para obtenerlas: abre <b>Google Maps</b>, "
-    "haz <b>clic derecho</b> sobre el punto exacto y copia los dos números que aparecen arriba del menú. "
-    "El primero es la latitud y el segundo la longitud.", body))
+    "Con la ubicación, la página de la propiedad muestra el mapa de Google y un botón de <b>Cómo llegar</b> "
+    "que abre la ruta en el celular del cliente. Para ponerla: busca la propiedad en <b>Google Maps</b>, "
+    "marca el punto exacto y <b>pega el link</b> en el campo <i>Link de Google Maps</i>. Sirve el link de la "
+    "barra del navegador o el de <b>Compartir</b> de la app. La latitud y la longitud se llenan solas y "
+    "abajo aparece el mapa: revisa que el pin esté en la casa correcta.", body))
+A(Spacer(1, 6))
+A(figure("09-mapa.png", "Pegas el link, se llenan las coordenadas y aparece el mapa para revisar el pin.", width=5.2 * inch))
 
 # ─────────────────────────── Paso 6 ───────────────────────────
 A(PageBreak())

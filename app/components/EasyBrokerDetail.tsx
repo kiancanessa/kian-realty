@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import { MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Bed, Bath, Car, Square, ExternalLink, Check, MessageSquare, Quote } from "lucide-react";
+import { MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Bed, Bath, Car, Square, ExternalLink, Check, MessageSquare, Quote, Navigation } from "lucide-react";
 import Link from "next/link";
 import type { EBPropertyDetail } from "../lib/easybroker";
 import { primaryOperation } from "../lib/easybroker";
 import { useLang } from "../lib/LangContext";
+import { googleMapEmbedUrl, googleMapsUrl, googleDirectionsUrl } from "../lib/maps";
 import { useSession } from "../lib/useSession";
 import { sendInquiry, whatsappLink } from "../lib/sendInquiry";
 import StarRating from "./StarRating";
@@ -115,13 +116,10 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
   ].filter((s): s is { icon: typeof Bed; val: string; label: string } => s !== null);
 
   const { latitude: lat, longitude: lng } = property.location_detail;
-  // Google's iframe embed requires an API key we don't have and blocks the
-  // key-less "output=embed" trick with X-Frame-Options. OpenStreetMap's
-  // embed works with no key and no framing restrictions.
-  const mapUrl = lat && lng
-    ? `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01},${lat - 0.008},${lng + 0.01},${lat + 0.008}&marker=${lat},${lng}`
-    : null;
-  const mapLinkUrl = lat && lng ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=15/${lat}/${lng}` : null;
+  const coords = lat && lng ? { lat, lng } : null;
+  const mapUrl = coords ? googleMapEmbedUrl(coords, locale) : null;
+  const mapLinkUrl = coords ? googleMapsUrl(coords) : null;
+  const directionsUrl = coords ? googleDirectionsUrl(coords) : null;
 
   return (
     <div style={{ background: "rgb(var(--bg))", minHeight: "100vh", color: "rgb(var(--ink))", fontFamily: "'Jost', sans-serif" }}>
@@ -230,22 +228,36 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
               <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", fontWeight: 300, color: "rgb(var(--ink))", marginBottom: 16 }}>
                 {t.labels.location}
               </h3>
-              <div style={{ border: "1px solid rgba(var(--accent),0.12)", overflow: "hidden", height: 280, marginBottom: 8 }}>
+              <div style={{ border: "1px solid rgba(var(--accent),0.12)", overflow: "hidden", height: 280 }}>
                 <iframe
                   src={mapUrl}
                   width="100%" height="100%"
-                  style={{ border: 0, filter: "saturate(0.85) contrast(0.95)" }}
-                  loading="lazy" title={t.labels.location}
+                  style={{ border: 0 }}
+                  loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen
+                  title={t.labels.location}
                 />
               </div>
-              {mapLinkUrl && (
-                <a href={mapLinkUrl} target="_blank" rel="noopener noreferrer"
-                  style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", color: "rgba(var(--ink),0.4)", letterSpacing: "0.06em", textDecoration: "none" }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "rgb(var(--accent))"}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(var(--ink),0.4)"}>
-                  {t.property.viewLargerMap} →
-                </a>
-              )}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginTop: 12 }}>
+                {/* On a phone this hands off to the Google Maps app with the
+                    route already set — the most useful thing for someone on
+                    their way to a viewing. */}
+                {directionsUrl && (
+                  <a href={directionsUrl} target="_blank" rel="noopener noreferrer"
+                    style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "13px 22px", background: "rgb(var(--accent))", color: "#FAF6EE", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontSize: "0.74rem", fontWeight: 500, letterSpacing: "0.14em", textTransform: "uppercase", transition: "background 0.3s" }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent-dark))"}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "rgb(var(--accent))"}>
+                    <Navigation size={15} /> {t.property.getDirections}
+                  </a>
+                )}
+                {mapLinkUrl && (
+                  <a href={mapLinkUrl} target="_blank" rel="noopener noreferrer"
+                    style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", color: "rgba(var(--ink),0.45)", letterSpacing: "0.06em", textDecoration: "none" }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "rgb(var(--accent))"}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(var(--ink),0.45)"}>
+                    {t.property.viewLargerMap} →
+                  </a>
+                )}
+              </div>
             </div>
           )}
 
