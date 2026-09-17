@@ -4,6 +4,7 @@ import { Locale } from "../lib/translations";
 import type { Announcement } from "../lib/announcements";
 import { X } from "lucide-react";
 import AnnouncementCard from "./templates/AnnouncementCard";
+import { INTRO_DONE_EVENT } from "./IntroCurtain";
 
 function seenKey(id: number) {
   return `announcementSeen_${id}`;
@@ -25,8 +26,15 @@ export default function EventAnnouncement() {
   useEffect(() => {
     if (!announcement) return;
     if (sessionStorage.getItem(seenKey(announcement.id))) return;
-    const timer = setTimeout(() => setVisible(true), 700);
-    return () => clearTimeout(timer);
+    // Wait for the opening animation, or the popup would open behind it.
+    let timer: ReturnType<typeof setTimeout>;
+    const open = () => { timer = setTimeout(() => setVisible(true), 350); };
+    if (window.__ecrIntroDone) open();
+    else window.addEventListener(INTRO_DONE_EVENT, open, { once: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener(INTRO_DONE_EVENT, open);
+    };
   }, [announcement]);
 
   const dismiss = () => {

@@ -4,6 +4,9 @@ import { useLang } from "../lib/LangContext";
 import { useQuiz } from "../lib/QuizContext";
 import { ChevronDown, Sparkles } from "lucide-react";
 
+// Set to "/videos/hero-waves.mp4" once the clip is in public/videos.
+const HERO_VIDEO: string | null = null;
+
 export default function Hero() {
   const { t } = useLang();
   const { openQuiz } = useQuiz();
@@ -34,11 +37,13 @@ export default function Hero() {
       {/* Radial glow */}
       <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(var(--accent),0.07) 0%, transparent 70%)" }} />
 
-      {/* Video (when you have one) */}
-      <video autoPlay muted loop playsInline poster="/images/hero-poster.jpg"
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.35 }}>
-        {/* <source src="/videos/hero.mp4" type="video/mp4" /> */}
-      </video>
+      {/* Background video. Drop a file at public/videos/hero-waves.mp4 and set
+          HERO_VIDEO to it; until then the gradient above stands alone, and no
+          empty <video> requests a poster that does not exist. */}
+      {HERO_VIDEO && (
+        <video autoPlay muted loop playsInline preload="metadata" src={HERO_VIDEO}
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.35 }} />
+      )}
 
       {/* Content */}
       <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "0 24px", maxWidth: 1000, margin: "0 auto" }}>
