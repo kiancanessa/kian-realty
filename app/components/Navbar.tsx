@@ -58,9 +58,11 @@ export default function Navbar() {
     <nav className={overHero ? "nav-over-hero" : undefined} style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
       transition: "all 0.5s ease",
-      background: scrolled ? "rgba(var(--bg),0.96)" : "transparent",
-      backdropFilter: scrolled ? "blur(12px)" : "none",
-      borderBottom: scrolled ? "1px solid rgba(var(--accent),0.12)" : "none",
+      // Solid once scrolled — or while the mobile menu is open, so its bar
+      // matches the panel below instead of floating over the hero video.
+      background: scrolled || open ? "rgba(var(--bg),0.96)" : "transparent",
+      backdropFilter: scrolled || open ? "blur(12px)" : "none",
+      borderBottom: scrolled || open ? "1px solid rgba(var(--accent),0.12)" : "none",
       padding: scrolled ? "12px 0" : "24px 0",
     }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>

@@ -903,6 +903,14 @@ html.intro-lock { overflow: hidden; }
     radial-gradient(ellipse 65% 55% at 50% 50%, rgba(8, 12, 10, 0.55), transparent 80%),
     linear-gradient(180deg, rgba(8, 12, 10, 0.6) 0%, rgba(8, 12, 10, 0.38) 45%, rgba(8, 12, 10, 0.6) 100%);
 }
+.hero-fade { display: none; }
+[data-theme="dark"] .hero-fade {
+  display: block;
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 120px;
+  background: linear-gradient(to top, rgb(var(--bg)), transparent);
+}
 /* The sage greens are tuned for a cream page; over dark water they need to
    be lighter to read. Only the text uses these — buttons keep the brand green. */
 .hero .sage-shimmer {

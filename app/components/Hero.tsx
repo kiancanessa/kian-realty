@@ -152,14 +152,16 @@ export default function Hero() {
 
       {/* Scroll indicator */}
       <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(var(--ink),0.3)" }}>
+        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(var(--ink),0.6)" }}>
           {t.hero.scroll}
         </span>
         <ChevronDown size={16} style={{ color: "rgb(var(--accent))", animation: "scrollDown 2s ease-in-out infinite" }} />
       </div>
 
-      {/* Bottom fade */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, background: "linear-gradient(to top, rgb(var(--bg)), transparent)" }} />
+      {/* Bottom fade into the page — dark theme only. On the cream page a
+          fade from dark water passes through a muddy grey, so there the
+          video simply ends in a clean edge. */}
+      <div className="hero-fade" aria-hidden />
     </section>
   );
 }
