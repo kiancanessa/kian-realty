@@ -75,7 +75,9 @@ export default function RootLayout({
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}`
+            // `js` lets CSS hide what JS will animate in, and only then.
+            __html: `document.documentElement.classList.add('js');`
+              + `try{if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}`
               // Decide before first paint whether the opening animation plays:
               // once per session, and never for reduced motion.
               + `try{var r=document.documentElement;if(sessionStorage.getItem('introSeen')==='1'||matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('no-intro');}else{sessionStorage.setItem('introSeen','1');r.classList.add('intro-lock');}}catch(e){document.documentElement.classList.add('no-intro');}`,

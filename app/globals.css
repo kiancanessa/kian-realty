@@ -110,15 +110,91 @@ body {
   opacity: 0.35;
 }
 
-/* Reveal animations */
+/* Reveal animations.
+   One easing for every entrance (a long, soft deceleration) so the page moves
+   with a single rhythm. Rise + a touch of blur coming into focus; the section
+   title inside rises from behind a mask, and the sage rule draws itself. */
+:root { --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1); }
 .reveal {
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.9s ease, transform 0.9s ease;
+  transform: translate3d(0, 34px, 0);
+  filter: blur(6px);
+  transition: opacity 1s var(--ease-out-soft), transform 1.1s var(--ease-out-soft), filter 1s var(--ease-out-soft);
 }
 .reveal.visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+  filter: none;
+}
+.reveal h2 {
+  clip-path: inset(0 0 100% 0);
+  transform: translate3d(0, 0.45em, 0);
+  transition: clip-path 1.1s var(--ease-out-soft) 0.12s, transform 1.1s var(--ease-out-soft) 0.12s;
+}
+.reveal.visible h2 { clip-path: inset(-0.3em -0.3em -0.3em -0.3em); transform: none; }
+.reveal .sage-line { transform: scaleX(0); transition: transform 1.2s var(--ease-out-soft) 0.25s; }
+.reveal.visible .sage-line { transform: scaleX(1); }
+
+/* The same entrances for anything marked data-reveal (see ScrollReveal).
+   Only armed once that script runs — without it, nothing is ever hidden. */
+html.reveal-armed [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 34px, 0);
+  filter: blur(6px);
+  transition: opacity 1s var(--ease-out-soft), transform 1.1s var(--ease-out-soft), filter 1s var(--ease-out-soft);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.reveal-armed [data-reveal].is-in { opacity: 1; transform: none; filter: none; }
+/* The observed element itself is never clipped: Chromium reports a target
+   hidden by its own clip-path as not intersecting, so it would never reveal.
+   The mask goes on something inside it instead. */
+
+/* Headings rise out of their own baseline (the text sits in a .reveal-text span). */
+html.reveal-armed [data-reveal="line"] { opacity: 1; filter: none; transform: none; }
+html.reveal-armed [data-reveal="line"] > .reveal-text {
+  display: inline-block;
+  clip-path: inset(0 0 100% 0);
+  transform: translate3d(0, 0.45em, 0);
+  transition: clip-path 1.1s var(--ease-out-soft), transform 1.1s var(--ease-out-soft);
+  transition-delay: calc(var(--reveal-delay, 0ms) + 120ms);
+}
+html.reveal-armed [data-reveal="line"].is-in > .reveal-text { clip-path: inset(-0.3em -0.3em -0.3em -0.3em); transform: none; }
+
+/* Photos and videos: a cover in the section's colour (--reveal-cover) lifts
+   off bottom-up while the picture settles from a slight zoom. */
+html.reveal-armed [data-reveal="media"] {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  /* translate/box-shadow keep a card's own hover lift animated. */
+  transition: translate 0.5s var(--ease-out-soft), box-shadow 0.5s ease;
+}
+html.reveal-armed [data-reveal="media"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: var(--reveal-cover, rgb(var(--bg)));
+  transform-origin: top;
+  transition: transform 1.25s var(--ease-out-soft);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.reveal-armed [data-reveal="media"].is-in::after { transform: scaleY(0); }
+html.reveal-armed [data-reveal="media"] :is(img, video) {
+  scale: 1.14;
+  transition: scale 1.6s var(--ease-out-soft), opacity 0.4s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.reveal-armed [data-reveal="media"].is-in :is(img, video) { scale: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal h2, .reveal .sage-line,
+  html.reveal-armed [data-reveal], html.reveal-armed [data-reveal] :is(img, video, .reveal-text) {
+    opacity: 1 !important; transform: none !important; filter: none !important;
+    clip-path: none !important; scale: none !important; transition: none !important;
+  }
+  html.reveal-armed [data-reveal="media"]::after { display: none; }
 }
 
 /* Sage divider */
@@ -329,143 +405,128 @@ body {
 }
 .lead-card:hover .lead-glow { opacity: 1; }
 
-/* Member cards: scroll-in reveal (fade + rise + blur-to-sharp + scale).
-   Stagger comes from an inline --i index. */
-.team-member {
-  opacity: 0;
-  transform: translate3d(0, 38px, 0) scale(0.965);
-  filter: blur(10px);
-  transition:
-    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.75s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: calc(var(--i, 0) * 90ms);
-  will-change: transform, opacity;
-}
-.team-member.in {
-  opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1);
-  filter: blur(0);
-}
-
-/* Circular roster wheel. It does not turn on its own — scrolling the page
-   drives it, and it holds still otherwise (see TeamSection).
-
-   The gap lives inside each copy (as a trailing padding) instead of between
-   the two copies, which makes the track exactly 2x one copy. That means the
-   wheel wraps at exactly -50% with no measurement: JS only has to emit a
-   percentage in [0, 50). */
-.team-wheel {
-  overflow: hidden;
-  /* Vertical gestures belong to the wheel, not the page — that is what lets it
-     be dragged on phones, where there is no hover to scope it. */
-  touch-action: pan-x;
-  cursor: grab;
-  /* Stacked layout: a fixed window. On desktop the wheel instead ends level
-     with the lead card, whose height JS publishes as --lead-h.
-     Long bios are clamped to an excerpt, with the full text in the profile
-     dialog, so an open card fits this window whatever its copy. */
-  height: 520px;
-  /* Fade both ends so cards appear to curve away over the rim. */
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
-  mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
-}
-@media (min-width: 1024px) {
-  .team-wheel { height: var(--lead-h, 620px); }
-}
-.team-wheel-track {
-  display: flex;
-  flex-direction: column;
-  /* No gap here — see the note above; each copy carries its own trailing gap. */
-  gap: 0;
-  will-change: transform;
-}
-.team-wheel-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding-bottom: 20px;
-}
-
-.team-member-card {
-  border-radius: 24px;
-  overflow: hidden;
-  transition:
-    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.45s ease,
-    border-color 0.45s ease;
-}
-.team-member-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.16);
-  border-color: rgba(var(--accent), 0.35);
-}
-.team-member-photo { transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
-.team-member-card:hover .team-member-photo { transform: scale(1.08); }
-
-/* Smooth auto-height reveal without a fixed max-height: 0fr -> 1fr is
-   interpolatable, so the panel grows to exactly its content height. */
-.team-reveal {
+/* Roster grid: every member visible at once, portrait first. */
+.team-grid {
   display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
-.team-reveal > div { overflow: hidden; min-height: 0; }
-/* A long bio shows its opening lines on the card; "View profile" has the rest. */
-.team-bio-excerpt {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
+@media (min-width: 640px) {
+  .team-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+}
+.team-tile {
+  position: relative;
+  border-radius: 22px;
   overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.45);
+  /* The hover lift uses `translate`, not `transform`: the scroll reveal owns
+     `transform` on this element and would override it. */
+  transition: translate 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
 }
-.team-member-card:hover .team-reveal,
-.team-member-card.is-open .team-reveal { grid-template-rows: 1fr; opacity: 1; }
-
-/* The caret is the only affordance on a phone, where there is no hover to
-   discover the card with; a mouse gets the hover reveal instead. */
-.team-caret { opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; }
-.team-member-card.is-open .team-caret { transform: rotate(180deg); }
-@media (hover: none) {
-  .team-caret { opacity: 1; }
+.team-tile-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  border: 0;
+  background: rgb(var(--bg-alt));
+  cursor: pointer;
+  text-align: left;
+  color: #FAF6EE;
 }
-
-/* Action chips rise and fade in slightly after the panel opens. */
-.team-action {
+.team-tile-open:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: -4px; border-radius: 22px; }
+.team-tile-photo { position: absolute; inset: 0; }
+.team-tile-photo .team-member-photo {
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), scale 1.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease !important;
+}
+.team-tile-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 38%, rgba(12, 12, 10, 0.35) 60%, rgba(12, 12, 10, 0.86) 100%);
+  transition: opacity 0.5s ease;
+}
+.team-tile-text {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 16px 15px;
+}
+.team-tile-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.08rem, 2.2vw, 1.32rem);
+  line-height: 1.15;
+  font-weight: 500;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+}
+.team-tile-role {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  color: rgba(250, 246, 238, 0.78);
+}
+/* "View profile" slides up on hover; on touch screens it is always shown,
+   because there is no hover to discover it with. */
+.team-tile-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--accent-light));
   opacity: 0;
-  transform: translateY(8px) scale(0.9);
-  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease, color 0.3s ease;
+  transform: translateY(6px);
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.team-member-card:hover .team-action,
-.team-member-card.is-open .team-action { opacity: 1; transform: translateY(0) scale(1); }
-.team-member-card:hover .team-action:nth-child(1),
-.team-member-card.is-open .team-action:nth-child(1) { transition-delay: 0.10s; }
-.team-member-card:hover .team-action:nth-child(2),
-.team-member-card.is-open .team-action:nth-child(2) { transition-delay: 0.16s; }
-.team-member-card:hover .team-action:nth-child(3),
-.team-member-card.is-open .team-action:nth-child(3) { transition-delay: 0.22s; }
-.team-member-card:hover .team-action:nth-child(4),
-.team-member-card.is-open .team-action:nth-child(4) { transition-delay: 0.28s; }
+@media (hover: hover) {
+  .team-tile:hover { translate: 0 -6px; box-shadow: 0 30px 60px -26px rgba(0, 0, 0, 0.55); }
+  .team-tile:hover .team-member-photo { transform: scale(1.06); }
+  .team-tile:hover .team-tile-more { opacity: 1; transform: none; }
+  .team-hint { display: none; }
+}
+@media (hover: none) {
+  .team-tile-more { opacity: 1; transform: none; }
+}
+.team-tile-wa {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #FAF6EE;
+  background: rgba(12, 12, 10, 0.38);
+  border: 1px solid rgba(250, 246, 238, 0.28);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.team-tile-wa:hover, .team-tile-wa:focus-visible { background: #25D366; border-color: #25D366; transform: scale(1.08); }
+/* Seven buttons wide on a phone would crowd the name: the icon stays, just smaller. */
+@media (max-width: 639px) {
+  .team-tile-text { padding: 12px 12px 11px; }
+  .team-tile-role { font-size: 0.68rem; }
+  .team-tile-wa { width: 34px; height: 34px; top: 8px; right: 8px; }
+}
+
+/* Contact buttons in the profile dialog. */
+.team-action { transition: background 0.3s ease, color 0.3s ease; }
 
 @media (prefers-reduced-motion: reduce) {
   .team-blob, .lead-float, .lead-card::before { animation: none; }
-  /* No scroll-linked motion: fall back to a plain scrollable list. */
-  .team-wheel {
-    overflow-y: auto;
-    touch-action: auto;
-    cursor: auto;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
   .lead-parallax { transform: none; }
-  .team-member {
-    opacity: 1;
-    transform: none;
-    filter: none;
-    transition: none;
-  }
-  .team-member-card:hover { transform: none; }
-  .team-member-card:hover .team-member-photo { transform: none; }
+  .team-tile, .team-tile .team-member-photo { transition: none !important; }
+  .team-tile:hover { translate: none; }
+  .team-tile:hover .team-member-photo { transform: none; }
 }
 
 /* ===== RESPONSIVE LAYOUT HELPERS ===== */
@@ -500,11 +561,12 @@ body {
   .contact-grid { grid-template-columns: 1fr 1.2fr !important; }
 }
 
-/* Team: lead card sticky beside the cascading stack on desktop only.
+/* Team: lead card sticky beside the roster grid on desktop only.
    Below this width the layout stacks and the sticky is released. */
 @media (min-width: 1024px) {
   .team-layout { grid-template-columns: 0.95fr 1.05fr !important; align-items: start !important; }
-  .team-lead-col { position: sticky !important; top: 96px !important; }
+  /* Whichever column is shorter holds still while the other scrolls past. */
+  .team-lead-col, .team-grid { position: sticky; top: 96px; }
 }
 
 /* Featured properties: up to 3 cols, larger cards */
@@ -675,4 +737,294 @@ html.intro-lock { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   .intro-curtain { display: none; }
+}
+
+/* ===== Vive Rosarito (coast videos) ===== */
+/* Always dark, in both themes: footage reads best on near-black, and the
+   change of tone marks a pause in the page between sections. */
+.coast-section {
+  position: relative;
+  padding: 112px 24px 96px;
+  background:
+    radial-gradient(ellipse 70% 60% at 85% 0%, rgba(var(--accent), 0.16), transparent 70%),
+    #11120f;
+  overflow: hidden;
+}
+.coast-head {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 48px;
+}
+@media (min-width: 900px) {
+  .coast-head { grid-template-columns: 1fr auto; align-items: end; column-gap: 48px; }
+  .coast-head > :first-child { grid-column: 1 / -1; }
+}
+/* Phone: a swipeable row of portrait tiles, the next one peeking in. */
+.coast-grid {
+  list-style: none;
+  margin: 0 -24px;
+  padding: 0 24px 6px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 76%;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.coast-grid::-webkit-scrollbar { display: none; }
+.coast-tile { scroll-snap-align: center; aspect-ratio: 4 / 5; }
+/* Tablet and up: a mosaic — the pier large, surf tall, two sunsets stacked. */
+@media (min-width: 760px) {
+  .coast-grid {
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(2, clamp(200px, 22vw, 290px));
+    grid-template-areas:
+      "a a b c"
+      "a a b d";
+    gap: 16px;
+  }
+  .coast-tile { aspect-ratio: auto; }
+  .coast-a { grid-area: a; }
+  .coast-b { grid-area: b; }
+  .coast-c { grid-area: c; }
+  .coast-d { grid-area: d; }
+}
+.coast-tile { position: relative; border-radius: 22px; overflow: hidden; --reveal-cover: #11120f; }
+.coast-figure {
+  position: relative;
+  isolation: isolate;
+  height: 100%;
+  margin: 0;
+  background: #1c1d19;
+}
+.coast-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  transition: transform 1.4s var(--ease-out-soft), scale 1.6s var(--ease-out-soft);
+}
+.coast-figure:hover .coast-video { transform: scale(1.04); }
+.coast-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(10, 10, 8, 0.25) 0%, transparent 30%, transparent 50%, rgba(10, 10, 8, 0.78) 100%);
+}
+.coast-toggle {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(250, 246, 238, 0.3);
+  background: rgba(10, 10, 8, 0.35);
+  color: #FAF6EE;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.coast-toggle:hover { transform: scale(1.08); background: rgba(10, 10, 8, 0.55); }
+.coast-toggle:focus-visible { outline: 2px solid rgb(var(--accent-light)); outline-offset: 2px; }
+.coast-caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px;
+  color: #FAF6EE;
+}
+.coast-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.6vw, 2.3rem);
+  line-height: 1;
+}
+.coast-sub {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(250, 246, 238, 0.72);
+}
+.coast-bar {
+  display: block;
+  height: 2px;
+  margin-top: 12px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgba(250, 246, 238, 0.2);
+}
+.coast-bar > span {
+  display: block;
+  height: 100%;
+  background: #FAF6EE;
+  transform-origin: left;
+  scale: 0 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .coast-video { transition: none; }
+  .coast-figure:hover .coast-video { transform: none; }
+}
+
+/* ===== Home hero over video ===== */
+/* Text on the hero (and on the nav while it floats over it) is light: the
+   hero redefines --ink locally, so every rgb(var(--ink)) inside follows. */
+.hero, .nav-over-hero { --ink: 250, 246, 238; }
+.hero-media {
+  position: absolute;
+  inset: 0;
+  background: #1b2a26 center / cover no-repeat;
+}
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.5s ease-out;
+}
+.hero-video.is-ready { opacity: 1; }
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 65% 55% at 50% 50%, rgba(8, 12, 10, 0.55), transparent 80%),
+    linear-gradient(180deg, rgba(8, 12, 10, 0.6) 0%, rgba(8, 12, 10, 0.38) 45%, rgba(8, 12, 10, 0.6) 100%);
+}
+/* The sage greens are tuned for a cream page; over dark water they need to
+   be lighter to read. Only the text uses these — buttons keep the brand green. */
+.hero .sage-shimmer {
+  background-image: linear-gradient(90deg, #c9dca4 0%, #eef3dc 30%, #b7cf8a 60%, #dfe9c4 80%, #c9dca4 100%);
+}
+.hero-eyebrow { color: #d5e4b6 !important; }
+.hero .sage-line { background: linear-gradient(90deg, transparent, #d5e4b6, transparent); }
+.hero-pause {
+  position: absolute;
+  /* Left: the floating social buttons own the bottom-right corner. */
+  left: 24px;
+  bottom: 32px;
+  z-index: 11;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(250, 246, 238, 0.35);
+  background: rgba(8, 12, 10, 0.3);
+  color: #FAF6EE;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.hero-pause:hover { background: rgba(8, 12, 10, 0.5); transform: scale(1.06); }
+.hero-pause:focus-visible { outline: 2px solid rgb(var(--accent-light)); outline-offset: 2px; }
+
+/* Entrance, started when the opening curtain lifts (.hero-in). Lines of the
+   headline rise out of their own masks; the rest follows in steps. Hidden
+   only when JS is running (html.js), so without it the hero is just there. */
+.hero-line { display: block; overflow: hidden; padding-bottom: 0.06em; }
+.hero-line > span { display: block; }
+html.js .hero-line > span {
+  transform: translate3d(0, 105%, 0);
+  transition: transform 1.3s var(--ease-out-soft);
+  transition-delay: calc(120ms + var(--line, 0) * 140ms);
+}
+html.js .hero-step {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition: opacity 1s var(--ease-out-soft), transform 1.1s var(--ease-out-soft);
+  transition-delay: calc(var(--step, 0) * 130ms + 60ms);
+}
+html.js .hero-in .hero-line > span,
+html.js .hero-in .hero-step { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html.js .hero-line > span, html.js .hero-step { opacity: 1; transform: none; transition: none; }
+}
+
+/* ===== Floating social buttons ===== */
+.social-float {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.social-fab {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  height: 46px;
+  border-radius: 999px;
+  background: var(--fab);
+  color: #FFFFFF;
+  text-decoration: none;
+  box-shadow: 0 10px 24px -8px rgba(35, 34, 30, 0.45);
+  /* Hover lifts with `translate`: the entrance animation holds `transform`. */
+  transition: translate 0.35s var(--ease-out-soft), filter 0.3s ease, box-shadow 0.3s ease;
+}
+.social-fab-icon { display: grid; place-items: center; width: 46px; height: 46px; flex-shrink: 0; }
+.social-fab-label {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: max-width 0.5s var(--ease-out-soft), padding 0.5s var(--ease-out-soft);
+}
+.social-fab:hover, .social-fab:focus-visible { translate: 0 -2px; filter: brightness(1.06); box-shadow: 0 14px 30px -10px rgba(35, 34, 30, 0.55); }
+.social-fab:hover .social-fab-label,
+.social-fab:focus-visible .social-fab-label { max-width: 190px; padding-left: 18px; }
+.social-fab:focus-visible { outline: 2px solid #FAF6EE; outline-offset: 3px; }
+
+.social-fab-wa { height: 52px; }
+.social-fab-wa .social-fab-icon { width: 52px; height: 52px; }
+/* The breathing ring: a copy of the button's fill that grows and fades. */
+.social-fab-wa::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: inherit;
+  animation: fabPulse 2.2s var(--ease-out-soft) infinite;
+}
+@keyframes fabPulse {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+/* Entrance, after the opening curtain (or straight away when there is none). */
+@keyframes fabIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.6); }
+  to   { opacity: 1; transform: none; }
+}
+.social-fab { animation: fabIn 0.6s var(--ease-out-soft) both; animation-delay: calc(2.4s + var(--i, 0) * 110ms); }
+html.no-intro .social-fab { animation-delay: calc(0.3s + var(--i, 0) * 110ms); }
+
+@media (max-width: 640px) {
+  .social-float { right: 16px; bottom: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .social-fab, .social-fab-wa::before { animation: none; }
+  .social-fab-label { transition: none; }
 }

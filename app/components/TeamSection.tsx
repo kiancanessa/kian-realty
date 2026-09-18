@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
+import Image from "next/image";
 import { createPortal } from "react-dom";
-import { ArrowRight, Mail, MessageCircle, ChevronDown, X, Check } from "lucide-react";
+import { ArrowRight, Mail, MessageCircle, X, Check } from "lucide-react";
 import { useLang } from "../lib/LangContext";
 
 function initials(name: string) {
@@ -14,27 +15,24 @@ function initials(name: string) {
 }
 
 /** Photo with an initials placeholder underneath while the image loads. */
-function Portrait({ photo, name, rounded }: { photo?: string; name: string; rounded: number }) {
+function Portrait({ photo, name, rounded, focus }: { photo?: string; name: string; rounded: number; focus?: string }) {
   const [loaded, setLoaded] = useState(false);
-  useEffect(() => {
-    if (!photo) return;
-    setLoaded(false);
-    const img = new window.Image();
-    img.onload = () => setLoaded(true);
-    img.src = photo;
-  }, [photo]);
 
   return (
     <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgb(var(--bg-alt))", borderRadius: rounded }}>
       <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "2rem", color: "rgba(var(--accent),0.55)" }}>
         {initials(name)}
       </span>
-      {loaded && photo && (
-        <img
+      {photo && (
+        <Image
           className="team-member-photo"
           src={photo}
           alt={name}
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", borderRadius: rounded }}
+          fill
+          sizes="(max-width: 640px) 50vw, 420px"
+          style={{ objectFit: "cover", objectPosition: focus, borderRadius: rounded, opacity: loaded ? 1 : 0, transition: "opacity 0.4s ease" }}
+          onLoad={() => setLoaded(true)}
+          onError={() => setLoaded(false)}
         />
       )}
     </div>
@@ -45,12 +43,6 @@ function Portrait({ photo, name, rounded }: { photo?: string; name: string; roun
  *  services pitch with a headline and a list of reasons. */
 type MemberProfile = { headline?: string; listTitle?: string; points?: { title: string; text: string }[] };
 type TeamMember = { name: string; role: string; photo?: string; bio: string; whatsapp?: string; email?: string; profile?: MemberProfile };
-
-// Past this length a bio no longer reads as a card blurb: the card shows the
-// opening lines and the full text moves to the profile dialog. Decided by
-// length rather than by measuring overflow, because the bio sits inside a
-// collapsed reveal where it has no height to measure.
-const BIO_EXCERPT_CHARS = 150;
 
 const actionButton: React.CSSProperties = {
   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
@@ -137,7 +129,7 @@ function ProfileDialog({ member, onClose, closeLabel }: { member: TeamMember; on
         <div style={{ padding: "28px 28px 30px" }}>
           <div style={{ display: "flex", gap: 18, alignItems: "center", paddingRight: 40, marginBottom: 22 }}>
             <div style={{ position: "relative", width: 76, height: 92, borderRadius: 16, overflow: "hidden", flexShrink: 0 }}>
-              <Portrait photo={member.photo} name={member.name} rounded={16} />
+              <Portrait photo={member.photo} name={member.name} rounded={16} focus={member.photo ? PHOTO_FOCUS[member.photo] ?? DEFAULT_FOCUS : undefined} />
             </div>
             <div style={{ minWidth: 0 }}>
               <h3 id={titleId} style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "clamp(1.45rem, 5vw, 1.8rem)", lineHeight: 1.2, color: "rgb(var(--ink))", marginBottom: 4 }}>
@@ -191,196 +183,54 @@ function ProfileDialog({ member, onClose, closeLabel }: { member: TeamMember; on
   );
 }
 
-/** One roster card. Rendered twice per roster (once per wheel copy). */
-function MemberCard({ member, ariaHidden }: { member: TeamMember; ariaHidden?: boolean }) {
+// Where the face sits in each photo, for the 4:5 crop. Most portraits are
+// framed from the chest up and read best anchored near the top; these are not.
+const PHOTO_FOCUS: Record<string, string> = {
+  "/images/team/ulises.jpeg": "50% 55%",
+  "/images/team/veronica.jpg": "50% 62%",
+  "/images/team/leticia.jpeg": "50% 30%",
+};
+const DEFAULT_FOCUS = "50% 22%";
+
+/** One portrait in the roster grid. The whole tile opens the profile; the
+ *  WhatsApp shortcut sits beside the button, not inside it, so it stays a
+ *  real link. */
+function MemberTile({ member, index }: { member: TeamMember; index: number }) {
   const { t } = useLang();
-  // Hover opens the card on a desktop, but a phone has no hover — without this
-  // the bio and the WhatsApp button are simply unreachable there. The wheel's
-  // drag handler already ignores movement under its threshold, so a tap that
-  // never turns into a drag lands here.
-  const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const closeProfile = useCallback(() => setProfileOpen(false), []);
 
-  const hasContact = !!(member.whatsapp || member.email);
-  const hasProfile = !!member.profile || member.bio.length > BIO_EXCERPT_CHARS;
-
   return (
-    <div
-      aria-hidden={ariaHidden || undefined}
-      className={`team-member-card${open ? " is-open" : ""}`}
-      onClick={e => {
-        // Let the links and buttons inside do their own job.
-        if ((e.target as HTMLElement).closest("a, button")) return;
-        setOpen(o => !o);
-      }}
-      style={{ display: "flex", gap: 22, alignItems: "flex-start", padding: 22, border: "1px solid rgba(var(--accent),0.12)", background: "rgba(var(--surface),0.82)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", flexShrink: 0 }}
-    >
-      <div style={{ position: "relative", width: 104, height: 124, borderRadius: 18, overflow: "hidden", flexShrink: 0 }}>
-        <Portrait photo={member.photo} name={member.name} rounded={18} />
-      </div>
-
-      <div style={{ minWidth: 0, flex: 1 }}>
-        <h4 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "1.5rem", color: "rgb(var(--ink))", lineHeight: 1.25, marginBottom: 6 }}>
-          {member.name}
-        </h4>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-          <span style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgba(var(--ink),0.48)", lineHeight: 1.5 }}>
-            {member.role}
-          </span>
-          <ChevronDown className="team-caret" size={17} color="rgba(var(--accent),0.65)" style={{ flexShrink: 0 }} />
-        </div>
-
-        <div className="team-reveal">
-          <div>
-            <p className={hasProfile ? "team-bio-excerpt" : undefined}
-              style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.92rem", lineHeight: 1.7, color: "rgba(var(--ink),0.6)", marginTop: 14 }}>
-              {member.bio}
-            </p>
-            {(hasContact || hasProfile) && (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 10, paddingTop: 16 }}>
-                <ContactLinks member={member} tabbable={!ariaHidden} />
-                {hasProfile && (
-                  <button type="button" className="team-action" style={actionButton}
-                    tabIndex={ariaHidden ? -1 : undefined}
-                    onClick={() => setProfileOpen(true)}
-                    onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
-                    {t.about.teamProfileCta} <ArrowRight size={15} />
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
+    <article className="team-tile" data-reveal="media" style={{ "--reveal-delay": `${(index % 3) * 90}ms` } as React.CSSProperties}>
+      <button type="button" className="team-tile-open" onClick={() => setProfileOpen(true)}
+        aria-label={`${t.about.teamProfileCta}: ${member.name}`}>
+        <span className="team-tile-photo">
+          <Portrait photo={member.photo} name={member.name} rounded={0} focus={member.photo ? PHOTO_FOCUS[member.photo] ?? DEFAULT_FOCUS : undefined} />
+        </span>
+        <span className="team-tile-shade" aria-hidden />
+        <span className="team-tile-text">
+          <span className="team-tile-name">{member.name}</span>
+          <span className="team-tile-role">{member.role}</span>
+          <span className="team-tile-more" aria-hidden>{t.about.teamProfileCta} <ArrowRight size={13} /></span>
+        </span>
+      </button>
+      {member.whatsapp && (
+        <a className="team-tile-wa" href={`https://wa.me/${member.whatsapp}`} target="_blank" rel="noopener noreferrer"
+          aria-label={`WhatsApp — ${member.name}`}>
+          <MessageCircle size={17} />
+        </a>
+      )}
       {profileOpen && <ProfileDialog member={member} onClose={closeProfile} closeLabel={t.about.teamProfileClose} />}
-    </div>
+    </article>
   );
 }
-
-
-// Percent of the track travelled per pixel of wheel/drag movement. 50% is one
-// full roster, so a ~1400px gesture turns the wheel exactly once.
-const WHEEL_PERCENT_PER_PX = 50 / 1400;
-// Movement below this is treated as a tap, so cards stay clickable.
-const DRAG_THRESHOLD_PX = 6;
 
 export default function TeamSection() {
   const { t } = useLang();
   const team = t.about.team;
   const [lead, ...rest] = team;
 
-  const gridRef = useRef<HTMLDivElement>(null);
   const leadRef = useRef<HTMLDivElement>(null);
-  const leadCardRef = useRef<HTMLDivElement>(null);
-  const wheelRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  // Reveal each member card once, then leave it on screen.
-  useEffect(() => {
-    const nodes = gridRef.current?.querySelectorAll(".team-member");
-    if (!nodes?.length) return;
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-            observer.unobserve(entry.target); // stays visible; no re-trigger
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
-    );
-    nodes.forEach(n => observer.observe(n));
-    return () => observer.disconnect();
-  }, [team.length]);
-
-  // The loop distance needs no JS — the stylesheet makes -50% exact. All that
-  // is left is publishing the lead card's height so the wheel can end level
-  // with it on desktop; the stylesheet decides whether to use it, since
-  // branching on matchMedia here raced the resize and left a stale height.
-  useEffect(() => {
-    const leadCard = leadCardRef.current;
-    if (!leadCard) return;
-
-    const sync = () => {
-      const leadH = leadCard.offsetHeight;
-      if (leadH > 0) wheelRef.current?.style.setProperty("--lead-h", `${leadH}px`);
-    };
-
-    sync();
-    const ro = new ResizeObserver(sync);
-    ro.observe(leadCard);
-    window.addEventListener("resize", sync);
-    return () => { ro.disconnect(); window.removeEventListener("resize", sync); };
-  }, [t]);
-
-  // The wheel is driven only by the pointer that is actually over it, never by
-  // page scroll — otherwise the cards slide past while you are just navigating
-  // down the page and never settle long enough to read.
-  //
-  // Position is a percentage of the track. The track is exactly two copies of
-  // the roster, so wrapping at 50% lands on the duplicate with no measurement.
-  useEffect(() => {
-    const wheelEl = wheelRef.current;
-    const track = trackRef.current;
-    if (!wheelEl || !track) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    let offset = 0;
-    const wrap = (v: number) => ((v % 50) + 50) % 50;
-    const apply = () => { track.style.transform = `translate3d(0, -${offset}%, 0)`; };
-    apply();
-
-    // Wheel/trackpad: turn the roster and hold the page still, but only while
-    // the cursor is over this section. Anywhere else the page scrolls normally.
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      offset = wrap(offset + e.deltaY * WHEEL_PERCENT_PER_PX);
-      apply();
-    };
-
-    // Phones have no hover, so there the roster is browsed by dragging it.
-    let startY = 0, lastY = 0, tracking = false, dragging = false;
-    const onPointerDown = (e: PointerEvent) => {
-      tracking = true; dragging = false; startY = lastY = e.clientY;
-    };
-    const onPointerMove = (e: PointerEvent) => {
-      if (!tracking) return;
-      // Stay out of the way until it is clearly a drag, so taps still open cards.
-      if (!dragging && Math.abs(e.clientY - startY) < DRAG_THRESHOLD_PX) return;
-      // Capture keeps the drag alive if the finger leaves the card, but throws
-      // for a pointer the element never owned — losing capture is survivable.
-      if (!dragging) {
-        dragging = true;
-        try { wheelEl.setPointerCapture(e.pointerId); } catch { /* drag still works */ }
-      }
-      offset = wrap(offset + (lastY - e.clientY) * WHEEL_PERCENT_PER_PX);
-      lastY = e.clientY;
-      apply();
-    };
-    const endDrag = (e: PointerEvent) => {
-      tracking = false;
-      if (dragging && wheelEl.hasPointerCapture(e.pointerId)) {
-        try { wheelEl.releasePointerCapture(e.pointerId); } catch { /* already released */ }
-      }
-      dragging = false;
-    };
-
-    wheelEl.addEventListener("wheel", onWheel, { passive: false });
-    wheelEl.addEventListener("pointerdown", onPointerDown);
-    wheelEl.addEventListener("pointermove", onPointerMove);
-    wheelEl.addEventListener("pointerup", endDrag);
-    wheelEl.addEventListener("pointercancel", endDrag);
-    return () => {
-      wheelEl.removeEventListener("wheel", onWheel);
-      wheelEl.removeEventListener("pointerdown", onPointerDown);
-      wheelEl.removeEventListener("pointermove", onPointerMove);
-      wheelEl.removeEventListener("pointerup", endDrag);
-      wheelEl.removeEventListener("pointercancel", endDrag);
-    };
-  }, []);
 
   // Parallax tilt + cursor glow, both written as CSS custom properties inside a
   // rAF so pointermove never triggers a React re-render.
@@ -424,13 +274,25 @@ export default function TeamSection() {
       </div>
 
       <div style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgb(var(--accent))", marginBottom: 48, textAlign: "center" }}>
-          {t.about.teamTitle}
+        <div data-reveal style={{ textAlign: "center", marginBottom: 56 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 18 }}>
+            <div className="sage-line" />
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgb(var(--accent))" }}>
+              {t.about.teamTitle}
+            </span>
+            <div className="sage-line" />
+          </div>
+          <h2 data-reveal="line" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontSize: "clamp(2rem, 4.2vw, 3.2rem)", lineHeight: 1.1, letterSpacing: "-0.01em", color: "rgb(var(--ink))" }}>
+            <span className="reveal-text">{t.about.teamHeading}</span>
+          </h2>
+          <p className="team-hint" style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.82rem", color: "rgba(var(--ink),0.45)", marginTop: 12 }}>
+            {t.about.teamHint}
+          </p>
         </div>
 
-        <div ref={gridRef} className="team-layout" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 40 }}>
+        <div className="team-layout" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 40 }}>
           {/* ---- Lead card ---- */}
-          <div className="team-lead-col">
+          <div className="team-lead-col" data-reveal>
             <div className="lead-float">
               <div
                 ref={leadRef}
@@ -438,11 +300,11 @@ export default function TeamSection() {
                 onPointerMove={onPointerMove}
                 onPointerLeave={onPointerLeave}
               >
-                <div className="lead-card" ref={leadCardRef} style={{ padding: 2 }}>
+                <div className="lead-card" style={{ padding: 2 }}>
                   <div className="lead-glow" aria-hidden />
                   <div style={{ padding: "36px 34px 34px" }}>
                     <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 5", borderRadius: 24, overflow: "hidden", marginBottom: 28 }}>
-                      <Portrait photo={lead.photo} name={lead.name} rounded={24} />
+                      <Portrait photo={lead.photo} name={lead.name} rounded={24} focus="50% 20%" />
                     </div>
                     <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.58rem", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgb(var(--accent))", marginBottom: 12 }}>
                       {lead.role}
@@ -482,25 +344,11 @@ export default function TeamSection() {
             </div>
           </div>
 
-          {/* ---- Circular roster wheel ---- */}
-          <div className="team-member">
-            <div className="team-wheel" ref={wheelRef}>
-              {/* Two copies so the wheel can turn without a visible seam; the
-                  second is decorative, hence aria-hidden. */}
-              <div className="team-wheel-track" ref={trackRef}>
-                {[0, 1].map(copy => (
-                  <div className="team-wheel-copy" key={copy} aria-hidden={copy === 1 || undefined}>
-                    {rest.map(member => (
-                      <MemberCard
-                        key={`${copy}-${member.name}`}
-                        member={member}
-                        ariaHidden={copy === 1}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* ---- Everyone else, all visible at once ---- */}
+          <div className="team-grid">
+            {rest.map((member, i) => (
+              <MemberTile key={member.name} member={member} index={i} />
+            ))}
           </div>
         </div>
       </div>

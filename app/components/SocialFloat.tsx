@@ -3,30 +3,28 @@ import { SOCIAL_LINKS, WhatsAppIcon } from "../lib/social";
 // Jorge's personal WhatsApp — the site's main point of contact.
 import { JORGE_WHATSAPP } from "../lib/contact";
 
+// wa.me wants digits with Mexico's old mobile "1"; people read it without.
+const WHATSAPP_DISPLAY = "+52 661 125 6107";
+
+/** Floating social buttons, with the Jarames treatment: WhatsApp breathes
+ *  with a pulse ring, and on hover or keyboard focus each button slides open
+ *  to show where it goes. The accessible name is always there, visible or not.
+ *  They pop in one by one once the opening curtain has lifted. */
 export default function SocialFloat() {
   return (
-    <div style={{ position: "fixed", bottom: 24, right: 24, zIndex: 40, display: "flex", flexDirection: "column", gap: 10 }}>
-      {SOCIAL_LINKS.map(({ name, href, Icon, color, hoverColor }) => (
+    <div className="social-float">
+      {SOCIAL_LINKS.map(({ name, href, Icon, color }, i) => (
         <a key={name} href={href} target="_blank" rel="noopener noreferrer" aria-label={name}
-          style={{
-            width: 46, height: 46, borderRadius: "50%", background: color, color: "#FFFFFF",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 4px 16px rgba(35,34,30,0.3)", transition: "all 0.3s", textDecoration: "none",
-          }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = hoverColor; (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)"; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = color; (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}>
-          <Icon size={18} />
+          className="social-fab" style={{ "--fab": color, "--i": i } as React.CSSProperties}>
+          <span className="social-fab-icon"><Icon size={18} /></span>
+          <span className="social-fab-label" aria-hidden>{name}</span>
         </a>
       ))}
-      <a href={`https://wa.me/${JORGE_WHATSAPP}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
-        style={{
-          width: 50, height: 50, borderRadius: "50%", background: "#25D366", color: "#FFFFFF",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          boxShadow: "0 4px 16px rgba(35,34,30,0.35)", transition: "all 0.3s", textDecoration: "none",
-        }}
-        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#1EBE5A"; (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)"; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#25D366"; (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}>
-        <WhatsAppIcon size={22} />
+      <a href={`https://wa.me/${JORGE_WHATSAPP}`} target="_blank" rel="noopener noreferrer"
+        aria-label={`WhatsApp ${WHATSAPP_DISPLAY}`}
+        className="social-fab social-fab-wa" style={{ "--fab": "#25D366", "--i": SOCIAL_LINKS.length } as React.CSSProperties}>
+        <span className="social-fab-icon"><WhatsAppIcon size={22} /></span>
+        <span className="social-fab-label" aria-hidden>{WHATSAPP_DISPLAY}</span>
       </a>
     </div>
   );

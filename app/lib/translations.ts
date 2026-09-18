@@ -27,6 +27,8 @@ export const translations = {
       cta1: "Explore Properties",
       cta2: "Get in Touch",
       scroll: "Scroll to explore",
+      pauseVideo: "Pause background video",
+      playVideo: "Play background video",
     },
     stats: {
       coast: "Miles of Coastline",
@@ -130,6 +132,8 @@ export const translations = {
       bio2: "Beyond real estate, our team also offers architectural design, construction, and property maintenance services — so whether you're buying an existing home or building one from the ground up, we're with you from the first visit to move-in day.",
       cta: "Talk to Our Team",
       teamTitle: "Meet the Team",
+      teamHeading: "The people behind every deal",
+      teamHint: "Tap a profile to read more",
       highlights: [
         "Bilingual team (English / Spanish)",
         "Full-license real estate services",
@@ -148,6 +152,7 @@ export const translations = {
         { name: "Irving Berron Mena", role: "Real Estate Sales Manager", photo: "/images/team/irving.jpeg", bio: "The Real Estate Sales Manager leads and oversees the agency's commercial strategy, ensuring targets for listings, marketing, and closings are met. He coordinates the team of advisors, sets clear goals, and ensures transparent, effective service for clients, strengthening the company's position in the market.", whatsapp: "5216645640037" },
         { name: "Leticia Bonilla", role: "Real Estate Advisor", photo: "/images/team/leticia.jpeg", bio: "Guides buyers and renters through the search, from first tour to offer.", whatsapp: "5216641358852" },
         { name: "Ulises Acosta Juarez", role: "Real Estate Advisor", photo: "/images/team/ulises.jpeg", bio: "Advises buyers and investors on listings across the Rosarito corridor.", whatsapp: "5216611017004" },
+        { name: "Adan Heredia Gonzales", role: "Real Estate Advisor", photo: "/images/team/adan.jpg", bio: "Advises buyers and sellers across Rosarito, from the first showing to the closing." },
         { name: "Javier Guerrero", role: "Real Estate Advisor", photo: "/images/team/javier.jpeg", bio: "Real estate broker specializing in domestic and international transactions, with a solid track record in buying, selling, and renting property in Mexico and abroad. His mission is to be the trusted bridge between clients, investors, and developers, offering end-to-end guidance that combines legal certainty, strategic vision, and effective results.", whatsapp: "16263735684" },
         { name: "Peter Zacharias Fehr", role: "Contractor · Spanish / English / German", photo: "/images/team/zacharias.jpeg", bio: "At El Casa Rosarito we know every project is more than a build: it is the dream of a home, a business, or a space that will shape your life. That is why we rely on the experience of Peter Zacharias Fehr, contractor and construction engineer, who personally oversees every stage of the process, from choosing materials to the land where your project will rise.", profile: { headline: "Build with us · Quality guaranteed", listTitle: "Why choose us?", points: [{ title: "Expert supervision", text: "Peter Zacharias Fehr makes sure every detail meets the highest standards of quality, safety, and efficiency." }, { title: "Premium materials", text: "We use durable materials that guarantee the soundness and value of your investment." }, { title: "Close guidance", text: "We walk you through every step, from initial planning to final handover." }, { title: "Full transparency", text: "Clear, constant communication so you always have peace of mind and confidence." }, { title: "Proven track record", text: "Successful projects that back our experience in the region." }] } },
         { name: "Kian Canessa", role: "Software Developer", photo: "/images/team/kian.png", bio: "Builds and maintains the website and the tools the team runs on.", whatsapp: "19512987671" },
@@ -169,6 +174,20 @@ export const translations = {
         { name: "Tijuana Airport", dist: "40 min", emoji: "✈️" },
         { name: "Playas de Tijuana", dist: "30 min", emoji: "🌊" },
       ],
+    },
+    coast: {
+      eyebrow: "Life in Rosarito",
+      title: "The coast you'll wake up to",
+      lead: "Surf, sunsets and the Pacific a few steps away. This is the everyday of living in Rosarito.",
+      clips: [
+        { slug: "muelle", title: "The Pier", caption: "Rosarito Beach from the air" },
+        { slug: "surf", title: "Surf", caption: "Pacific waves all year long" },
+        { slug: "playa", title: "The Beach", caption: "Low tide at dusk in Rosarito" },
+        { slug: "atardecer", title: "Sunset", caption: "Every evening over the Pacific" },
+      ],
+      play: "Play {name}",
+      pause: "Pause {name}",
+      credit: "Footage: Ilia Devaltovskii and Pexels",
     },
     testimonials: {
       title: "What Our Clients Say",
@@ -363,6 +382,8 @@ export const translations = {
       cta1: "Ver Propiedades",
       cta2: "Contáctanos",
       scroll: "Desliza para explorar",
+      pauseVideo: "Pausar video de fondo",
+      playVideo: "Reproducir video de fondo",
     },
     stats: {
       coast: "Millas de Costa",
@@ -466,6 +487,8 @@ export const translations = {
       bio2: "Además de bienes raíces, nuestro equipo ofrece diseño arquitectónico, construcción y mantenimiento de propiedades — así que ya sea que compres una casa existente o construyas una desde cero, te acompañamos desde la primera visita hasta la entrega.",
       cta: "Habla con Nuestro Equipo",
       teamTitle: "Conoce a Nuestro Equipo",
+      teamHeading: "Las personas detrás de cada operación",
+      teamHint: "Toca un perfil para conocerlo",
       highlights: [
         "Equipo bilingüe (Español / Inglés)",
         "Servicios inmobiliarios con licencia completa",
@@ -484,6 +507,7 @@ export const translations = {
         { name: "Irving Berron Mena", role: "Gerente de Ventas Inmobiliarias", photo: "/images/team/irving.jpeg", bio: "El Gerente de Ventas Inmobiliarias es responsable de dirigir y supervisar las estrategias comerciales de la agencia, asegurando el cumplimiento de objetivos de captación, promoción y cierre de operaciones. Coordina al equipo de asesores, establece metas claras y garantiza un servicio transparente y eficaz para los clientes, fortaleciendo la posición de la empresa en el mercado.", whatsapp: "5216645640037" },
         { name: "Leticia Bonilla", role: "Asesora Inmobiliaria", photo: "/images/team/leticia.jpeg", bio: "Acompaña a compradores y arrendatarios durante toda la búsqueda, del primer recorrido a la oferta.", whatsapp: "5216641358852" },
         { name: "Ulises Acosta Juarez", role: "Asesor Inmobiliario", photo: "/images/team/ulises.jpeg", bio: "Asesora a compradores e inversionistas sobre propiedades del corredor de Rosarito.", whatsapp: "5216611017004" },
+        { name: "Adan Heredia Gonzales", role: "Asesor Inmobiliario", photo: "/images/team/adan.jpg", bio: "Asesora a compradores y vendedores en Rosarito, desde la primera visita hasta el cierre." },
         { name: "Javier Guerrero", role: "Asesor Inmobiliario", photo: "/images/team/javier.jpeg", bio: "Broker inmobiliario especializado en operaciones nacionales e internacionales, con sólida trayectoria en la compraventa y renta de propiedades en México y el extranjero. Su misión es ser el puente confiable entre clientes, inversionistas y desarrolladores, ofreciendo acompañamiento integral que combina seguridad jurídica, visión estratégica y resultados efectivos.", whatsapp: "16263735684" },
         { name: "Peter Zacharias Fehr", role: "Contratista · Español / Inglés / Alemán", photo: "/images/team/zacharias.jpeg", bio: "En El Casa Rosarito sabemos que cada proyecto es más que una obra: es el sueño de un hogar, un negocio o un espacio que marcará tu vida. Por eso contamos con la experiencia de Peter Zacharias Fehr, contratista e ingeniero en construcción, quien supervisa personalmente cada etapa del proceso, desde la selección de materiales hasta el terreno donde se levantará tu proyecto.", profile: { headline: "Construye con nosotros · Calidad garantizada", listTitle: "¿Por qué elegirnos?", points: [{ title: "Supervisión experta", text: "Peter Zacharias Fehr asegura que cada detalle cumpla con los más altos estándares de calidad, seguridad y eficiencia." }, { title: "Materiales de excelencia", text: "Usamos insumos duraderos que garantizan la solidez y el valor de tu inversión." }, { title: "Acompañamiento cercano", text: "Te guiamos paso a paso, desde la planeación inicial hasta la entrega final." }, { title: "Transparencia total", text: "Comunicación clara y constante para que siempre tengas tranquilidad y confianza." }, { title: "Trayectoria comprobada", text: "Proyectos exitosos que respaldan nuestra experiencia en la región." }] } },
         { name: "Kian Canessa", role: "Desarrollador de Software", photo: "/images/team/kian.png", bio: "Desarrolla y mantiene el sitio web y las herramientas que usa el equipo.", whatsapp: "19512987671" },
@@ -505,6 +529,20 @@ export const translations = {
         { name: "Aeropuerto de Tijuana", dist: "40 min", emoji: "✈️" },
         { name: "Playas de Tijuana", dist: "30 min", emoji: "🌊" },
       ],
+    },
+    coast: {
+      eyebrow: "Vive Rosarito",
+      title: "La costa que verás al despertar",
+      lead: "Surf, atardeceres y el Pacífico a unos pasos. Así es el día a día de vivir en Rosarito.",
+      clips: [
+        { slug: "muelle", title: "El Muelle", caption: "Playas de Rosarito desde el aire" },
+        { slug: "surf", title: "Surf", caption: "Olas del Pacífico todo el año" },
+        { slug: "playa", title: "La Playa", caption: "Marea baja al atardecer en Rosarito" },
+        { slug: "atardecer", title: "Atardecer", caption: "Cada tarde sobre el Pacífico" },
+      ],
+      play: "Reproducir {name}",
+      pause: "Pausar {name}",
+      credit: "Videos: Ilia Devaltovskii y Pexels",
     },
     testimonials: {
       title: "Lo que Dicen Nuestros Clientes",

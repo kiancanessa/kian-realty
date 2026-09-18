@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useLang } from "../lib/LangContext";
 import { useTheme } from "../lib/ThemeContext";
 import { useSession } from "../lib/useSession";
@@ -19,6 +19,10 @@ export default function Navbar() {
   const [accountOpen, setAccountOpen] = useState(false);
   const { openQuiz } = useQuiz();
   const accountRef = useRef<HTMLDivElement>(null);
+  // Over the home hero the nav sits on dark video, so its text turns light
+  // until the page scrolls and the nav gets its own background.
+  const pathname = usePathname();
+  const overHero = pathname === "/" && !scrolled && !open;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -51,7 +55,7 @@ export default function Navbar() {
 
   return (
     <>
-    <nav style={{
+    <nav className={overHero ? "nav-over-hero" : undefined} style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
       transition: "all 0.5s ease",
       background: scrolled ? "rgba(var(--bg),0.96)" : "transparent",
