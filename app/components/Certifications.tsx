@@ -66,7 +66,9 @@ export default function Certifications() {
                     )}
                   </div>
                   <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.95rem", color: "#FAF6EE", marginBottom: 14 }}>
-                    {locale === "es" ? "Certificados por" : "All certified by"}
+                    {/* Every seal here is a membership (AMPI, NAR, CEPIBC, CANACO),
+                        not a certificate, so the label says so. */}
+                    {locale === "es" ? "Afiliados a" : "Affiliated with"}
                   </div>
                   <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "1.5rem", color: "#FAF6EE", marginBottom: 14, lineHeight: 1.2 }}>
                     {c.name}
