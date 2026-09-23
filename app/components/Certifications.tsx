@@ -41,7 +41,9 @@ export default function Certifications() {
           </span>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
+        {/* Flex, not grid: with five seals a grid leaves the last one
+            stranded at the left of its own row. Here the last row centres. */}
+        <div className="cert-grid">
           {items.map(item => {
             const c = item.content[locale] ?? item.content.en;
             return (
@@ -58,7 +60,7 @@ export default function Certifications() {
                   style={{ position: "absolute", bottom: -50, right: -50, opacity: 0.05, transform: "rotate(-12deg)", zIndex: 0, pointerEvents: "none" }} />
 
                 <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
-                  <div className="badge-pulse" style={{ flexShrink: 0, width: 110, height: 110, borderRadius: "50%", background: "#FAF6EE", border: "1px solid rgba(var(--accent),0.3)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: 18, marginBottom: 24 }}>
+                  <div className="badge-pulse" style={{ flexShrink: 0, width: 120, height: 120, borderRadius: "50%", background: "#FAF6EE", border: "1px solid rgba(var(--accent),0.3)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: 15, marginBottom: 24 }}>
                     {item.image_url ? (
                       <img src={item.image_url} alt={c.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                     ) : (

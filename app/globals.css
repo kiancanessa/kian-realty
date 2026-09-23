@@ -1036,3 +1036,15 @@ html.no-intro .social-fab { animation-delay: calc(0.3s + var(--i, 0) * 110ms); }
   .social-fab, .social-fab-wa::before { animation: none; }
   .social-fab-label { transition: none; }
 }
+
+/* ===== Certification seals ===== */
+.cert-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+.certification-card {
+  flex: 1 1 300px;
+  max-width: 360px;
+}
