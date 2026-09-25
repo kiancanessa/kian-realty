@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "lemusrealty.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "assets.easybroker.com",
         pathname: "/**",
       },

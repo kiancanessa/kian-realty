@@ -36,6 +36,14 @@ export const PARTNERS: Partner[] = [
     tokenEnv: "BOLSA_OUT_JARAMES",
     incomingTokenEnv: "BOLSA_IN_JARAMES",
   },
+  {
+    slug: "lemus",
+    name: "Grupo Lemus Realty",
+    site: "https://lemusrealty.com",
+    api: "https://lemusrealty.com/api/bolsa/v1",
+    tokenEnv: "BOLSA_OUT_LEMUS",
+    incomingTokenEnv: "BOLSA_IN_LEMUS",
+  },
 ];
 
 /** The partner's API base, overridable per environment (a preview deploy or
