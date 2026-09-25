@@ -11,6 +11,8 @@ import { sendInquiry, whatsappLink } from "../lib/sendInquiry";
 import StarRating from "./StarRating";
 import Avatar from "./Avatar";
 import FavoriteButton from "./FavoriteButton";
+import PartnerTag from "./PartnerTag";
+import type { ListingPartner } from "../lib/propertyFormat";
 
 type PropertyReview = { id: number; name: string; rating: number; comment_en: string; comment_es: string; language: "en" | "es" };
 
@@ -18,7 +20,7 @@ const WHATSAPP_NUMBER = "526611256107";
 const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER}`;
 const EMAIL_HREF = "mailto:jorgeelcasarosarito@gmail.com";
 
-export default function EasyBrokerDetail({ property }: { property: EBPropertyDetail }) {
+export default function EasyBrokerDetail({ property, partner }: { property: EBPropertyDetail; partner?: ListingPartner }) {
   const { t, locale } = useLang();
   const { user } = useSession();
   const [lightbox, setLightbox] = useState<number | null>(null);
@@ -156,11 +158,15 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
           <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontSize: "clamp(2rem, 5vw, 3.5rem)", color: "#FAF6EE", lineHeight: 1, marginBottom: 8 }}>
             {property.title}
           </h1>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <MapPin size={13} color="rgb(var(--accent-light))" />
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "rgba(250,246,238,0.8)", letterSpacing: "0.08em" }}>
-              {property.location}
+          <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <MapPin size={13} color="rgb(var(--accent-light))" />
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "rgba(250,246,238,0.8)", letterSpacing: "0.08em" }}>
+                {property.location}
+              </span>
             </span>
+            {/* An allied agency's listing says so right under the title. */}
+            {partner && <PartnerTag partner={partner} href={partner.site} />}
           </div>
         </div>
       </div>
@@ -365,7 +371,9 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
               style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "rgba(var(--ink),0.4)", fontFamily: "'Jost', sans-serif", fontSize: "0.78rem", textDecoration: "none" }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "rgb(var(--accent))"}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(var(--ink),0.4)"}>
-              {t.property.viewOnEasyBroker} <ExternalLink size={13} />
+              {partner
+                ? t.property.viewOnPartnerSite.replace("{name}", partner.name)
+                : t.property.viewOnEasyBroker} <ExternalLink size={13} />
             </a>
           )}
         </div>

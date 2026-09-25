@@ -23,3 +23,7 @@ export function numOrNull(v: string | number | null | undefined): number | null 
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
 }
+
+/** The agency a listing belongs to, when it is not ours: shown as a small
+ *  origin badge on the card and on the detail page. */
+export type ListingPartner = { slug: string; name: string; site: string; logo: string | null };
