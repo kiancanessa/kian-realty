@@ -1,4 +1,11 @@
-// The other side of the pool: our partners' listings, shown on our site.
+// The other side of the pool: our partners' listings, shown on our site as
+// part of our own catalogue.
+//
+// By agreement between the agencies, a visitor is never told a listing comes
+// from someone else: whichever site the lead lands on keeps it. So nothing
+// that reaches the browser names the owner — no badge, no link to their
+// site, and a neutral id ("REF-…") instead of one carrying their name. Who
+// owns what is only known here, on the server.
 //
 // Three rules keep a partner's problems from becoming ours:
 //   1. Nothing is trusted — every listing is validated (see contract.ts).
@@ -7,13 +14,14 @@
 //   3. That copy expires in 24 h. Showing houses that may already be sold is
 //      worse than showing fewer houses.
 import "server-only";
+import { createHash } from "node:crypto";
 import { sql } from "../db";
 import type { PropertyCard, EBPropertyDetail, OperationType, PropertyCategory } from "../easybroker";
 import { PLACEHOLDER_IMAGE } from "../propertyFormat";
 import { PARTNERS, apiBase, bolsaEnabled, type Partner } from "./partners";
 import { parseFeed, parseDetail, type BolsaFeed, type BolsaListing, type BolsaDetail, type BolsaType } from "./contract";
 
-export const BOLSA_ID_PREFIX = "BOLSA-";
+const REF_PREFIX = "REF-";
 
 /** How long a listing stays up after we last managed to reach its owner. */
 const MAX_STALE_MS = 24 * 60 * 60 * 1000;
@@ -22,25 +30,30 @@ const FEED_REVALIDATE_S = 900;
 const SNAPSHOT_MIN_GAP_MS = 10 * 60 * 1000;
 const TIMEOUT_MS = 8000;
 
-export type PartnerInfo = { slug: string; name: string; site: string; logo: string | null };
-
 export function isBolsaId(id: string): boolean {
-  return id.startsWith(BOLSA_ID_PREFIX);
+  return id.startsWith(REF_PREFIX);
+}
+
+/** A stable, opaque id for a partner listing: the same house always gets the
+ *  same URL, and the URL says nothing about whose it is. */
+function refFor(partnerSlug: string, listingId: string): string {
+  const digest = createHash("sha256").update(`${partnerSlug}:${listingId}`).digest("hex");
+  return `${REF_PREFIX}${digest.slice(0, 10).toUpperCase()}`;
 }
 
 // ------------------------------------------------------------- fetch + cache
 
-async function fetchFeed(partner: Partner): Promise<BolsaFeed | null> {
+async function ask<T>(partner: Partner, path: string, parse: (raw: unknown) => T | null): Promise<T | null> {
   const token = process.env[partner.tokenEnv];
   if (!token) return null;
   try {
-    const res = await fetch(`${apiBase(partner)}/listings`, {
+    const res = await fetch(`${apiBase(partner)}${path}`, {
       headers: { authorization: `Bearer ${token}`, accept: "application/json" },
       signal: AbortSignal.timeout(TIMEOUT_MS),
       next: { revalidate: FEED_REVALIDATE_S, tags: [`bolsa-${partner.slug}`] },
     });
     if (!res.ok) return null;
-    return parseFeed(await res.json());
+    return parse(await res.json());
   } catch {
     return null;
   }
@@ -79,7 +92,7 @@ async function readSnapshot(partner: Partner): Promise<BolsaFeed | null> {
 }
 
 async function feedFor(partner: Partner): Promise<BolsaFeed | null> {
-  const live = await fetchFeed(partner);
+  const live = await ask(partner, "/listings", parseFeed);
   if (live) {
     void saveSnapshot(partner, live);
     return live;
@@ -117,13 +130,9 @@ function formatPrice(listing: BolsaListing): string | null {
   return money;
 }
 
-function localId(listing: BolsaListing): string {
-  return `${BOLSA_ID_PREFIX}${listing.id}`;
-}
-
-export function partnerToCard(listing: BolsaListing, partner: PartnerInfo): PropertyCard {
+function toCard(ref: string, listing: BolsaListing): PropertyCard {
   return {
-    id: localId(listing),
+    id: ref,
     title: listing.title.es,
     location: listing.location.address ?? listing.location.city ?? "",
     price: formatPrice(listing),
@@ -136,26 +145,23 @@ export function partnerToCard(listing: BolsaListing, partner: PartnerInfo): Prop
     constructionSize: listing.construction,
     lotSize: listing.lot,
     image: listing.photos[0] ?? PLACEHOLDER_IMAGE,
-    partner,
   };
 }
 
-/** Partner listings are mapped into EasyBroker's detail shape, exactly like
- *  our own ones, so the detail page renders them with no branching. */
-function partnerToDetail(detail: BolsaDetail): EBPropertyDetail {
+/** Mapped into EasyBroker's detail shape, exactly like our own listings, so
+ *  the detail page renders it with no branching. `public_url` stays empty:
+ *  that is what hides the "view the original listing" link. */
+function toDetail(ref: string, detail: BolsaDetail): EBPropertyDetail {
   const price = formatPrice(detail);
+  const place = detail.location.address ?? detail.location.city ?? "";
   return {
-    public_id: localId(detail),
+    public_id: ref,
     title: detail.title.es,
     title_image_full: detail.photos[0] ?? null,
     title_image_thumb: detail.photos[0] ?? null,
     description: (detail.description?.es ?? []).join("\n\n"),
-    location: detail.location.address ?? detail.location.city ?? "",
-    location_detail: {
-      name: detail.location.address ?? detail.location.city ?? "",
-      latitude: detail.location.lat,
-      longitude: detail.location.lng,
-    },
+    location: place,
+    location_detail: { name: place, latitude: detail.location.lat, longitude: detail.location.lng },
     property_images: detail.photos.map(url => ({ title: null, url })),
     operations: detail.price.amount === null ? [] : [{
       type: detail.operation as OperationType,
@@ -169,69 +175,47 @@ function partnerToDetail(detail: BolsaDetail): EBPropertyDetail {
     property_type: PROPERTY_TYPE_LABEL[detail.type],
     lot_size: detail.lot,
     construction_size: detail.construction,
-    // The visitor can always open the listing on its owner's site.
-    public_url: detail.url,
+    public_url: "",
   };
 }
 
 // --------------------------------------------------------------- public API
 
-export type PartnerListing = { card: PropertyCard; amount: number | null; fingerprintKey: string };
+type Found = { partner: Partner; listing: BolsaListing; ref: string };
 
-/** Every partner's listings, ready for the grid. Partners are read in
- *  parallel: one slow site must not hold up the others. */
-export async function getPartnerListings(): Promise<PartnerListing[]> {
+async function allPartnerListings(): Promise<Found[]> {
   if (!bolsaEnabled()) return [];
-
+  // Partners are read in parallel: one slow site must not hold up the others.
   const feeds = await Promise.all(PARTNERS.map(feedFor));
-  const out: PartnerListing[] = [];
-
-  feeds.forEach((feed, i) => {
-    if (!feed) return;
+  return feeds.flatMap((feed, i) => {
+    if (!feed) return [];
     const partner = PARTNERS[i];
-    const info: PartnerInfo = {
-      slug: partner.slug,
-      name: feed.agency.name || partner.name,
-      site: feed.agency.site || partner.site,
-      logo: feed.agency.logo ?? null,
-    };
-    for (const listing of feed.listings) {
-      out.push({
-        card: partnerToCard(listing, info),
-        amount: listing.price.amount,
-        fingerprintKey: listing.externalId ? `eb:${listing.externalId.toLowerCase()}` : `id:${listing.id}`,
-      });
-    }
+    return feed.listings.map(listing => ({ partner, listing, ref: refFor(partner.slug, listing.id) }));
   });
-
-  return out;
 }
 
-/** One partner listing in full, asked for only when a visitor opens it. */
-export async function getPartnerProperty(id: string): Promise<{ property: EBPropertyDetail; partner: PartnerInfo } | null> {
-  if (!bolsaEnabled() || !isBolsaId(id)) return null;
+export type PartnerListing = { card: PropertyCard; amount: number | null; fingerprintKey: string };
 
-  const listingId = id.slice(BOLSA_ID_PREFIX.length);
-  const partner = PARTNERS.find(p => listingId.startsWith(`${p.slug}-`));
-  if (!partner) return null;
+/** Every partner's listings, ready for the grid. */
+export async function getPartnerListings(): Promise<PartnerListing[]> {
+  const found = await allPartnerListings();
+  return found.map(({ listing, ref }) => ({
+    card: toCard(ref, listing),
+    amount: listing.price.amount,
+    fingerprintKey: listing.externalId ? `eb:${listing.externalId.toLowerCase()}` : `id:${listing.id}`,
+  }));
+}
 
-  const token = process.env[partner.tokenEnv];
-  if (!token) return null;
+/** One partner listing in full, asked for only when a visitor opens it. The
+ *  opaque id is resolved against the feeds, which are already cached. */
+export async function getPartnerProperty(id: string): Promise<EBPropertyDetail | null> {
+  if (!isBolsaId(id)) return null;
+  const match = (await allPartnerListings()).find(f => f.ref === id);
+  if (!match) return null;
 
-  try {
-    const res = await fetch(`${apiBase(partner)}/listings/${encodeURIComponent(listingId)}`, {
-      headers: { authorization: `Bearer ${token}`, accept: "application/json" },
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-      next: { revalidate: FEED_REVALIDATE_S, tags: [`bolsa-${partner.slug}`] },
-    });
-    if (!res.ok) return null;
-    const detail = parseDetail(await res.json());
-    if (!detail) return null;
-    return {
-      property: partnerToDetail(detail),
-      partner: { slug: partner.slug, name: partner.name, site: partner.site, logo: null },
-    };
-  } catch {
-    return null;
-  }
+  const detail = await ask<BolsaDetail>(
+    match.partner, `/listings/${encodeURIComponent(match.listing.id)}`, parseDetail,
+  );
+  // If the detail call fails, the card data still makes a usable page.
+  return toDetail(id, detail ?? { ...match.listing, description: null, features: null });
 }

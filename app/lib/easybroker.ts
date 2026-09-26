@@ -1,7 +1,7 @@
 // Server-only: fetches live listings from the agency's EasyBroker account.
 // Never import this from a "use client" component — EASYBROKER_API_KEY must
 // stay off the client bundle.
-import { PLACEHOLDER_IMAGE, type ListingPartner } from "./propertyFormat";
+import { PLACEHOLDER_IMAGE } from "./propertyFormat";
 
 const API_BASE = "https://api.easybroker.com/v1";
 const PAGE_LIMIT = 20;
@@ -122,8 +122,6 @@ export type PropertyCard = {
   constructionSize: number | null;
   lotSize: number | null;
   image: string;
-  /** Set only on listings that belong to an allied agency (see lib/bolsa). */
-  partner?: ListingPartner;
 };
 
 

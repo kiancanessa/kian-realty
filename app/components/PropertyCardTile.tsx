@@ -5,7 +5,6 @@ import type { PropertyCard } from "../lib/easybroker";
 import { useLang } from "../lib/LangContext";
 import type { ReviewStats } from "../lib/useReviewStats";
 import FavoriteButton from "./FavoriteButton";
-import PartnerTag from "./PartnerTag";
 
 export default function PropertyCardTile({ p, inquireLabel, stats }: { p: PropertyCard; inquireLabel: string; stats?: ReviewStats }) {
   const { t } = useLang();
@@ -32,10 +31,6 @@ export default function PropertyCardTile({ p, inquireLabel, stats }: { p: Proper
         <div style={{ position: "absolute", top: 16, left: 16, padding: "4px 12px", background: "rgb(var(--accent))", color: "#FAF6EE", fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
           {operationLabel}
         </div>
-        {/* Whose house this is, when it is not ours. */}
-        {p.partner && (
-          <PartnerTag partner={p.partner} style={{ position: "absolute", top: 52, left: 16 }} />
-        )}
         <FavoriteButton propertyId={p.id} propertyTitle={p.title} propertyImage={p.image} size={16} style={{ position: "absolute", top: 12, right: 12 }} />
         <div style={{ position: "absolute", bottom: 16, right: 16, fontFamily: "'Cormorant Garamond', serif", fontSize: "1.5rem", color: "#FAF6EE" }}>
           {p.price ?? t.property.priceOnRequest}

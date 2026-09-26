@@ -3,19 +3,19 @@ import { notFound } from "next/navigation";
 import EasyBrokerDetail from "../../components/EasyBrokerDetail";
 import { getProperty, primaryOperation, type EBPropertyDetail } from "../../lib/easybroker";
 import { isOwnPropertyId, getOwnProperty, ownToDetail } from "../../lib/ownProperties";
-import { isBolsaId, getPartnerProperty, type PartnerInfo } from "../../lib/bolsa/consume";
+import { isBolsaId, getPartnerProperty } from "../../lib/bolsa/consume";
 
 type Props = { params: Promise<{ id: string }> };
 
 // Own listings — and an allied agency's, through the shared pool — are mapped
 // into the EasyBroker detail shape, so everything downstream (metadata,
 // JSON-LD, the detail component) stays source-agnostic.
-type Loaded = { property: EBPropertyDetail; partner?: PartnerInfo };
+type Loaded = { property: EBPropertyDetail; fromPartner?: boolean };
 
 async function loadProperty(id: string): Promise<Loaded | null> {
   if (isBolsaId(id)) {
-    const found = await getPartnerProperty(id);
-    return found ? { property: found.property, partner: found.partner } : null;
+    const property = await getPartnerProperty(id);
+    return property ? { property, fromPartner: true } : null;
   }
   if (isOwnPropertyId(id)) {
     const row = await getOwnProperty(id);
@@ -29,28 +29,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const loaded = await loadProperty(id);
   if (!loaded) return { title: "Propiedad no encontrada" };
-  const { property, partner } = loaded;
+  const { property, fromPartner } = loaded;
 
   const op = primaryOperation(property.operations);
   const priceText = op?.formatted_amount ?? "Precio a consultar";
   const description = `${property.property_type} en ${op?.type === "rental" ? "renta" : "venta"} en ${property.location} — ${priceText}. ${property.description.slice(0, 120)}…`;
 
-  // An allied agency's listing lives on their site: it points there as the
-  // canonical page and stays out of the index, so the same house never
-  // competes against itself in search results.
-  if (partner) {
-    return {
-      title: `${property.title} — ${property.location}`,
-      description,
-      alternates: { canonical: property.public_url || undefined },
-      robots: { index: false, follow: true },
-    };
-  }
-
   return {
     title: `${property.title} — ${property.location}`,
     description,
     alternates: { canonical: `/propiedades/${property.public_id}` },
+    // An allied agency's listing is shown here as part of our catalogue, but
+    // the same house is on its owner's site and on the third ally's too: kept
+    // out of the index so the three sites never compete for it in search.
+    ...(fromPartner ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title: property.title,
       description,
@@ -64,7 +56,7 @@ export default async function PropertyPage({ params }: Props) {
   const { id } = await params;
   const loaded = await loadProperty(id);
   if (!loaded) notFound();
-  const { property, partner } = loaded;
+  const { property } = loaded;
 
   const op = primaryOperation(property.operations);
   const jsonLd = {
@@ -81,7 +73,7 @@ export default async function PropertyPage({ params }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <EasyBrokerDetail property={property} partner={partner} />
+      <EasyBrokerDetail property={property} />
     </>
   );
 }
