@@ -29,6 +29,9 @@ export const translations = {
       scroll: "Scroll to explore",
       pauseVideo: "Pause background video",
       playVideo: "Play background video",
+      sound: "Sound of the sea",
+      soundOnShort: "Hear the sea",
+      soundOffShort: "Mute",
     },
     stats: {
       coast: "Miles of Coastline",
@@ -395,6 +398,9 @@ export const translations = {
       scroll: "Desliza para explorar",
       pauseVideo: "Pausar video de fondo",
       playVideo: "Reproducir video de fondo",
+      sound: "Sonido del mar",
+      soundOnShort: "Escuchar el mar",
+      soundOffShort: "Silenciar",
     },
     stats: {
       coast: "Millas de Costa",

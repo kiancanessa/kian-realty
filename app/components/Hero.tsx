@@ -2,11 +2,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useLang } from "../lib/LangContext";
 import { useQuiz } from "../lib/QuizContext";
-import { ChevronDown, Pause, Play, Sparkles } from "lucide-react";
+import { ChevronDown, Pause, Play, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { INTRO_DONE_EVENT } from "./IntroCurtain";
 
 /** Waves over the rocks off Rosarito, a seamless loop (scripts/videos-rosarito.py). */
 const HERO_POSTER = "/videos/hero-waves.webp";
+/** The drone footage has no sound of its own; this is a separate recording
+ *  of waves on rocks, looped the same way. */
+const HERO_SOUND = "/videos/hero-waves.m4a";
+const SOUND_PREF_KEY = "ecr-hero-sound";
+const SOUND_VOLUME = 0.55;
+const SOUND_FADE_MS = 1200;
 
 /** Background video: the poster paints with the page, the video is chosen
  *  and loaded in the browser (720p on phones) and fades in over the poster
@@ -60,10 +66,101 @@ function useHeroVideo() {
   return { videoRef, enabled, ready, paused, toggle };
 }
 
+/** The sea, heard. Never starts by itself: browsers block sound nobody asked
+ *  for, and a page that suddenly makes noise is the fastest way to lose a
+ *  visitor. It plays once the visitor turns it on, and the choice is
+ *  remembered: on the next visit it resumes at their first click or key.
+ *  It fades in and out rather than cutting, and goes quiet whenever the
+ *  waves do: scrolled past the hero, tab in the background, video paused. */
+function useHeroSound(videoRef: React.RefObject<HTMLVideoElement | null>, videoPaused: boolean) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const fadeRef = useRef(0);
+  const [on, setOn] = useState(false);
+  const [inView, setInView] = useState(true);
+  const [tabVisible, setTabVisible] = useState(true);
+
+  const audible = on && inView && tabVisible && !videoPaused;
+
+  useEffect(() => {
+    // A timer, not requestAnimationFrame: frames stop in a background tab,
+    // and a fade-out that never finishes is sound that never stops.
+    const fadeTo = (audio: HTMLAudioElement, target: number) => {
+      clearInterval(fadeRef.current);
+      const from = audio.volume;
+      const start = performance.now();
+      fadeRef.current = window.setInterval(() => {
+        const k = Math.min(1, (performance.now() - start) / SOUND_FADE_MS);
+        audio.volume = from + (target - from) * k;
+        if (k < 1) return;
+        clearInterval(fadeRef.current);
+        if (target === 0) audio.pause();
+      }, 30);
+    };
+
+    if (!audible) {
+      const audio = audioRef.current;
+      if (!audio) return;
+      // Leaving the tab cuts at once; everything else fades.
+      if (document.hidden) { clearInterval(fadeRef.current); audio.pause(); audio.volume = 0; }
+      else fadeTo(audio, 0);
+      return;
+    }
+    if (!audioRef.current) {
+      const created = new Audio(HERO_SOUND);
+      created.loop = true;
+      created.volume = 0;
+      audioRef.current = created;
+    }
+    const audio = audioRef.current;
+    const start = () => audio.play().then(() => fadeTo(audio, SOUND_VOLUME));
+    // Remembered as on, but nobody has touched this visit yet: the browser
+    // lets it start at the first click or key press.
+    const resume = () => { start().catch(() => {}); };
+    start().catch(() => {
+      window.addEventListener("pointerdown", resume, { once: true });
+      window.addEventListener("keydown", resume, { once: true });
+    });
+    return () => {
+      window.removeEventListener("pointerdown", resume);
+      window.removeEventListener("keydown", resume);
+    };
+  }, [audible]);
+
+  useEffect(() => {
+    try {
+      // Restoring a saved choice is exactly what an effect is for.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (localStorage.getItem(SOUND_PREF_KEY) === "on") setOn(true);
+    } catch { /* storage blocked: the sound simply starts off */ }
+
+    const target = videoRef.current;
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.25 });
+    if (target) io.observe(target);
+    const onVisibility = () => setTabVisible(!document.hidden);
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+      clearInterval(fadeRef.current);
+      audioRef.current?.pause();
+    };
+  }, [videoRef]);
+
+  const toggle = () => {
+    const next = !on;
+    setOn(next);
+    try { localStorage.setItem(SOUND_PREF_KEY, next ? "on" : "off"); } catch { /* not remembered */ }
+  };
+
+  return { soundOn: on, toggleSound: toggle };
+}
+
 export default function Hero() {
   const { t } = useLang();
   const { openQuiz } = useQuiz();
   const { videoRef, enabled, ready, paused, toggle } = useHeroVideo();
+  const { soundOn, toggleSound } = useHeroSound(videoRef, paused);
 
   // The entrance waits for the opening curtain; played underneath it, nobody
   // would see it.
@@ -145,14 +242,22 @@ export default function Hero() {
       </div>
 
       {enabled && (
-        <button type="button" onClick={toggle} className="hero-pause" aria-label={paused ? t.hero.playVideo : t.hero.pauseVideo}>
-          {paused ? <Play size={15} aria-hidden /> : <Pause size={15} aria-hidden />}
-        </button>
+        <div className="hero-controls">
+          <button type="button" onClick={toggle} className="hero-pause" aria-label={paused ? t.hero.playVideo : t.hero.pauseVideo}>
+            {paused ? <Play size={15} aria-hidden /> : <Pause size={15} aria-hidden />}
+          </button>
+          <button type="button" onClick={toggleSound} className={`hero-sound${soundOn ? " is-on" : ""}`}
+            aria-pressed={soundOn} aria-label={t.hero.sound}>
+            {soundOn ? <Volume2 size={15} aria-hidden /> : <VolumeX size={15} aria-hidden />}
+            <span className="hero-sound-bars" aria-hidden><i /><i /><i /></span>
+            <span className="hero-sound-label" aria-hidden>{soundOn ? t.hero.soundOffShort : t.hero.soundOnShort}</span>
+          </button>
+        </div>
       )}
 
       {/* Scroll indicator */}
       <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(var(--ink),0.6)" }}>
+        <span className="hero-scroll-label" style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(var(--ink),0.6)" }}>
           {t.hero.scroll}
         </span>
         <ChevronDown size={16} style={{ color: "rgb(var(--accent))", animation: "scrollDown 2s ease-in-out infinite" }} />

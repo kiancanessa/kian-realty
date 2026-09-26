@@ -12,14 +12,24 @@ obligatoria). Se da crédito de todos modos en la sección.
     Surf (costa del Pacífico, NO es Rosarito — no se rotula como tal):
       https://www.pexels.com/video/man-surfing-on-sea-waves-during-daytime-7425556/
 
+Las tomas son de dron y su pista de audio viene en silencio, así que el sonido
+del fondo del inicio es otra grabación, de dominio público (CC0):
+
+    amholma — "Crashing Waves into Rocks 2" (Destin, Florida; NO es Rosarito):
+      https://freesound.org/people/amholma/sounds/376801/
+    curl -L -o 376801.mp3 https://cdn.freesound.org/previews/376/376801_6128004-hq.mp3
+
 Descarga los originales a una carpeta y pásala como argumento:
 
     curl -L -o 20082338.mp4 https://www.pexels.com/download/video/20082338/
     python scripts/videos-rosarito.py ruta/a/originales
+    python scripts/videos-rosarito.py ruta/a/originales --solo-sonido
 
 Cada clip se recorta a su mejor momento y se RE-CODIFICA: H.264 sin audio,
 `+faststart` para que empiece antes de bajar completo, y un póster WebP.
 Los nombres de salida son los que leen `CoastVideos.tsx` y `Hero.tsx`.
+El sonido sale aparte (`hero-waves.m4a`): el video tiene que ir mudo para que
+el navegador lo reproduzca solo, y el sonido sólo suena si el visitante lo pide.
 """
 
 from __future__ import annotations
@@ -81,11 +91,40 @@ def hero(origen: Path) -> None:
     poster(DESTINO.parent / "hero-waves-1080.mp4", 0.0, DESTINO.parent / "hero-waves.webp")
 
 
+def sonido(origen: Path) -> None:
+    """Olas rompiendo en las rocas, en bucle sin corte (mismo truco que el video).
+
+    Ganancia fija, no `loudnorm`: el golpe de la ola y la calma entre una y
+    otra son el sonido; comprimirlos lo vuelve ruido blanco. El paso-altos
+    quita los golpes de viento en el micrófono."""
+    src = origen / "376801.mp3"
+    if not src.exists():
+        sys.exit(f"Falta {src}")
+    fundido, largo = 3.0, 51.5
+    out = DESTINO.parent / "hero-waves.m4a"
+    correr([
+        "-i", str(src),
+        "-filter_complex",
+        f"[0:a]highpass=f=50,volume=10.5dB,alimiter=limit=0.8:level=false,asplit[a][b];"
+        f"[a]atrim={fundido}:{largo},asetpts=PTS-STARTPTS[cuerpo];"
+        f"[b]atrim=0:{fundido},asetpts=PTS-STARTPTS[inicio];"
+        f"[cuerpo][inicio]acrossfade=d={fundido}:c1=qsin:c2=qsin[s]",
+        "-map", "[s]", "-map_metadata", "-1", "-c:a", "aac", "-b:a", "96k", "-ar", "44100",
+        "-movflags", "+faststart", str(out),
+    ])
+    print(f"sonido: {out.stat().st_size / 1e6:.2f} MB")
+
+
 def main() -> None:
-    if len(sys.argv) != 2:
-        sys.exit("Uso: python scripts/videos-rosarito.py <carpeta con los originales>")
-    origen = Path(sys.argv[1])
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if len(args) != 1:
+        sys.exit("Uso: python scripts/videos-rosarito.py <carpeta con los originales> [--solo-sonido]")
+    origen = Path(args[0])
     DESTINO.mkdir(parents=True, exist_ok=True)
+
+    if "--solo-sonido" in sys.argv:
+        sonido(origen)
+        return
 
     for nombre, (archivo, inicio, duracion, ancho, alto, seg_poster) in CLIPS.items():
         src = origen / archivo
@@ -103,6 +142,7 @@ def main() -> None:
         print(f"{nombre}: {mp4.stat().st_size / 1e6:.1f} MB")
 
     hero(origen)
+    sonido(origen)
 
 
 if __name__ == "__main__":

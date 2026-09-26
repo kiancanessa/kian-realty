@@ -918,12 +918,18 @@ html.intro-lock { overflow: hidden; }
 }
 .hero-eyebrow { color: #d5e4b6 !important; }
 .hero .sage-line { background: linear-gradient(90deg, transparent, #d5e4b6, transparent); }
-.hero-pause {
+.hero-controls {
   position: absolute;
   /* Left: the floating social buttons own the bottom-right corner. */
   left: 24px;
   bottom: 32px;
   z-index: 11;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-pause,
+.hero-sound {
   display: grid;
   place-items: center;
   width: 44px;
@@ -938,7 +944,38 @@ html.intro-lock { overflow: hidden; }
   transition: background 0.3s ease, transform 0.3s ease;
 }
 .hero-pause:hover { background: rgba(8, 12, 10, 0.5); transform: scale(1.06); }
-.hero-pause:focus-visible { outline: 2px solid rgb(var(--accent-light)); outline-offset: 2px; }
+.hero-pause:focus-visible,
+.hero-sound:focus-visible { outline: 2px solid rgb(var(--accent-light)); outline-offset: 2px; }
+
+/* Sound: a pill with its label on wide screens (it has to be found to be
+   used), just the round icon on phones, where the scroll cue sits close. */
+.hero-sound {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: auto;
+  padding: 0 18px 0 15px;
+  border-radius: 999px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.hero-sound:hover { background: rgba(8, 12, 10, 0.5); }
+.hero-sound.is-on { border-color: rgba(213, 228, 182, 0.6); }
+.hero-sound-bars { display: none; align-items: flex-end; gap: 2px; height: 12px; }
+.hero-sound-bars i { width: 2px; height: 100%; background: #d5e4b6; border-radius: 1px; transform-origin: bottom; animation: soundBar 1.1s ease-in-out infinite; }
+.hero-sound-bars i:nth-child(2) { animation-delay: -0.35s; }
+.hero-sound-bars i:nth-child(3) { animation-delay: -0.7s; }
+.hero-sound.is-on .hero-sound-bars { display: flex; }
+@keyframes soundBar { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .hero-sound-bars i { animation: none; transform: scaleY(0.6); } }
+@media (max-width: 639px) {
+  .hero-sound { width: 44px; padding: 0; justify-content: center; }
+  .hero-sound-label, .hero-sound.is-on .hero-sound-bars { display: none; }
+}
+/* On a phone the controls reach the middle; the arrow alone says scroll. */
+@media (max-width: 479px) { .hero-scroll-label { display: none; } }
 
 /* Entrance, started when the opening curtain lifts (.hero-in). Lines of the
    headline rise out of their own masks; the rest follows in steps. Hidden
