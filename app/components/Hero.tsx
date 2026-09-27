@@ -66,20 +66,26 @@ function useHeroVideo() {
   return { videoRef, enabled, ready, paused, toggle };
 }
 
-/** The sea, heard. Never starts by itself: browsers block sound nobody asked
- *  for, and a page that suddenly makes noise is the fastest way to lose a
- *  visitor. It plays once the visitor turns it on, and the choice is
- *  remembered: on the next visit it resumes at their first click or key.
+/** The sea, heard. On by default, and the mute button beside the pause
+ *  button turns it off; that choice is remembered.
+ *
+ *  "On" is as far as a page can go: browsers refuse to play sound before the
+ *  visitor has interacted with the site, so on a first visit it starts at
+ *  their first tap, click or key (closing the offer popup counts). Where the
+ *  browser allows it straight away, it starts straight away.
+ *
  *  It fades in and out rather than cutting, and goes quiet whenever the
- *  waves do: scrolled past the hero, tab in the background, video paused. */
-function useHeroSound(videoRef: React.RefObject<HTMLVideoElement | null>, videoPaused: boolean) {
+ *  waves do: scrolled past the hero, tab in the background, video paused.
+ *  With no video (reduced motion, data saver) there is no sound either:
+ *  there would be no button to stop it. */
+function useHeroSound(videoRef: React.RefObject<HTMLVideoElement | null>, videoEnabled: boolean, videoPaused: boolean) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fadeRef = useRef(0);
-  const [on, setOn] = useState(false);
+  const [on, setOn] = useState(true);
   const [inView, setInView] = useState(true);
   const [tabVisible, setTabVisible] = useState(true);
 
-  const audible = on && inView && tabVisible && !videoPaused;
+  const audible = videoEnabled && on && inView && tabVisible && !videoPaused;
 
   useEffect(() => {
     // A timer, not requestAnimationFrame: frames stop in a background tab,
@@ -113,25 +119,27 @@ function useHeroSound(videoRef: React.RefObject<HTMLVideoElement | null>, videoP
     }
     const audio = audioRef.current;
     const start = () => audio.play().then(() => fadeTo(audio, SOUND_VOLUME));
-    // Remembered as on, but nobody has touched this visit yet: the browser
-    // lets it start at the first click or key press.
-    const resume = () => { start().catch(() => {}); };
-    start().catch(() => {
-      window.addEventListener("pointerdown", resume, { once: true });
-      window.addEventListener("keydown", resume, { once: true });
-    });
-    return () => {
-      window.removeEventListener("pointerdown", resume);
-      window.removeEventListener("keydown", resume);
+    // Nobody has interacted with this visit yet, so the browser said no. It
+    // says yes at the first tap, click or key; these are the events that
+    // count (a touch counts when the finger lifts, not when it lands). A press
+    // on the mute button itself is left alone, or the sea would start for an
+    // instant only to be switched off.
+    const GESTURES = ["pointerdown", "pointerup", "touchend", "keydown"] as const;
+    const stopWaiting = () => GESTURES.forEach(g => window.removeEventListener(g, resume));
+    const resume = (e: Event) => {
+      if ((e.target as Element | null)?.closest?.(".hero-sound")) return;
+      start().then(stopWaiting, () => {});
     };
+    start().catch(() => GESTURES.forEach(g => window.addEventListener(g, resume)));
+    return stopWaiting;
   }, [audible]);
 
   useEffect(() => {
     try {
       // Restoring a saved choice is exactly what an effect is for.
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (localStorage.getItem(SOUND_PREF_KEY) === "on") setOn(true);
-    } catch { /* storage blocked: the sound simply starts off */ }
+      if (localStorage.getItem(SOUND_PREF_KEY) === "off") setOn(false);
+    } catch { /* storage blocked: the default stands */ }
 
     const target = videoRef.current;
     const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.25 });
@@ -160,7 +168,7 @@ export default function Hero() {
   const { t } = useLang();
   const { openQuiz } = useQuiz();
   const { videoRef, enabled, ready, paused, toggle } = useHeroVideo();
-  const { soundOn, toggleSound } = useHeroSound(videoRef, paused);
+  const { soundOn, toggleSound } = useHeroSound(videoRef, enabled, paused);
 
   // The entrance waits for the opening curtain; played underneath it, nobody
   // would see it.
