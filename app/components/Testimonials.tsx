@@ -5,24 +5,9 @@ import { useSession } from "../lib/useSession";
 import Avatar from "./Avatar";
 import StarRating from "./StarRating";
 import GoogleG from "./GoogleG";
+import ReviewsShowcase, { type Review, type GoogleSummary } from "./ReviewsShowcase";
 import { Quote, CheckCircle, ArrowUpRight } from "lucide-react";
-import { GOOGLE_PROFILE_URL, GOOGLE_WRITE_REVIEW_URL } from "../lib/googleLinks";
-
-type Review = {
-  id: number; name: string; rating: number; comment_en: string; comment_es: string; language: "en" | "es";
-  source: "site" | "google"; author_url: string | null; photo_url: string | null;
-};
-type GoogleSummary = { rating: number; total: number };
-
-/** Google's own profile picture when it sent one; the initials otherwise (and
- *  if the picture fails to load). */
-function ReviewerAvatar({ name, photoUrl, size }: { name: string; photoUrl: string | null; size: number }) {
-  const [broken, setBroken] = useState(false);
-  if (!photoUrl || broken) return <Avatar name={name} size={size} />;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={photoUrl} alt="" width={size} height={size} referrerPolicy="no-referrer" onError={() => setBroken(true)}
-    style={{ width: size, height: size, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />;
-}
+import { GOOGLE_WRITE_REVIEW_URL } from "../lib/googleLinks";
 
 const googleLinkStyle: React.CSSProperties = {
   display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none", transition: "all 0.3s",
@@ -101,50 +86,11 @@ export default function Testimonials() {
             {t.testimonials.subtitle}
           </p>
 
-          {/* What Google shows for us, and a way to read the rest there. */}
-          {google && (
-            <a href={GOOGLE_PROFILE_URL} target="_blank" rel="noopener noreferrer" aria-label={`${t.testimonials.seeOnGoogle}: ${google.rating.toFixed(1)}`}
-              style={{ ...googleLinkStyle, marginTop: 28, padding: "10px 20px", border: "1px solid rgba(var(--accent),0.2)", background: "rgb(var(--surface))", flexWrap: "wrap", justifyContent: "center" }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgb(var(--accent))"}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(var(--accent),0.2)"}>
-              <GoogleG size={18} />
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", lineHeight: 1 }}>{google.rating.toFixed(1)}</span>
-              <StarRating value={Math.round(google.rating)} size={14} />
-              <span style={{ fontSize: "0.8rem", color: "rgba(var(--ink),0.55)" }}>
-                {google.total === 1 ? t.testimonials.googleReviewsOne : t.testimonials.googleReviewsMany.replace("{n}", String(google.total))}
-              </span>
-              <ArrowUpRight size={14} color="rgb(var(--accent))" aria-hidden />
-            </a>
-          )}
         </div>
 
         {/* Cards */}
         {reviews.length > 0 ? (
-          <div className="testimonials-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20, marginBottom: 48 }}>
-            {reviews.map(r => (
-              <div key={r.id} className="reveal" style={{ position: "relative", padding: 32, border: "1px solid rgba(var(--accent),0.1)", background: "rgb(var(--surface))" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
-                  <Quote size={22} color="rgba(var(--accent),0.35)" />
-                  {r.source === "google" && (
-                    <a href={r.author_url || GOOGLE_PROFILE_URL} target="_blank" rel="noopener noreferrer"
-                      style={{ ...googleLinkStyle, gap: 6, fontFamily: "'DM Mono', monospace", fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(var(--ink),0.5)" }}>
-                      <GoogleG size={13} /> {t.testimonials.googleBadge}
-                    </a>
-                  )}
-                </div>
-                <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.9rem", color: "rgba(var(--ink),0.65)", lineHeight: 1.7, marginBottom: 20 }}>
-                  {locale === "es" ? r.comment_es : r.comment_en}
-                </p>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <ReviewerAvatar name={r.name} photoUrl={r.photo_url} size={34} />
-                    <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.1rem", color: "rgb(var(--ink))" }}>{r.name}</span>
-                  </div>
-                  <StarRating value={r.rating} size={14} />
-                </div>
-              </div>
-            ))}
-          </div>
+          <ReviewsShowcase reviews={reviews} google={google} />
         ) : (
           <div className="reveal" style={{ textAlign: "center", padding: "40px 24px", marginBottom: 48, border: "1px dashed rgba(var(--accent),0.2)" }}>
             <Quote size={28} color="rgba(var(--accent),0.35)" style={{ marginBottom: 14 }} />
