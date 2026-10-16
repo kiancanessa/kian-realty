@@ -8,7 +8,7 @@ export async function GET() {
   }
 
   const rows = await sql`
-    SELECT id, type, property_id, property_title, name, email, rating, comment, status, created_at
+    SELECT id, type, property_id, property_title, name, email, rating, comment, status, created_at, source
     FROM reviews
     ORDER BY created_at DESC
   `;

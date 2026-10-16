@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Check, X, Mail } from "lucide-react";
 import Avatar from "../../components/Avatar";
 import StarRating from "../../components/StarRating";
+import GoogleG from "../../components/GoogleG";
 
 type Review = {
   id: number;
@@ -15,6 +16,7 @@ type Review = {
   comment: string;
   status: "pending" | "approved" | "rejected";
   created_at: string;
+  source: "site" | "google";
 };
 
 const TABS = ["pending", "approved", "rejected", "all"] as const;
@@ -88,7 +90,7 @@ export default function AdminReviewsClient() {
                   <div>
                     <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.1rem", color: "rgb(var(--ink))" }}>{r.name}</div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", color: "rgba(var(--ink),0.45)" }}>
-                      <Mail size={11} /> {r.email}
+                      {r.source === "google" ? <><GoogleG size={11} /> Reseña de Google</> : <><Mail size={11} /> {r.email}</>}
                     </div>
                   </div>
                 </div>

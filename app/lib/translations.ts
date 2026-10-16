@@ -217,6 +217,11 @@ export const translations = {
       formError: "Something went wrong. Please try again or email us directly.",
       formNote: "Reviews are moderated by our team before appearing publicly.",
       empty: "No reviews yet — be the first to share your experience with us.",
+      googleReviewsOne: "1 review on Google",
+      googleReviewsMany: "{n} reviews on Google",
+      googleBadge: "Google review",
+      writeOnGoogle: "Review us on Google",
+      seeOnGoogle: "See all on Google",
     },
     contact: {
       title: "Let's Connect",
@@ -586,6 +591,11 @@ export const translations = {
       formError: "Hubo un problema. Intenta de nuevo o escríbenos directo.",
       formNote: "Las reseñas son revisadas por nuestro equipo antes de publicarse.",
       empty: "Aún no hay reseñas — sé el primero en compartir tu experiencia con nosotros.",
+      googleReviewsOne: "1 opinión en Google",
+      googleReviewsMany: "{n} opiniones en Google",
+      googleBadge: "Reseña de Google",
+      writeOnGoogle: "Reseñar en Google",
+      seeOnGoogle: "Ver todas en Google",
     },
     contact: {
       title: "Hablemos",

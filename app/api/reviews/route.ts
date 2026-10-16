@@ -1,7 +1,8 @@
-import { NextRequest } from "next/server";
+import { NextRequest, after } from "next/server";
 import { sql } from "../../lib/db";
 import { getSessionUser } from "../../lib/auth";
 import { translateText, detectLanguage } from "../../lib/translateText";
+import { getGoogleSummary, syncGoogleReviews } from "../../lib/googleReviews";
 
 const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
 
@@ -20,12 +21,17 @@ export async function GET(request: NextRequest) {
         ORDER BY created_at DESC
       `
     : await sql`
-        SELECT id, name, rating, comment_en, comment_es, language, created_at FROM reviews
+        SELECT id, name, rating, comment_en, comment_es, language, created_at, source, author_url, photo_url FROM reviews
         WHERE type = 'testimonial' AND status = 'approved'
         ORDER BY created_at DESC
       `;
 
-  return Response.json({ reviews: rows });
+  if (type === "property") return Response.json({ reviews: rows });
+
+  // Google's reviews are refreshed in the background, at most twice a day, so
+  // this visitor never waits on Google. A no-op until an API key is set.
+  after(syncGoogleReviews);
+  return Response.json({ reviews: rows, google: await getGoogleSummary() });
 }
 
 export async function POST(request: NextRequest) {
