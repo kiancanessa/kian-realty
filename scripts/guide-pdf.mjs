@@ -13,6 +13,8 @@ import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { GUIDE, GUIDE_UPDATED } from "../app/lib/guideContent.ts";
+import { VERONICA_WHATSAPP } from "../app/lib/contact.ts";
+import { pagePath } from "../app/lib/seoSlugs.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const { chromium } = createRequire(import.meta.url)(process.env.PLAYWRIGHT_PATH ?? "playwright");
@@ -34,12 +36,23 @@ const css = `
   li { margin-bottom: 4px; break-inside: avoid; }
   .intro p { font-size: 11pt; }
   .disclaimer { margin-top: 22px; padding: 12px 16px; border-left: 3px solid #6B8A42; background: rgba(107,138,66,0.1); font-size: 9pt; }
+  .legal { margin-top: 22px; padding: 14px 18px; border: 1px solid #6B8A42; break-inside: avoid; }
+  .legal h2 { margin: 0 0 6px; }
+  .legal p { margin: 0 0 8px; }
+  .legal a { color: #47592B; }
+  .btn { display: inline-block; padding: 8px 16px; margin: 4px 10px 4px 0; background: #25D366; color: #08260f !important; text-decoration: none; font-weight: 500; font-size: 9.5pt; }
   .contact { margin-top: 16px; font-size: 9.5pt; }
   .contact strong { font-weight: 500; }
 `;
 
+const SITE = "https://elcasarosaritogroup.com";
+
 function html(lang) {
   const g = GUIDE[lang];
+  // Printed copies cannot click, so the address is written out; the campaign tags tell Analytics the visit came from the PDF.
+  const legalUrl = `${SITE}${pagePath("asesoria-legal", lang)}`;
+  const legalTagged = `${legalUrl}?utm_source=guia&utm_medium=pdf&utm_campaign=asesoria-legal`;
+  const wa = `https://wa.me/${VERONICA_WHATSAPP}?text=${encodeURIComponent(g.legal.whatsappMessage)}`;
   const sections = g.sections.map(s => `
     <section>
       <h2>${esc(s.h2)}</h2>
@@ -55,6 +68,12 @@ function html(lang) {
       <p class="updated">${esc(g.updated)}</p>
       <div class="intro">${g.intro.map(t => `<p>${esc(t)}</p>`).join("")}</div>
       ${sections}
+      <div class="legal">
+        <h2>${esc(g.legal.title)}</h2>
+        <p>${esc(g.legal.text)}</p>
+        <p><a class="btn" href="${wa}">${esc(g.legal.whatsapp)}</a> <a href="${legalTagged}">${esc(g.legal.page)}</a><br>
+          <span style="font-size:8.5pt">WhatsApp +52 1 495 120 2716 · ${legalUrl.replace("https://", "")}</span></p>
+      </div>
       <p class="disclaimer">${esc(g.disclaimer)}</p>
       <p class="contact"><strong>El Casa Rosarito</strong> · Local 19 Módulo A, Quinta Plaza, Playas de Rosarito, B.C.<br>
         WhatsApp +52 661 125 6107 · jorgeelcasarosarito@gmail.com · elcasarosaritogroup.com</p>

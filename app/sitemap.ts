@@ -23,8 +23,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       (["es", "en"] as const).map(lang => ({
         url: `${BASE_URL}${pagePath(key, lang)}`,
         lastModified: new Date(),
-        changeFrequency: (key === "guia" ? "monthly" : "daily") as "monthly" | "daily",
-        priority: key === "guia" ? 0.7 : 0.8,
+        changeFrequency: (key === "guia" || key === "asesoria-legal" ? "monthly" : "daily") as "monthly" | "daily",
+        priority: key === "guia" || key === "asesoria-legal" ? 0.7 : 0.8,
         alternates: { languages: { es: `${BASE_URL}${pagePath(key, "es")}`, en: `${BASE_URL}${pagePath(key, "en")}` } },
       })),
     ),

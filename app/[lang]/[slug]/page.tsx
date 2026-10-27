@@ -4,7 +4,9 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import LandingGrid from "../../components/LandingGrid";
 import GuidePage from "../../components/GuidePage";
+import LegalPage from "../../components/LegalPage";
 import { GUIDE } from "../../lib/guideContent";
+import { LEGAL } from "../../lib/legalContent";
 import { getAllListings } from "../../lib/listings";
 import { orderProperties, type PropertyCard } from "../../lib/easybroker";
 import { whatsappLink } from "../../lib/sendInquiry";
@@ -27,16 +29,18 @@ export function generateStaticParams() {
   return [
     ...LANDINGS.flatMap(l => LANGS.map(lang => ({ lang, slug: PAGE_SLUGS[l.key][lang] }))),
     ...LANGS.map(lang => ({ lang, slug: PAGE_SLUGS.guia[lang] })),
+    ...LANGS.map(lang => ({ lang, slug: PAGE_SLUGS["asesoria-legal"][lang] })),
   ];
 }
 
-type Resolved = { kind: "guide"; lang: Lang } | { kind: "landing"; lang: Lang; landing: Landing };
+type Resolved = { kind: "guide"; lang: Lang } | { kind: "legal"; lang: Lang } | { kind: "landing"; lang: Lang; landing: Landing };
 
 async function resolve(params: Props["params"]): Promise<Resolved | null> {
   const { lang, slug } = await params;
   if (!isLang(lang)) return null;
   const key = keyFromSlug(lang, slug);
   if (key === "guia") return { kind: "guide", lang };
+  if (key === "asesoria-legal") return { kind: "legal", lang };
   const landing = key ? getLanding(key) : undefined;
   return landing ? { kind: "landing", lang, landing } : null;
 }
@@ -54,14 +58,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const found = await resolve(params);
   if (!found) return {};
   const { lang } = found;
-  if (found.kind === "guide") {
-    const g = GUIDE[lang];
+  if (found.kind === "guide" || found.kind === "legal") {
+    const key = found.kind === "guide" ? "guia" : "asesoria-legal";
+    const doc = found.kind === "guide" ? GUIDE[lang] : LEGAL[lang];
     return {
-      title: g.title,
-      description: g.description,
-      alternates: { canonical: pagePath("guia", lang), languages: languageAlternates("guia") },
+      title: doc.title,
+      description: doc.description,
+      alternates: { canonical: pagePath(key, lang), languages: languageAlternates(key) },
       openGraph: {
-        title: g.title, description: g.description, url: `${SITE}${pagePath("guia", lang)}`, siteName: "El Casa Rosarito", type: "article",
+        title: doc.title, description: doc.description, url: `${SITE}${pagePath(key, lang)}`, siteName: "El Casa Rosarito",
+        type: found.kind === "guide" ? "article" : "website",
         locale: lang === "es" ? "es_MX" : "en_US", alternateLocale: [lang === "es" ? "en_US" : "es_MX"],
       },
     };
@@ -96,6 +102,7 @@ export default async function LandingPage({ params }: Props) {
   if (!found) notFound();
   const { lang } = found;
   if (found.kind === "guide") return <GuidePage lang={lang} />;
+  if (found.kind === "legal") return <LegalPage lang={lang} />;
   const { landing } = found;
   const copy = landing.copy[lang];
   const ui = CHROME[lang];

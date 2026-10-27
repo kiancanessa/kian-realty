@@ -26,6 +26,8 @@ export const PAGE_SLUGS = {
   "terrazas-del-mar": { es: "propiedades-en-terrazas-del-mar-rosarito", en: "terrazas-del-mar-rosarito-real-estate" },
   // The guide that answers the question every foreign buyer has
   guia: { es: "guia-comprar-propiedad-en-mexico-extranjeros", en: "buying-property-in-mexico-foreigners-guide" },
+  // The service behind the guide
+  "asesoria-legal": { es: "asesoria-legal-inmobiliaria-rosarito", en: "real-estate-legal-advice-rosarito" },
 } as const satisfies Record<string, Record<Lang, string>>;
 
 export type PageKey = keyof typeof PAGE_SLUGS;
@@ -72,4 +74,5 @@ export const LINK_LABELS: Record<PageKey, Record<Lang, string>> = {
   "mar-de-calafia": { es: "Mar de Calafia", en: "Mar de Calafia" },
   "terrazas-del-mar": { es: "Terrazas del Mar", en: "Terrazas del Mar" },
   guia: { es: "Guía para comprar en México", en: "Buying in Mexico: guide" },
+  "asesoria-legal": { es: "Asesoría legal", en: "Legal advisory" },
 };

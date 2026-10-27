@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLang } from "../lib/LangContext";
+import { pagePath } from "../lib/seoSlugs";
 import { Home, TrendingUp, Key, BarChart2, Scale, Hammer, ArrowRight } from "lucide-react";
 
 type ServiceKey = "buy" | "sell" | "rent" | "invest" | "legal" | "development";
@@ -47,7 +48,7 @@ function ServiceVisual({ photo, icon: Icon, alt }: { photo: string; icon: typeof
 }
 
 export default function Services() {
-  const { t } = useLang();
+  const { t, locale } = useLang();
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -67,6 +68,7 @@ export default function Services() {
   const LINKS: Partial<Record<ServiceKey, { href: string; label: string }>> = {
     sell: { href: "/ventas", label: t.services.viewSales },
     development: { href: "/desarrollo", label: t.services.viewProjects },
+    legal: { href: pagePath("asesoria-legal", locale), label: t.services.viewLegal },
   };
 
   return (

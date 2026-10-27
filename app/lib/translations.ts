@@ -1,4 +1,4 @@
-import { JORGE_WHATSAPP } from "./contact";
+import { JORGE_WHATSAPP, VERONICA_WHATSAPP } from "./contact";
 
 export type Locale = "en" | "es";
 
@@ -44,6 +44,7 @@ export const translations = {
       subtitle: "Full-spectrum real estate services tailored for buyers, sellers, and renters across Rosarito and Baja California.",
       viewProjects: "View Our Projects",
       viewSales: "View Properties Sold",
+      viewLegal: "See Legal Advisory",
       buy: {
         title: "Buy",
         desc: "Find your dream home or investment property on the Rosarito coast with expert local guidance.",
@@ -151,7 +152,7 @@ export const translations = {
       team: [
         { name: "Lic. Jorge L. Juarez Arellano", role: "President", photo: "/images/team/jorge.jpg", bio: "President of El Casa Rosarito, he leads the firm specializing in real estate and legal advisory, consolidating his leadership in Baja California's real estate sector. Under his direction, the company stands by every client from the first visit to the final handover of the property, ensuring transparency, legal certainty, and excellence in service.", whatsapp: JORGE_WHATSAPP },
         { name: "Lic. Eduardo L. Molina Herrera", role: "Attorney at Law", photo: "/images/team/eduardo.jpeg", bio: "Attorney specializing in civil and real estate law, committed to legal certainty in every property transaction. His practice stands out for a firm defense of his clients' interests, always guided by professionalism and ethics. With broad experience in contracts, legal counsel, and asset protection, he guarantees certainty and confidence in every transaction." },
-        { name: "Veronica Ruiz Olvera", role: "Office Manager · Legal Advisor", photo: "/images/team/veronica.jpg", bio: "Coordinates day-to-day operations and keeps legal paperwork moving.", whatsapp: "5214951202716" },
+        { name: "Veronica Ruiz Olvera", role: "Office Manager · Legal Advisor", photo: "/images/team/veronica.jpg", bio: "Coordinates day-to-day operations and keeps legal paperwork moving.", whatsapp: VERONICA_WHATSAPP },
         { name: "Irving Berron Mena", role: "Real Estate Sales Manager", photo: "/images/team/irving.jpeg", bio: "The Real Estate Sales Manager leads and oversees the agency's commercial strategy, ensuring targets for listings, marketing, and closings are met. He coordinates the team of advisors, sets clear goals, and ensures transparent, effective service for clients, strengthening the company's position in the market.", whatsapp: "5216645640037" },
         { name: "Leticia Bonilla", role: "Real Estate Advisor", photo: "/images/team/leticia.jpeg", bio: "Guides buyers and renters through the search, from first tour to offer.", whatsapp: "5216641358852" },
         { name: "Ulises Acosta Juarez", role: "Real Estate Advisor", photo: "/images/team/ulises.jpeg", bio: "Advises buyers and investors on listings across the Rosarito corridor.", whatsapp: "5216611017004" },
@@ -445,6 +446,7 @@ export const translations = {
       subtitle: "Servicios inmobiliarios completos para compradores, vendedores y arrendatarios en Rosarito y toda Baja California.",
       viewProjects: "Ver Nuestros Proyectos",
       viewSales: "Ver Propiedades Vendidas",
+      viewLegal: "Ver Asesoría Legal",
       buy: {
         title: "Comprar",
         desc: "Encuentra tu hogar soñado o propiedad de inversión en la costa de Rosarito con guía local experta.",
@@ -552,7 +554,7 @@ export const translations = {
       team: [
         { name: "Lic. Jorge L. Juarez Arellano", role: "Presidente", photo: "/images/team/jorge.jpg", bio: "Presidente de El Casa Rosarito, dirige la firma especializada en bienes raíces y asesoría legal, consolidando su liderazgo en el sector inmobiliario de Baja California. Bajo su conducción, la empresa acompaña a cada cliente desde la primera visita hasta la entrega final de su propiedad, garantizando transparencia, seguridad jurídica y excelencia en el servicio.", whatsapp: JORGE_WHATSAPP },
         { name: "Lic. Eduardo L. Molina Herrera", role: "Abogado", photo: "/images/team/eduardo.jpeg", bio: "Abogado especializado en Derecho Civil e Inmobiliario, comprometido en brindar seguridad jurídica en cada operación patrimonial. Su práctica se distingue por la defensa firme de los intereses de sus clientes, siempre bajo los principios de profesionalismo y ética. Con amplia experiencia en contratos, asesoría legal y protección patrimonial, garantiza certeza y confianza en cada transacción." },
-        { name: "Veronica Ruiz Olvera", role: "Gerente de Oficina · Asesora Legal", photo: "/images/team/veronica.jpg", bio: "Coordina la operación diaria y da seguimiento a toda la documentación legal.", whatsapp: "5214951202716" },
+        { name: "Veronica Ruiz Olvera", role: "Gerente de Oficina · Asesora Legal", photo: "/images/team/veronica.jpg", bio: "Coordina la operación diaria y da seguimiento a toda la documentación legal.", whatsapp: VERONICA_WHATSAPP },
         { name: "Irving Berron Mena", role: "Gerente de Ventas Inmobiliarias", photo: "/images/team/irving.jpeg", bio: "El Gerente de Ventas Inmobiliarias es responsable de dirigir y supervisar las estrategias comerciales de la agencia, asegurando el cumplimiento de objetivos de captación, promoción y cierre de operaciones. Coordina al equipo de asesores, establece metas claras y garantiza un servicio transparente y eficaz para los clientes, fortaleciendo la posición de la empresa en el mercado.", whatsapp: "5216645640037" },
         { name: "Leticia Bonilla", role: "Asesora Inmobiliaria", photo: "/images/team/leticia.jpeg", bio: "Acompaña a compradores y arrendatarios durante toda la búsqueda, del primer recorrido a la oferta.", whatsapp: "5216641358852" },
         { name: "Ulises Acosta Juarez", role: "Asesor Inmobiliario", photo: "/images/team/ulises.jpeg", bio: "Asesora a compradores e inversionistas sobre propiedades del corredor de Rosarito.", whatsapp: "5216611017004" },

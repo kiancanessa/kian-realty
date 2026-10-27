@@ -29,6 +29,8 @@ export type Guide = {
     again: string; message: string;
   };
   cta: { title: string; text: string; whatsapp: string; whatsappMessage: string };
+  /** Points the reader to the legal advisor (page and PDF): her WhatsApp and the legal advisory page. */
+  legal: { title: string; text: string; whatsapp: string; page: string; whatsappMessage: string };
 };
 
 export const GUIDE_UPDATED = "2026-10-26";
@@ -124,6 +126,13 @@ export const GUIDE: Record<"es" | "en", Guide> = {
       whatsapp: "Escribir por WhatsApp",
       whatsappMessage: "Hola, leí su guía para comprar propiedad en México y me gustaría revisar mi caso.",
     },
+    legal: {
+      title: "¿Dudas legales sobre tu compra?",
+      text: "Verónica Ruiz Olvera, asesora legal de El Casa Rosarito, te orienta sobre los documentos y los pasos de tu caso. Escríbele por WhatsApp o conoce el servicio de asesoría legal.",
+      whatsapp: "Hablar con Verónica por WhatsApp",
+      page: "Conocer la asesoría legal",
+      whatsappMessage: "Hola Verónica, leí la guía para comprar propiedad en México y tengo dudas legales sobre mi compra.",
+    },
   },
   en: {
     title: "Buying property in Mexico as a foreigner: guide",
@@ -214,6 +223,13 @@ export const GUIDE: Record<"es" | "en", Guide> = {
       text: "Tell us which property interests you and we will explain the steps and the cost breakdown for that specific property.",
       whatsapp: "Message us on WhatsApp",
       whatsappMessage: "Hi, I read your guide to buying property in Mexico and I'd like to go over my case.",
+    },
+    legal: {
+      title: "Legal questions about your purchase?",
+      text: "Verónica Ruiz Olvera, El Casa Rosarito's legal advisor, can point you to the documents and steps for your case. Message her on WhatsApp or learn about the legal advisory service.",
+      whatsapp: "Message Verónica on WhatsApp",
+      page: "Learn about legal advisory",
+      whatsappMessage: "Hi Verónica, I read the guide to buying property in Mexico and I have legal questions about my purchase.",
     },
   },
 };

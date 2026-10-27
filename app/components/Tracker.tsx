@@ -12,6 +12,9 @@ const LEAD_BY_SOURCE: Record<string, LeadMethod> = {
 
 /** Where on the page a direct-contact link sits, so the report can say which one works. */
 function placement(a: Element): string {
+  // A section can name itself (data-placement), e.g. the legal advisor's contact.
+  const named = a.closest("[data-placement]")?.getAttribute("data-placement");
+  if (named) return named;
   if (a.closest(".social-float")) return "floating";
   if (a.closest(".pcb")) return "property_bar";
   if (a.closest("#team")) return "team";

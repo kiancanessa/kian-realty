@@ -5,7 +5,7 @@ import { GUIDE, GUIDE_UPDATED } from "../lib/guideContent";
 import { CHROME } from "../lib/landingPages";
 import { LINK_LABELS, pagePath, type Lang, type PageKey } from "../lib/seoSlugs";
 import { whatsappLink } from "../lib/sendInquiry";
-import { JORGE_WHATSAPP } from "../lib/contact";
+import { VERONICA_WHATSAPP } from "../lib/contact";
 
 const SITE = "https://elcasarosaritogroup.com";
 const RELATED: PageKey[] = ["casas", "condominios", "terrenos", "frente-al-mar"];
@@ -75,16 +75,24 @@ export default function GuidePage({ lang }: { lang: Lang }) {
             </section>
           ))}
 
-          <p style={{ ...p, marginTop: 48, padding: "20px 24px", borderLeft: "3px solid rgb(var(--accent))", background: "rgb(var(--surface))", fontSize: "0.9rem" }}>{g.disclaimer}</p>
-
-          <section style={{ margin: "56px 0", padding: "32px", border: "1px solid rgba(var(--accent),0.18)", background: "rgb(var(--surface))" }}>
-            <h2 style={{ ...h2, margin: "0 0 10px" }}>{g.cta.title}</h2>
-            <p style={{ ...p, maxWidth: 560 }}>{g.cta.text}</p>
-            <a href={whatsappLink(JORGE_WHATSAPP, g.cta.whatsappMessage)} target="_blank" rel="noopener noreferrer"
-              style={{ display: "inline-block", padding: "14px 26px", background: "#25D366", color: "#08260f", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.76rem", letterSpacing: "0.14em", textTransform: "uppercase" }}>
-              {g.cta.whatsapp}
-            </a>
+          {/* From the guide to the person who answers the legal questions it raises. */}
+          <section aria-labelledby="guide-legal" data-placement="legal-advisor"
+            style={{ margin: "56px 0 0", padding: "32px", border: "1px solid rgba(var(--accent),0.3)", background: "rgb(var(--surface))" }}>
+            <h2 id="guide-legal" style={{ ...h2, margin: "0 0 10px" }}>{g.legal.title}</h2>
+            <p style={{ ...p, maxWidth: 600 }}>{g.legal.text}</p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+              <a href={whatsappLink(VERONICA_WHATSAPP, g.legal.whatsappMessage)} target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-block", padding: "14px 26px", background: "#25D366", color: "#08260f", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: "0.76rem", letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                {g.legal.whatsapp}
+              </a>
+              <a href={pagePath("asesoria-legal", lang)}
+                style={{ display: "inline-block", padding: "14px 26px", border: "1px solid rgb(var(--accent))", color: "rgb(var(--accent))", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontSize: "0.76rem", letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                {g.legal.page}
+              </a>
+            </div>
           </section>
+
+          <p style={{ ...p, margin: "40px 0 56px", padding: "20px 24px", borderLeft: "3px solid rgb(var(--accent))", background: "rgb(var(--surface))", fontSize: "0.9rem" }}>{g.disclaimer}</p>
 
           <section aria-labelledby="guide-related">
             <h2 id="guide-related" style={{ ...h2, margin: "0 0 16px" }}>{ui.related}</h2>

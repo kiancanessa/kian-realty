@@ -45,7 +45,7 @@ const TOPICS: Landing[] = [
     key: "casas",
     kind: "topic",
     matches: c => isSale(c) && c.type === "house" && !/edificio|local/i.test(c.propertyType),
-    related: ["condominios", "terrenos", "frente-al-mar", "guia"],
+    related: ["condominios", "terrenos", "frente-al-mar", "asesoria-legal", "guia"],
     copy: {
       es: {
         title: "Casas en venta en Rosarito, B.C.",
@@ -85,7 +85,7 @@ const TOPICS: Landing[] = [
     key: "condominios",
     kind: "topic",
     matches: c => isSale(c) && c.type === "apartment",
-    related: ["frente-al-mar", "casas", "rentas", "guia"],
+    related: ["frente-al-mar", "casas", "rentas", "asesoria-legal", "guia"],
     copy: {
       es: {
         title: "Condominios y departamentos en venta en Rosarito",
@@ -125,7 +125,7 @@ const TOPICS: Landing[] = [
     key: "terrenos",
     kind: "topic",
     matches: c => isSale(c) && c.type === "land" && !/local|edificio/i.test(c.propertyType),
-    related: ["casas", "frente-al-mar", "guia"],
+    related: ["casas", "frente-al-mar", "asesoria-legal", "guia"],
     copy: {
       es: {
         title: "Terrenos en venta en Rosarito, B.C.",
@@ -165,7 +165,7 @@ const TOPICS: Landing[] = [
     key: "frente-al-mar",
     kind: "topic",
     matches: c => SEAFRONT.test(c.title),
-    related: ["condominios", "casas", "terrenos", "guia"],
+    related: ["condominios", "casas", "terrenos", "asesoria-legal", "guia"],
     copy: {
       es: {
         title: "Propiedades frente al mar en Rosarito",
