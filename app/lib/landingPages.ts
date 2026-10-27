@@ -85,7 +85,7 @@ const TOPICS: Landing[] = [
     key: "condominios",
     kind: "topic",
     matches: c => isSale(c) && c.type === "apartment",
-    related: ["frente-al-mar", "casas", "rentas", "asesoria-legal", "guia"],
+    related: ["frente-al-mar", "casas", "rentas", "calculadora-rentabilidad", "asesoria-legal", "guia"],
     copy: {
       es: {
         title: "Condominios y departamentos en venta en Rosarito",
@@ -205,7 +205,7 @@ const TOPICS: Landing[] = [
     key: "rentas",
     kind: "topic",
     matches: c => c.operation === "rental",
-    related: ["condominios", "casas", "guia"],
+    related: ["condominios", "casas", "calculadora-rentabilidad", "guia"],
     copy: {
       es: {
         title: "Casas y departamentos en renta en Rosarito",

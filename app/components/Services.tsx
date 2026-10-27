@@ -69,6 +69,7 @@ export default function Services() {
     sell: { href: "/ventas", label: t.services.viewSales },
     development: { href: "/desarrollo", label: t.services.viewProjects },
     legal: { href: pagePath("asesoria-legal", locale), label: t.services.viewLegal },
+    invest: { href: pagePath("calculadora-rentabilidad", locale), label: t.services.viewInvest },
   };
 
   return (

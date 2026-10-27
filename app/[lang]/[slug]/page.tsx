@@ -5,8 +5,11 @@ import Footer from "../../components/Footer";
 import LandingGrid from "../../components/LandingGrid";
 import GuidePage from "../../components/GuidePage";
 import LegalPage from "../../components/LegalPage";
+import CalcPage from "../../components/CalcPage";
+import AlertSignup from "../../components/AlertSignup";
 import { GUIDE } from "../../lib/guideContent";
 import { LEGAL } from "../../lib/legalContent";
+import { CALC } from "../../lib/calcContent";
 import { getAllListings } from "../../lib/listings";
 import { orderProperties, type PropertyCard } from "../../lib/easybroker";
 import { whatsappLink } from "../../lib/sendInquiry";
@@ -30,10 +33,11 @@ export function generateStaticParams() {
     ...LANDINGS.flatMap(l => LANGS.map(lang => ({ lang, slug: PAGE_SLUGS[l.key][lang] }))),
     ...LANGS.map(lang => ({ lang, slug: PAGE_SLUGS.guia[lang] })),
     ...LANGS.map(lang => ({ lang, slug: PAGE_SLUGS["asesoria-legal"][lang] })),
+    ...LANGS.map(lang => ({ lang, slug: PAGE_SLUGS["calculadora-rentabilidad"][lang] })),
   ];
 }
 
-type Resolved = { kind: "guide"; lang: Lang } | { kind: "legal"; lang: Lang } | { kind: "landing"; lang: Lang; landing: Landing };
+type Resolved = { kind: "guide"; lang: Lang } | { kind: "legal"; lang: Lang } | { kind: "calc"; lang: Lang } | { kind: "landing"; lang: Lang; landing: Landing };
 
 async function resolve(params: Props["params"]): Promise<Resolved | null> {
   const { lang, slug } = await params;
@@ -41,6 +45,7 @@ async function resolve(params: Props["params"]): Promise<Resolved | null> {
   const key = keyFromSlug(lang, slug);
   if (key === "guia") return { kind: "guide", lang };
   if (key === "asesoria-legal") return { kind: "legal", lang };
+  if (key === "calculadora-rentabilidad") return { kind: "calc", lang };
   const landing = key ? getLanding(key) : undefined;
   return landing ? { kind: "landing", lang, landing } : null;
 }
@@ -58,9 +63,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const found = await resolve(params);
   if (!found) return {};
   const { lang } = found;
-  if (found.kind === "guide" || found.kind === "legal") {
-    const key = found.kind === "guide" ? "guia" : "asesoria-legal";
-    const doc = found.kind === "guide" ? GUIDE[lang] : LEGAL[lang];
+  if (found.kind === "guide" || found.kind === "legal" || found.kind === "calc") {
+    const key = found.kind === "guide" ? "guia" : found.kind === "legal" ? "asesoria-legal" : "calculadora-rentabilidad";
+    const doc = found.kind === "guide" ? GUIDE[lang] : found.kind === "legal" ? LEGAL[lang] : CALC[lang];
     return {
       title: doc.title,
       description: doc.description,
@@ -103,6 +108,7 @@ export default async function LandingPage({ params }: Props) {
   const { lang } = found;
   if (found.kind === "guide") return <GuidePage lang={lang} />;
   if (found.kind === "legal") return <LegalPage lang={lang} />;
+  if (found.kind === "calc") return <CalcPage lang={lang} />;
   const { landing } = found;
   const copy = landing.copy[lang];
   const ui = CHROME[lang];
@@ -166,6 +172,8 @@ export default async function LandingPage({ params }: Props) {
               {ui.none} <a href={allHref} style={linkStyle}>{ui.viewAll}</a>
             </p>
           )}
+
+          <AlertSignup lang={lang} pageKey={landing.key} />
 
           <section style={{ margin: "72px 0", padding: "36px 32px", border: "1px solid rgba(var(--accent),0.18)", background: "rgb(var(--surface))" }}>
             <h2 style={{ ...sectionTitle, marginBottom: 10 }}>{ui.ctaTitle}</h2>

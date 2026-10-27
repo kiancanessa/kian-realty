@@ -63,11 +63,12 @@ export default function Tracker() {
       try {
         const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
         const method = (init?.method ?? (input instanceof Request ? input.method : "GET")).toUpperCase();
-        if (method === "POST" && (url.includes("/api/inquiries") || url.includes("/api/property-interest"))) {
+        if (method === "POST" && (url.includes("/api/inquiries") || url.includes("/api/property-interest") || url.includes("/api/alerts"))) {
           const body = typeof init?.body === "string" ? init.body : "";
           request.then(res => {
             if (!res.ok) return;
             if (url.includes("/api/property-interest")) return trackLead("interest");
+            if (url.includes("/api/alerts")) return trackLead("alert");
             const source = (JSON.parse(body) as { source?: string }).source ?? "";
             trackLead(LEAD_BY_SOURCE[source] ?? "contact_form");
           }).catch(() => {});

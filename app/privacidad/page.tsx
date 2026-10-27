@@ -26,6 +26,9 @@ const CONTENT: Record<"es" | "en", { title: string; updated: string; sections: S
           "Cuando nos escribes por el formulario de contacto, el de una propiedad o el cuestionario: nombre, correo, teléfono (si lo das), tu mensaje, la propiedad que te interesa y tus respuestas (operación, tipo, presupuesto y tiempo).",
           "Si creas una cuenta: nombre, correo y contraseña (se guarda cifrada), y las propiedades que marcas como favoritas.",
           "Si marcas una propiedad como de tu interés sin cuenta: tu correo y esa propiedad.",
+          "Si te suscribes a los avisos de propiedades: tu correo y la página de propiedades que te interesa. Puedes darte de baja desde cualquier mensaje.",
+          "Si descargas la guía: tu nombre, tu correo y, si lo das, tu WhatsApp.",
+          "Los números que escribes en la calculadora de rentabilidad se quedan en tu navegador: no los guardamos.",
         ],
       },
       {
@@ -78,6 +81,9 @@ const CONTENT: Record<"es" | "en", { title: string; updated: string; sections: S
           "When you write to us through the contact form, a property's form, or the quiz: your name, email, phone (if you give it), your message, the property you are interested in, and your answers (operation, type, budget and timing).",
           "If you create an account: your name, email and password (stored encrypted), and the properties you save as favorites.",
           "If you mark a property as of interest without an account: your email and that property.",
+          "If you subscribe to property alerts: your email and the properties page you are interested in. You can unsubscribe from any message.",
+          "If you download the guide: your name, your email and, if you give it, your WhatsApp.",
+          "The numbers you type into the rental yield calculator stay in your browser: we do not save them.",
         ],
       },
       {

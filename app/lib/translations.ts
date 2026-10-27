@@ -45,6 +45,7 @@ export const translations = {
       viewProjects: "View Our Projects",
       viewSales: "View Properties Sold",
       viewLegal: "See Legal Advisory",
+      viewInvest: "Calculate your return",
       buy: {
         title: "Buy",
         desc: "Find your dream home or investment property on the Rosarito coast with expert local guidance.",
@@ -447,6 +448,7 @@ export const translations = {
       viewProjects: "Ver Nuestros Proyectos",
       viewSales: "Ver Propiedades Vendidas",
       viewLegal: "Ver Asesoría Legal",
+      viewInvest: "Calcular tu rendimiento",
       buy: {
         title: "Comprar",
         desc: "Encuentra tu hogar soñado o propiedad de inversión en la costa de Rosarito con guía local experta.",

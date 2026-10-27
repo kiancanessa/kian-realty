@@ -28,6 +28,8 @@ export const PAGE_SLUGS = {
   guia: { es: "guia-comprar-propiedad-en-mexico-extranjeros", en: "buying-property-in-mexico-foreigners-guide" },
   // The service behind the guide
   "asesoria-legal": { es: "asesoria-legal-inmobiliaria-rosarito", en: "real-estate-legal-advice-rosarito" },
+  // A tool for investors
+  "calculadora-rentabilidad": { es: "calculadora-rentabilidad-inversion-rosarito", en: "rosarito-rental-yield-calculator" },
 } as const satisfies Record<string, Record<Lang, string>>;
 
 export type PageKey = keyof typeof PAGE_SLUGS;
@@ -75,4 +77,5 @@ export const LINK_LABELS: Record<PageKey, Record<Lang, string>> = {
   "terrazas-del-mar": { es: "Terrazas del Mar", en: "Terrazas del Mar" },
   guia: { es: "Guía para comprar en México", en: "Buying in Mexico: guide" },
   "asesoria-legal": { es: "Asesoría legal", en: "Legal advisory" },
+  "calculadora-rentabilidad": { es: "Calculadora de rentabilidad", en: "Rental yield calculator" },
 };

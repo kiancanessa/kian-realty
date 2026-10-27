@@ -3,6 +3,8 @@ import { getAllProperties } from "./lib/easybroker";
 import { pageKeys, pagePath } from "./lib/seoSlugs";
 
 const BASE_URL = "https://elcasarosaritogroup.com";
+// Pages whose content does not follow the inventory.
+const STABLE = new Set<string>(["guia", "asesoria-legal", "calculadora-rentabilidad"]);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const properties = await getAllProperties();
@@ -23,8 +25,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       (["es", "en"] as const).map(lang => ({
         url: `${BASE_URL}${pagePath(key, lang)}`,
         lastModified: new Date(),
-        changeFrequency: (key === "guia" || key === "asesoria-legal" ? "monthly" : "daily") as "monthly" | "daily",
-        priority: key === "guia" || key === "asesoria-legal" ? 0.7 : 0.8,
+        changeFrequency: (STABLE.has(key) ? "monthly" : "daily") as "monthly" | "daily",
+        priority: STABLE.has(key) ? 0.7 : 0.8,
         alternates: { languages: { es: `${BASE_URL}${pagePath(key, "es")}`, en: `${BASE_URL}${pagePath(key, "en")}` } },
       })),
     ),
