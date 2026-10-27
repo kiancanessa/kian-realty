@@ -11,28 +11,31 @@ import AnalyticsScripts from "./components/AnalyticsScripts";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://elcasarosaritogroup.com"),
+  // "/" is the English site (and the x-default); the Spanish one is "/es" and
+  // has its own title and description, see app/[lang]/page.tsx.
   title: {
-    default: "El Casa Rosarito · Casas, Departamentos y Terrenos en Rosarito",
+    default: "El Casa Rosarito · Homes, Condos & Land for Sale in Rosarito, Baja California",
     template: "%s | El Casa Rosarito",
   },
   description:
-    "Casas, departamentos y terrenos en venta y renta en Rosarito, Baja California. Agencia inmobiliaria bilingüe con licencia completa — El Casa Rosarito.",
+    "Homes, condos and land for sale and rent in Rosarito, Baja California. Bilingual, fully licensed real estate agency — El Casa Rosarito.",
   keywords: [
     "casas en venta Rosarito", "departamentos en renta Rosarito", "terrenos en venta Rosarito",
     "Rosarito real estate", "Rosarito homes for sale", "Baja California real estate",
     "El Casa Rosarito", "bienes raíces Rosarito", "inmobiliaria Rosarito",
   ],
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", languages: { en: "/", es: "/es", "x-default": "/" } },
   robots: { index: true, follow: true },
   // Search Console ownership tag. Not needed if the domain is verified through DNS.
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
   openGraph: {
-    title: "El Casa Rosarito · Casas, Departamentos y Terrenos en Rosarito",
-    description: "Agencia inmobiliaria bilingüe en Rosarito, Baja California. Casas, departamentos y terrenos en venta y renta.",
+    title: "El Casa Rosarito · Homes, Condos & Land for Sale in Rosarito, Baja California",
+    description: "Bilingual real estate agency in Rosarito, Baja California. Homes, condos and land for sale and rent.",
     url: "https://elcasarosaritogroup.com",
     siteName: "El Casa Rosarito",
     type: "website",
-    locale: "es_MX",
+    locale: "en_US",
+    alternateLocale: ["es_MX"],
   },
 };
 
@@ -51,11 +54,16 @@ const ORGANIZATION_JSON_LD = {
   },
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Rosarito",
+    streetAddress: "Local 19 Módulo A, Quinta Plaza",
+    addressLocality: "Playas de Rosarito",
     addressRegion: "Baja California",
+    postalCode: "22703",
     addressCountry: "MX",
   },
-  sameAs: ["https://www.facebook.com/share/1KXb7Lm8g9/"],
+  geo: { "@type": "GeoCoordinates", latitude: 32.3482054, longitude: -117.0618127 },
+  hasMap: "https://maps.app.goo.gl/Qp3g7CKCrx1EC82Z8",
+  knowsLanguage: ["es", "en"],
+  sameAs: ["https://www.facebook.com/share/1KXb7Lm8g9/", "https://maps.app.goo.gl/Qp3g7CKCrx1EC82Z8"],
 };
 
 export default function RootLayout({

@@ -7,7 +7,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const properties = await getAllProperties();
 
   return [
-    { url: BASE_URL, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
+    // The two language versions of the home page point at each other.
+    {
+      url: BASE_URL, lastModified: new Date(), changeFrequency: "weekly", priority: 1,
+      alternates: { languages: { en: BASE_URL, es: `${BASE_URL}/es` } },
+    },
+    {
+      url: `${BASE_URL}/es`, lastModified: new Date(), changeFrequency: "weekly", priority: 1,
+      alternates: { languages: { en: BASE_URL, es: `${BASE_URL}/es` } },
+    },
     { url: `${BASE_URL}/propiedades`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: `${BASE_URL}/ventas`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE_URL}/desarrollo`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
