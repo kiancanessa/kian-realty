@@ -23,11 +23,11 @@ export default function AnalyticsScripts() {
       {META_PIXEL_ID && (
         <Script id="meta-pixel" strategy="afterInteractive">{`
           !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-          fbq('consent','revoke');
-          fbq('init','${META_PIXEL_ID}');
-          /* The grant has to come after init: Meta ignores one given before the pixel exists. */
-          try{if(localStorage.getItem('${CONSENT_KEY}')==='granted'){fbq('consent','grant')}}catch(e){}
-          fbq('track','PageView');
+          /* Meta holds everything queued after a "revoke" until a later "grant", and that grant cannot
+             sit in the same startup queue. So a visitor who already accepted is simply not revoked. */
+          var ok=false;try{ok=localStorage.getItem('${CONSENT_KEY}')==='granted'}catch(e){}
+          if(!ok){fbq('consent','revoke')}
+          fbq('init','${META_PIXEL_ID}');fbq('track','PageView');
         `}</Script>
       )}
     </>
