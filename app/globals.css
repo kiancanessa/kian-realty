@@ -1270,3 +1270,49 @@ a.rv-name:hover { color: rgb(var(--accent)); }
   .rv-pill:hover { translate: none; }
   .rv-stage::before { display: none; }
 }
+
+/* ── Cookie banner and the property contact bar ─────────────────────── */
+.consent {
+  position: fixed; left: 50%; bottom: 16px; z-index: 150; width: min(560px, calc(100% - 32px));
+  display: flex; align-items: center; gap: 16px; padding: 14px 16px 14px 20px;
+  background: rgb(var(--surface)); color: rgb(var(--ink)); border: 1px solid rgba(var(--accent), 0.25);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  translate: -50% 0; animation: consentIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.consent p { margin: 0; flex: 1; font-family: 'Jost', sans-serif; font-size: 0.78rem; line-height: 1.55; color: rgba(var(--ink), 0.78); }
+.consent p a { color: rgb(var(--accent)); text-underline-offset: 3px; white-space: nowrap; }
+.consent-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.consent-actions button {
+  min-width: 92px; min-height: 44px; padding: 0 16px; cursor: pointer; font-family: 'Jost', sans-serif; font-size: 0.72rem;
+  letter-spacing: 0.12em; text-transform: uppercase; transition: background 0.25s ease, border-color 0.25s ease;
+  background: transparent; color: rgb(var(--ink)); border: 1px solid rgba(var(--accent), 0.5);
+}
+.consent-actions button:hover { background: rgba(var(--accent), 0.1); border-color: rgb(var(--accent)); }
+.consent-actions button:focus-visible, .consent p a:focus-visible { outline: 2px solid rgb(var(--accent-light)); outline-offset: 2px; }
+@keyframes consentIn { from { opacity: 0; transform: translate3d(0, 16px, 0); } to { opacity: 1; transform: none; } }
+@media (max-width: 560px) {
+  .consent { flex-direction: column; align-items: stretch; gap: 12px; bottom: 12px; }
+  .consent-actions button { flex: 1; }
+}
+
+.pcb { display: none; }
+@media (max-width: 767px) {
+  .pcb {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 90; display: flex; gap: 10px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(var(--bg), 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(var(--accent), 0.18);
+  }
+  .pcb a {
+    flex: 1; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'Jost', sans-serif; font-weight: 500; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; text-decoration: none;
+  }
+  .pcb-wa { background: #25D366; color: #08260f; }
+  .pcb-call { color: rgb(var(--accent)); border: 1px solid rgb(var(--accent)); }
+  .pcb a:focus-visible { outline: 2px solid rgb(var(--accent-light)); outline-offset: 2px; }
+  /* The bar replaces the floating buttons here, and the page leaves room for it. */
+  body:has(.pcb) .social-float { display: none; }
+  body:has(.pcb) { padding-bottom: 72px; }
+  body:has(.pcb) .consent { bottom: 84px; }
+}
+@media (prefers-reduced-motion: reduce) { .consent { animation: none; } }

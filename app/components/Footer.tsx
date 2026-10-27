@@ -28,7 +28,7 @@ export default function Footer() {
               </a>
             ))}
           </div>
-          <a href="#" style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(var(--ink),0.2)", textDecoration: "none" }}>{t.footer.privacy}</a>
+          <a href="/privacidad" style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(var(--ink),0.2)", textDecoration: "none" }}>{t.footer.privacy}</a>
           <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", color: "rgba(var(--ink),0.2)" }}>© {year} · {t.footer.rights}</span>
         </div>
       </div>

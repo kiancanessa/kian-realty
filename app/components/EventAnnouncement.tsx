@@ -6,6 +6,12 @@ import { X } from "lucide-react";
 import AnnouncementCard from "./templates/AnnouncementCard";
 import { INTRO_DONE_EVENT } from "./IntroCurtain";
 
+/** Lets other first-visit prompts (the cookie banner) wait their turn instead
+ *  of stacking behind the announcement. */
+export const ANNOUNCEMENT_CLOSED_EVENT = "ecr:announcement-closed";
+let announcementOpen = false;
+export const announcementIsOpen = () => announcementOpen;
+
 function seenKey(id: number) {
   return `announcementSeen_${id}`;
 }
@@ -28,7 +34,7 @@ export default function EventAnnouncement() {
     if (sessionStorage.getItem(seenKey(announcement.id))) return;
     // Wait for the opening animation, or the popup would open behind it.
     let timer: ReturnType<typeof setTimeout>;
-    const open = () => { timer = setTimeout(() => setVisible(true), 350); };
+    const open = () => { timer = setTimeout(() => { announcementOpen = true; setVisible(true); }, 350); };
     if (window.__ecrIntroDone) open();
     else window.addEventListener(INTRO_DONE_EVENT, open, { once: true });
     return () => {
@@ -39,6 +45,8 @@ export default function EventAnnouncement() {
 
   const dismiss = () => {
     setVisible(false);
+    announcementOpen = false;
+    window.dispatchEvent(new Event(ANNOUNCEMENT_CLOSED_EVENT));
     if (announcement) sessionStorage.setItem(seenKey(announcement.id), "1");
   };
 

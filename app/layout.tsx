@@ -7,6 +7,7 @@ import { QuizProvider } from "./lib/QuizContext";
 import PublicWidgets from "./components/PublicWidgets";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import AnalyticsScripts from "./components/AnalyticsScripts";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://elcasarosaritogroup.com"),
@@ -23,6 +24,8 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: "/" },
   robots: { index: true, follow: true },
+  // Search Console ownership tag. Not needed if the domain is verified through DNS.
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
   openGraph: {
     title: "El Casa Rosarito · Casas, Departamentos y Terrenos en Rosarito",
     description: "Agencia inmobiliaria bilingüe en Rosarito, Baja California. Casas, departamentos y terrenos en venta y renta.",
@@ -97,6 +100,7 @@ export default function RootLayout({
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
+        <AnalyticsScripts />
       </body>
     </html>
   );

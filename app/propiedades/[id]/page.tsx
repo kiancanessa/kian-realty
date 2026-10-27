@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import EasyBrokerDetail from "../../components/EasyBrokerDetail";
+import PropertyContactBar from "../../components/PropertyContactBar";
 import { getProperty, primaryOperation, type EBPropertyDetail } from "../../lib/easybroker";
 import { isOwnPropertyId, getOwnProperty, ownToDetail } from "../../lib/ownProperties";
 import { isBolsaId, getPartnerProperty } from "../../lib/bolsa/consume";
@@ -74,6 +75,7 @@ export default async function PropertyPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <EasyBrokerDetail property={property} />
+      <PropertyContactBar id={property.public_id} title={property.title} />
     </>
   );
 }

@@ -5,6 +5,8 @@ import ScrollReveal from "./ScrollReveal";
 import SocialFloat from "./SocialFloat";
 import RosaritoGuide from "./RosaritoGuide";
 import EventAnnouncement from "./EventAnnouncement";
+import ConsentBanner from "./ConsentBanner";
+import Tracker from "./Tracker";
 
 export default function PublicWidgets() {
   const pathname = usePathname();
@@ -17,6 +19,8 @@ export default function PublicWidgets() {
       <SocialFloat />
       <RosaritoGuide />
       <EventAnnouncement />
+      <ConsentBanner />
+      <Tracker />
     </>
   );
 }

@@ -258,6 +258,19 @@ export const translations = {
       rights: "All rights reserved.",
       privacy: "Privacy Policy",
     },
+    consent: {
+      label: "Cookie preferences",
+      text: "We use analytics and advertising cookies to learn what works on this site and to show our listings to people who may like them. You decide.",
+      accept: "Accept",
+      decline: "Decline",
+      policy: "Privacy notice",
+    },
+    pcb: {
+      label: "Contact about this property",
+      whatsapp: "WhatsApp",
+      call: "Call",
+      message: "Hi, I'm interested in {title} ({id}). Could you send me more information?",
+    },
     guide: {
       trigger: "Rosarito Guide",
       title: "Rosarito Guide",
@@ -645,6 +658,19 @@ export const translations = {
       tagline: "Bienes raíces premium en Rosarito y la costa de Baja California.",
       rights: "Todos los derechos reservados.",
       privacy: "Política de Privacidad",
+    },
+    consent: {
+      label: "Preferencias de cookies",
+      text: "Usamos cookies de análisis y publicidad para entender qué funciona en este sitio y mostrar nuestras propiedades a quien pueda interesarle. Tú decides.",
+      accept: "Aceptar",
+      decline: "Rechazar",
+      policy: "Aviso de privacidad",
+    },
+    pcb: {
+      label: "Contacto sobre esta propiedad",
+      whatsapp: "WhatsApp",
+      call: "Llamar",
+      message: "Hola, me interesa {title} ({id}). ¿Me pueden dar más información?",
     },
     guide: {
       trigger: "Guía de Rosarito",
