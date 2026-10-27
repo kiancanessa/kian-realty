@@ -1324,12 +1324,6 @@ a.rv-name:hover { color: rgb(var(--accent)); }
 .yc { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; margin: 40px 0; align-items: start; /* Numbers are set in Jost: the serif used for headings only has old-style figures here, where 1 reads as a capital I */ font-variant-numeric: lining-nums tabular-nums; }
 @media (min-width: 981px) { .yc { grid-template-columns: minmax(340px, 5fr) minmax(0, 7fr); gap: 44px; } }
 
-/* The site clips sideways overflow on <body> (overflow-x: hidden), which turns the body into a
-   scroll container and stops every position: sticky from sticking. "clip" crops the same way
-   without that side effect. Scoped to this page: other pages' sticky parts (the property
-   page's header and side card) have never stuck, and changing that is a separate decision. */
-body:has(.yc) { overflow-x: clip; }
-
 .yc-inputs { min-width: 0; }
 .yc-step { border: 0; padding: 0; margin: 0 0 30px; min-width: 0; }
 .yc-step legend {
@@ -1383,17 +1377,13 @@ body:has(.yc) { overflow-x: clip; }
 .yc-currency button.is-on { background: rgb(var(--accent)); color: #FAF6EE; }
 .yc-currency button:focus-visible { outline: 2px solid rgb(var(--accent-light)); outline-offset: 2px; }
 
-/* A flex column, not a grid: a sticky child can only move inside its own grid cell. */
 .yc-results { display: flex; flex-direction: column; gap: 20px; min-width: 0; scroll-margin-top: 90px; }
 .yc-card { padding: 24px 26px; border: 1px solid rgba(var(--accent), 0.2); background: rgb(var(--surface)); }
 .yc-card h2 { margin: 0 0 4px; font: 400 1.5rem 'Cormorant Garamond', serif; color: rgb(var(--ink)); }
 .yc-sub { margin: 0 0 18px; font: 0.85rem 'Jost', sans-serif; color: rgba(var(--ink), 0.62); }
 
-/* On a wide screen the sentence and the three numbers stay in view while the sliders move. */
+/* The sentence and the three numbers sit in the flow with the rest: they do not float over the other cards. */
 .yc-pin { display: grid; gap: 12px; }
-@media (min-width: 981px) {
-  .yc-pin { position: sticky; top: 84px; z-index: 6; margin: -12px; padding: 12px; background: rgba(var(--bg), 0.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-}
 .yc-summary { background: rgba(var(--accent), 0.1); border-color: rgba(var(--accent), 0.35); padding: 18px 22px; }
 .yc-summary p { margin: 0; font: 400 1.18rem/1.5 'Jost', sans-serif; color: rgb(var(--ink)); }
 .yc-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
