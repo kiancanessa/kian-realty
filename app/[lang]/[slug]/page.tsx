@@ -173,6 +173,14 @@ export default async function LandingPage({ params }: Props) {
             </p>
           )}
 
+          {landing.invest && (
+            <aside style={{ margin: "56px 0 0", padding: "26px 32px", border: "1px solid rgba(var(--accent),0.25)", background: "rgb(var(--surface))" }}>
+              <h2 style={{ ...sectionTitle, fontSize: "1.45rem", marginBottom: 8 }}>{ui.calcTitle}</h2>
+              <p style={{ ...bodyText, maxWidth: 640, marginBottom: 14 }}>{ui.calcText}</p>
+              <a href={pagePath("calculadora-rentabilidad", lang)} data-cta="calc-landing" style={{ ...linkStyle, fontFamily: "'Jost', sans-serif", fontWeight: 500 }}>{ui.calcLink} →</a>
+            </aside>
+          )}
+
           <AlertSignup lang={lang} pageKey={landing.key} />
 
           <section style={{ margin: "72px 0", padding: "36px 32px", border: "1px solid rgba(var(--accent),0.18)", background: "rgb(var(--surface))" }}>

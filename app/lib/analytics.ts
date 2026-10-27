@@ -71,6 +71,11 @@ export function trackContactClick(channel: "whatsapp" | "phone" | "email", param
   whenReady("fbq", fbq => fbq("track", "Contact", { content_category: channel }));
 }
 
+/** A click on a call to action, by where it sits (the link's data-cta). */
+export function trackCta(name: string): void {
+  whenReady("gtag", gtag => gtag("event", "cta_click", { cta: name }));
+}
+
 export function trackPropertyView(id: string): void {
   whenReady("gtag", gtag => gtag("event", "view_item", { items: [{ item_id: id }] }));
   whenReady("fbq", fbq => fbq("track", "ViewContent", { content_ids: [id], content_type: "product" }));

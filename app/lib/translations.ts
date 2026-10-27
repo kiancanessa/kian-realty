@@ -255,6 +255,13 @@ export const translations = {
       alsoWhatsApp: "Also send via WhatsApp",
       error: "Something went wrong sending your message. Please try WhatsApp or email us directly below.",
     },
+    invest: {
+      eyebrow: "For investors",
+      title: "What would your Rosarito investment yield?",
+      text: "Move a few sliders and see, with your own numbers, what a rental property would leave you each year and how long it would take to recover what you invest.",
+      points: ["Free", "No sign-up", "Instant result"],
+      cta: "Try the calculator",
+    },
     footer: {
       tagline: "Premium real estate along the Rosarito and Baja California coast.",
       rights: "All rights reserved.",
@@ -657,6 +664,13 @@ export const translations = {
       alsoWhatsApp: "Enviar también por WhatsApp",
       error: "Hubo un problema al enviar tu mensaje. Intenta por WhatsApp o escríbenos directo abajo.",
       or: "O contáctanos directamente",
+    },
+    invest: {
+      eyebrow: "Para inversionistas",
+      title: "¿Cuánto rendiría tu inversión en Rosarito?",
+      text: "Mueve unos controles y mira, con tus propios números, cuánto te dejaría una propiedad de renta al año y en cuánto tiempo recuperarías lo que inviertes.",
+      points: ["Gratis", "Sin registro", "Resultado al instante"],
+      cta: "Probar la calculadora",
     },
     footer: {
       tagline: "Bienes raíces premium en Rosarito y la costa de Baja California.",

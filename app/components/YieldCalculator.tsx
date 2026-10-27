@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import Link from "next/link";
 import { Hourglass, PiggyBank, TrendingUp } from "lucide-react";
 import { CALC, type ExpenseKey } from "../lib/calcContent";
 import { JORGE_WHATSAPP } from "../lib/contact";
@@ -227,6 +228,20 @@ export default function YieldCalculator({ lang }: { lang: Lang }) {
   const [v, setV] = useState<Record<Field, string>>(EXAMPLE);
   const [pickedYear, setPickedYear] = useState<number | null>(null);
 
+  // Opened from a property: its price (and listed rent) arrive filled in.
+  const [fromProperty, setFromProperty] = useState<{ id: string; rent: boolean } | null>(null);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const p = Number(q.get("price")), r = Number(q.get("rent")), cur = q.get("currency"), id = q.get("ref") ?? "";
+    if (!(p > 0)) return;
+    /* Reading the address after load is what an effect is for (the page is built ahead of time). */
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setV(prev => ({ ...prev, price: String(Math.round(p)), ...(r > 0 ? { rent: String(Math.round(r)) } : {}) }));
+    if (cur === "USD" || cur === "MXN") setCurrency(cur);
+    if (/^[A-Za-z0-9-]{3,24}$/.test(id)) setFromProperty({ id, rent: r > 0 });
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, []);
+
   const inputsRef = useRef<HTMLFormElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const resultsInView = useInView(resultsRef, 0.2);
@@ -295,6 +310,12 @@ export default function YieldCalculator({ lang }: { lang: Lang }) {
   return (
     <div className="yc">
       <form ref={inputsRef} className="yc-inputs" onSubmit={e => e.preventDefault()}>
+        {fromProperty && (
+          <p className="yc-prefill" role="status">
+            {c.prefill.text(fromProperty.id, fromProperty.rent)}{" "}
+            <Link href={`/propiedades/${fromProperty.id}`}>{c.prefill.link}</Link>
+          </p>
+        )}
         <Step n={1} title={c.steps.property} hint={c.steps.propertyHint}>
           <div className="yc-currency" role="radiogroup" aria-label={c.fields.currency}>
             {(["USD", "MXN"] as const).map(code => (

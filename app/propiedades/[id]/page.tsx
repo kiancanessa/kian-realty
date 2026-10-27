@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import EasyBrokerDetail from "../../components/EasyBrokerDetail";
 import PropertyContactBar from "../../components/PropertyContactBar";
+import PropertyReturnCard from "../../components/PropertyReturnCard";
 import { getProperty, primaryOperation, type EBPropertyDetail } from "../../lib/easybroker";
 import { isOwnPropertyId, getOwnProperty, ownToDetail } from "../../lib/ownProperties";
 import { isBolsaId, getPartnerProperty } from "../../lib/bolsa/consume";
@@ -60,6 +61,9 @@ export default async function PropertyPage({ params }: Props) {
   const { property } = loaded;
 
   const op = primaryOperation(property.operations);
+  // The yield calculator needs a purchase price; a rental-only listing has none.
+  const sale = property.operations.find(o => o.type === "sale");
+  const rental = property.operations.find(o => o.type === "rental");
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
@@ -75,6 +79,10 @@ export default async function PropertyPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <EasyBrokerDetail property={property} />
+      {sale && sale.amount > 0 && (
+        <PropertyReturnCard id={property.public_id} price={sale.amount} currency={sale.currency}
+          rent={rental && rental.currency === sale.currency ? rental.amount : null} />
+      )}
       <PropertyContactBar id={property.public_id} title={property.title} />
     </>
   );

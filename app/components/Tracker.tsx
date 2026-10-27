@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { trackContactClick, trackLead, trackPageView, trackPropertyView, type LeadMethod } from "../lib/analytics";
+import { trackContactClick, trackCta, trackLead, trackPageView, trackPropertyView, type LeadMethod } from "../lib/analytics";
 
 const LEAD_BY_SOURCE: Record<string, LeadMethod> = {
   contact: "contact_form",
@@ -44,6 +44,8 @@ export default function Tracker() {
       const a = (e.target as Element | null)?.closest?.("a[href]");
       const href = a?.getAttribute("href") ?? "";
       if (!a) return;
+      const cta = a.getAttribute("data-cta");
+      if (cta) trackCta(cta);
       const where = { placement: placement(a), page_path: location.pathname };
       if (/^https?:\/\/(wa\.me|api\.whatsapp\.com)\//.test(href)) trackContactClick("whatsapp", where);
       else if (href.startsWith("tel:")) trackContactClick("phone", where);

@@ -12,6 +12,8 @@ export type CalcContent = {
   description: string;
   intro: string[];
   currencyNote: string;
+  /** Shown when the page was opened from a property, with that property's numbers already in. */
+  prefill: { text: (id: string, withRent: boolean) => string; link: string };
   steps: { property: string; propertyHint: string; rent: string; rentHint: string; expenses: string; expensesHint: string };
   fields: {
     currency: string; price: string; closing: string; closingHint: string; rent: string; occupancy: string; occupancyHint: string;
@@ -47,6 +49,7 @@ export const CALC: Record<"es" | "en", CalcContent> = {
       "Los valores con los que se abre son ejemplos redondos para que veas cómo funciona. Cámbialos por los de la propiedad que estás analizando.",
     ],
     currencyNote: "La moneda solo cambia el símbolo: escribe tus cifras en la moneda que elijas.",
+    prefill: { text: (id, rent) => `Cargamos el precio${rent ? " y la renta" : ""} publicados de la propiedad ${id}. Ajusta lo que quieras.`, link: "Ver la propiedad" },
     steps: {
       property: "La propiedad", propertyHint: "¿Cuánto cuesta y cuánto sumarías en costos de compra?",
       rent: "La renta", rentHint: "¿Cuánto cobrarías al mes y qué parte del año estaría rentada?",
@@ -111,6 +114,7 @@ export const CALC: Record<"es" | "en", CalcContent> = {
       "The values it opens with are round examples so you can see how it works. Replace them with those of the property you are looking at.",
     ],
     currencyNote: "The currency only changes the symbol: enter your figures in the currency you choose.",
+    prefill: { text: (id, rent) => `We filled in the listed price${rent ? " and rent" : ""} of property ${id}. Adjust whatever you like.`, link: "View the property" },
     steps: {
       property: "The property", propertyHint: "How much does it cost and how much would you add in purchase costs?",
       rent: "The rent", rentHint: "How much would you charge per month and how much of the year would it be rented?",

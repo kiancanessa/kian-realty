@@ -8,7 +8,7 @@ import { whatsappLink } from "../lib/sendInquiry";
 import { VERONICA_WHATSAPP } from "../lib/contact";
 
 const SITE = "https://elcasarosaritogroup.com";
-const RELATED: PageKey[] = ["casas", "condominios", "terrenos", "frente-al-mar"];
+const RELATED: PageKey[] = ["casas", "condominios", "terrenos", "frente-al-mar", "calculadora-rentabilidad"];
 
 const h2: React.CSSProperties = { fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: "clamp(1.6rem, 3vw, 2.1rem)", color: "rgb(var(--ink))", margin: "52px 0 16px" };
 const p: React.CSSProperties = { fontFamily: "'Jost', sans-serif", fontSize: "1.02rem", lineHeight: 1.85, color: "rgba(var(--ink),0.78)", marginBottom: 16 };

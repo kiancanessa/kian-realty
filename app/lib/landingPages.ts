@@ -18,6 +18,8 @@ export type Landing = {
   matches: (c: PropertyCard) => boolean;
   copy: Record<Lang, Copy>;
   related: PageKey[];
+  /** Shows the "what would it yield" callout: for pages about buying a place that could be rented out. */
+  invest?: boolean;
 };
 
 const isSale = (c: PropertyCard) => c.operation === "sale";
@@ -46,6 +48,7 @@ const TOPICS: Landing[] = [
     kind: "topic",
     matches: c => isSale(c) && c.type === "house" && !/edificio|local/i.test(c.propertyType),
     related: ["condominios", "terrenos", "frente-al-mar", "asesoria-legal", "guia"],
+    invest: true,
     copy: {
       es: {
         title: "Casas en venta en Rosarito, B.C.",
@@ -86,6 +89,7 @@ const TOPICS: Landing[] = [
     kind: "topic",
     matches: c => isSale(c) && c.type === "apartment",
     related: ["frente-al-mar", "casas", "rentas", "calculadora-rentabilidad", "asesoria-legal", "guia"],
+    invest: true,
     copy: {
       es: {
         title: "Condominios y departamentos en venta en Rosarito",
@@ -166,6 +170,7 @@ const TOPICS: Landing[] = [
     kind: "topic",
     matches: c => SEAFRONT.test(c.title),
     related: ["condominios", "casas", "terrenos", "asesoria-legal", "guia"],
+    invest: true,
     copy: {
       es: {
         title: "Propiedades frente al mar en Rosarito",
@@ -205,7 +210,7 @@ const TOPICS: Landing[] = [
     key: "rentas",
     kind: "topic",
     matches: c => c.operation === "rental",
-    related: ["condominios", "casas", "calculadora-rentabilidad", "guia"],
+    related: ["condominios", "casas", "guia"],
     copy: {
       es: {
         title: "Casas y departamentos en renta en Rosarito",
@@ -259,6 +264,7 @@ function zonePage(z: Zone): Landing {
     kind: "zone",
     matches: c => z.match.test(c.location),
     related: ["casas", "terrenos", "condominios", "guia"],
+    invest: true,
     copy: {
       es: {
         title: `Propiedades en ${z.name}, Rosarito`,
@@ -315,6 +321,7 @@ export const CHROME: Record<Lang, {
   home: string; available: (n: number) => string; none: string; viewAll: string;
   ctaTitle: string; ctaText: string; whatsapp: string; contact: string;
   faq: string; related: string; guideTitle: string; guideText: string; guideLink: string;
+  calcTitle: string; calcText: string; calcLink: string;
   whatsappMessage: (h1: string) => string;
 }> = {
   es: {
@@ -331,6 +338,9 @@ export const CHROME: Record<Lang, {
     guideTitle: "Guía para comprar propiedad en México",
     guideText: "Fideicomiso, zona restringida y pasos de la compra, explicados para extranjeros.",
     guideLink: "Leer la guía",
+    calcTitle: "¿Pensando en rentarla? Calcula cuánto rendiría",
+    calcText: "Pon el precio y la renta que esperas y mira, con controles sencillos, cuánto te quedaría al año y en cuánto tiempo recuperarías tu inversión.",
+    calcLink: "Probar la calculadora",
     whatsappMessage: h1 => `Hola, vi la página "${h1}" en su sitio y me gustaría más información.`,
   },
   en: {
@@ -347,6 +357,9 @@ export const CHROME: Record<Lang, {
     guideTitle: "Guide to buying property in Mexico",
     guideText: "Bank trust, restricted zone and the steps of the purchase, explained for foreign buyers.",
     guideLink: "Read the guide",
+    calcTitle: "Thinking of renting it out? See what it would yield",
+    calcText: "Enter the price and the rent you expect and see, with simple sliders, what you would keep each year and how long it would take to recover your investment.",
+    calcLink: "Try the calculator",
     whatsappMessage: h1 => `Hi, I saw the page "${h1}" on your site and I'd like more information.`,
   },
 };

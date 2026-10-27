@@ -4,6 +4,7 @@ import Stats from "./Stats";
 import Certifications from "./Certifications";
 import Services from "./Services";
 import Featured from "./Featured";
+import InvestBand from "./InvestBand";
 import About from "./About";
 import Location from "./Location";
 import CoastVideos from "./CoastVideos";
@@ -27,6 +28,7 @@ export default async function HomePage() {
       <Services />
       <Certifications />
       <Featured properties={properties} />
+      <InvestBand />
       <About />
       <Location />
       <CoastVideos />
