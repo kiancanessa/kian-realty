@@ -1316,3 +1316,138 @@ a.rv-name:hover { color: rgb(var(--accent)); }
   body:has(.pcb) .consent { bottom: 84px; }
 }
 @media (prefers-reduced-motion: reduce) { .consent { animation: none; } }
+
+/* ── Rental yield calculator ─────────────────────────────────────────────
+   Sliders to fill it in, a donut for where the rent goes, three numbers, and
+   year-by-year bars. The numbers and shapes are driven from the component
+   (they move together); CSS here only styles and adds the entrance. */
+.yc { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; margin: 40px 0; align-items: start; /* Numbers are set in Jost: the serif used for headings only has old-style figures here, where 1 reads as a capital I */ font-variant-numeric: lining-nums tabular-nums; }
+@media (min-width: 981px) { .yc { grid-template-columns: minmax(340px, 5fr) minmax(0, 7fr); gap: 44px; } }
+
+/* The site clips sideways overflow on <body> (overflow-x: hidden), which turns the body into a
+   scroll container and stops every position: sticky from sticking. "clip" crops the same way
+   without that side effect. Scoped to this page: other pages' sticky parts (the property
+   page's header and side card) have never stuck, and changing that is a separate decision. */
+body:has(.yc) { overflow-x: clip; }
+
+.yc-inputs { min-width: 0; }
+.yc-step { border: 0; padding: 0; margin: 0 0 30px; min-width: 0; }
+.yc-step legend {
+  display: flex; align-items: center; gap: 10px; padding: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.55rem; color: rgb(var(--ink));
+}
+.yc-step-n {
+  display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; flex: 0 0 auto;
+  background: rgb(var(--accent)); color: #FAF6EE; font: 600 0.8rem 'Jost', sans-serif;
+}
+.yc-step-hint { margin: 6px 0 14px 38px; font: 0.85rem/1.5 'Jost', sans-serif; color: rgba(var(--ink), 0.62); }
+.yc-field { padding: 12px 0 8px; border-top: 1px solid rgba(var(--accent), 0.14); }
+.yc-field-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.yc-field label { font: 0.92rem 'Jost', sans-serif; color: rgb(var(--ink)); }
+.yc-unit { color: rgba(var(--ink), 0.55); }
+.yc-hint { margin: 2px 0 0; font: 0.76rem/1.5 'Jost', sans-serif; color: rgba(var(--ink), 0.58); }
+.yc-valuebox {
+  display: flex; align-items: baseline; gap: 4px; padding: 3px 12px; border: 1px solid rgba(var(--accent), 0.3); border-radius: 8px;
+  background: rgb(var(--bg)); color: rgb(var(--ink)); font-family: 'Jost', sans-serif; font-weight: 400; font-size: 1.15rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.yc-valuebox:focus-within { border-color: rgb(var(--accent)); box-shadow: 0 0 0 3px rgba(var(--accent), 0.2); }
+.yc-valuebox input {
+  width: 9ch; min-width: 0; border: 0; outline: 0; background: transparent; color: inherit; font: inherit; text-align: right;
+  font-variant-numeric: lining-nums tabular-nums; -moz-appearance: textfield; appearance: textfield;
+}
+.yc-valuebox input::-webkit-outer-spin-button, .yc-valuebox input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.yc-range { -webkit-appearance: none; appearance: none; width: 100%; height: 34px; margin: 4px 0 0; background: transparent; cursor: pointer; touch-action: pan-y; }
+.yc-range::-webkit-slider-runnable-track {
+  height: 8px; border-radius: 99px;
+  background: linear-gradient(90deg, rgb(var(--accent)) var(--p, 0%), rgba(var(--accent), 0.2) var(--p, 0%));
+}
+.yc-range::-moz-range-track { height: 8px; border-radius: 99px; background: rgba(var(--accent), 0.2); }
+.yc-range::-moz-range-progress { height: 8px; border-radius: 99px; background: rgb(var(--accent)); }
+.yc-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 26px; height: 26px; margin-top: -9px; border-radius: 50%;
+  background: #FAF6EE; border: 4px solid rgb(var(--accent)); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28); transition: transform 0.15s ease;
+}
+.yc-range::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #FAF6EE; border: 4px solid rgb(var(--accent)); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28); }
+.yc-range:hover::-webkit-slider-thumb { transform: scale(1.1); }
+.yc-range:active::-webkit-slider-thumb { transform: scale(1.22); }
+.yc-range:focus-visible { outline: none; }
+.yc-range:focus-visible::-webkit-slider-thumb { outline: 3px solid rgb(var(--accent-light)); outline-offset: 2px; }
+.yc-range:focus-visible::-moz-range-thumb { outline: 3px solid rgb(var(--accent-light)); outline-offset: 2px; }
+
+.yc-currency { display: inline-flex; margin-bottom: 12px; padding: 3px; border: 1px solid rgba(var(--accent), 0.35); border-radius: 999px; }
+.yc-currency button {
+  min-width: 68px; min-height: 38px; border: 0; border-radius: 999px; background: transparent; color: rgba(var(--ink), 0.7);
+  font: 500 0.78rem 'Jost', sans-serif; letter-spacing: 0.14em; cursor: pointer; transition: background 0.25s ease, color 0.25s ease;
+}
+.yc-currency button.is-on { background: rgb(var(--accent)); color: #FAF6EE; }
+.yc-currency button:focus-visible { outline: 2px solid rgb(var(--accent-light)); outline-offset: 2px; }
+
+/* A flex column, not a grid: a sticky child can only move inside its own grid cell. */
+.yc-results { display: flex; flex-direction: column; gap: 20px; min-width: 0; scroll-margin-top: 90px; }
+.yc-card { padding: 24px 26px; border: 1px solid rgba(var(--accent), 0.2); background: rgb(var(--surface)); }
+.yc-card h2 { margin: 0 0 4px; font: 400 1.5rem 'Cormorant Garamond', serif; color: rgb(var(--ink)); }
+.yc-sub { margin: 0 0 18px; font: 0.85rem 'Jost', sans-serif; color: rgba(var(--ink), 0.62); }
+
+/* On a wide screen the sentence and the three numbers stay in view while the sliders move. */
+.yc-pin { display: grid; gap: 12px; }
+@media (min-width: 981px) {
+  .yc-pin { position: sticky; top: 84px; z-index: 6; margin: -12px; padding: 12px; background: rgba(var(--bg), 0.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+}
+.yc-summary { background: rgba(var(--accent), 0.1); border-color: rgba(var(--accent), 0.35); padding: 18px 22px; }
+.yc-summary p { margin: 0; font: 400 1.18rem/1.5 'Jost', sans-serif; color: rgb(var(--ink)); }
+.yc-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.yc-kpi { padding: 14px 16px; border: 1px solid rgba(var(--accent), 0.2); background: rgb(var(--surface)); }
+.yc-kpi-icon { display: block; margin-bottom: 6px; color: rgb(var(--accent)); }
+.yc-kpi-label { font: 0.78rem 'Jost', sans-serif; color: rgba(var(--ink), 0.68); }
+.yc-kpi-value { margin: 2px 0; font: 300 1.9rem/1.15 'Jost', sans-serif; color: rgb(var(--ink)); font-variant-numeric: lining-nums tabular-nums; }
+.yc-kpi-hint { font: 0.7rem/1.4 'Jost', sans-serif; color: rgba(var(--ink), 0.55); }
+
+.yc-donut-row { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
+.yc-donut { width: 210px; max-width: 100%; flex: 0 0 auto; margin: 0 auto; }
+.yc-legend { flex: 1 1 220px; display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.yc-legend li { display: flex; align-items: center; gap: 10px; font: 0.9rem 'Jost', sans-serif; }
+.yc-dot { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; }
+.yc-legend-name { flex: 1; color: rgb(var(--ink)); }
+.yc-legend-val { color: rgb(var(--ink)); font-variant-numeric: lining-nums tabular-nums; }
+.yc-legend-val small { color: rgba(var(--ink), 0.58); font-size: 0.78rem; }
+.yc-note { margin: 16px 0 0; padding: 12px 14px; border-left: 3px solid rgb(var(--accent)); background: rgba(var(--accent), 0.08); font: 0.86rem/1.6 'Jost', sans-serif; color: rgb(var(--ink)); }
+.yc-note-bad { border-left-color: rgb(var(--error)); background: rgba(var(--error), 0.08); }
+
+.yc-bars { display: block; width: 100%; height: auto; }
+.yc-bar { animation: ycFade 0.6s ease both; }
+@keyframes ycFade { from { opacity: 0; } to { opacity: 1; } }
+.yc-badge { transform-box: fill-box; transform-origin: center bottom; animation: ycPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s both; }
+@keyframes ycPop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+.yc-chart-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 10px 0 0; padding: 0; list-style: none; font: 0.78rem 'Jost', sans-serif; color: rgba(var(--ink), 0.72); }
+.yc-chart-legend li { display: flex; align-items: center; gap: 7px; }
+.yc-swatch { width: 14px; height: 14px; border-radius: 3px; flex: 0 0 auto; }
+.yc-swatch-line { width: 18px; height: 0; border-radius: 0; border-top: 2px dashed rgb(var(--ink)); }
+.yc-explore { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(var(--accent), 0.16); }
+.yc-explore label { font: 0.88rem 'Jost', sans-serif; color: rgb(var(--ink)); }
+.yc-readout { margin: 6px 0 0; font: 400 1.02rem/1.5 'Jost', sans-serif; color: rgb(var(--ink)); }
+
+.yc-cta p { margin: 4px 0 16px; max-width: 520px; font: 0.92rem/1.65 'Jost', sans-serif; color: rgba(var(--ink), 0.74); }
+.yc-cta a { display: inline-block; padding: 13px 24px; background: #25D366; color: #08260f; text-decoration: none; font: 500 0.76rem 'Jost', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; }
+.yc-cta a:focus-visible { outline: 2px solid rgb(var(--accent-light)); outline-offset: 2px; }
+
+/* On a phone the result is far below the sliders: this keeps the two numbers in view. */
+.yc-mini {
+  position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 85; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 58px; padding: 8px 16px; border: 1px solid rgb(var(--accent)); background: rgba(var(--bg), 0.97); color: rgb(var(--ink));
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); cursor: pointer; text-align: left;
+  animation: consentIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.yc-mini span { display: grid; }
+.yc-mini small { font: 0.6rem 'DM Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(var(--ink), 0.62); }
+.yc-mini strong { font: 400 1.25rem/1.15 'Jost', sans-serif; font-variant-numeric: lining-nums tabular-nums; }
+.yc-mini-go { font: 500 0.68rem 'Jost', sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: rgb(var(--accent)); }
+@media (min-width: 981px) { .yc-mini { display: none; } }
+@media (max-width: 980px) {
+  body:has(.yc-mini) .social-float { display: none; }
+  body:has(.yc-mini) .consent { bottom: 84px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .yc-bar, .yc-badge, .yc-mini { animation: none; }
+  .yc-range::-webkit-slider-thumb, .yc-valuebox, .yc-currency button { transition: none; }
+}

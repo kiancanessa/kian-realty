@@ -36,7 +36,7 @@ export default function CalcPage({ lang }: { lang: Lang }) {
       <Navbar />
       {jsonLd.map((d, i) => <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(d) }} />)}
       <main style={{ padding: "140px 24px 96px" }}>
-        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <nav aria-label="Breadcrumb" style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", letterSpacing: "0.08em", color: "rgba(var(--ink),0.5)", marginBottom: 28 }}>
             <a href={lang === "es" ? "/es" : "/"} style={{ color: "inherit" }}>{ui.home}</a>
             <span aria-hidden> / </span>
