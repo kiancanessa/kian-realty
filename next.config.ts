@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      // The guide's PDF repeats the guide page: keep the page, not the file, in search results.
+      { source: "/guias/:file*", headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }] },
+    ];
+  },
   images: {
     remotePatterns: [
       // Fotos de las agencias aliadas (ver app/lib/bolsa): las sirve su dueña.

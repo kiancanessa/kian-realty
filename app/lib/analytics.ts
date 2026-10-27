@@ -59,7 +59,7 @@ export function setConsent(granted: boolean): void {
   whenReady("fbq", fbq => fbq("consent", granted ? "grant" : "revoke"));
 }
 
-export type LeadMethod = "contact_form" | "property_inquiry" | "quiz" | "interest";
+export type LeadMethod = "contact_form" | "property_inquiry" | "quiz" | "interest" | "guide";
 
 export function trackLead(method: LeadMethod, params: Params = {}): void {
   whenReady("gtag", gtag => gtag("event", "generate_lead", { method, ...params }));

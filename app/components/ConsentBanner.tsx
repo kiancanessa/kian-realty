@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useLang } from "../lib/LangContext";
 import { setConsent, storedConsent, trackingConfigured } from "../lib/analytics";
 import { INTRO_DONE_EVENT } from "./IntroCurtain";
@@ -41,7 +42,7 @@ export default function ConsentBanner() {
     <div className="consent" role="region" aria-label={t.consent.label}>
       <p>
         {t.consent.text}{" "}
-        <a href="/privacidad">{t.consent.policy}</a>
+        <Link href="/privacidad">{t.consent.policy}</Link>
       </p>
       <div className="consent-actions">
         <button type="button" onClick={() => choose(false)}>{t.consent.decline}</button>

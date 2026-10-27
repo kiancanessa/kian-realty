@@ -1,10 +1,12 @@
 "use client";
+import Link from "next/link";
 import { useLang } from "../lib/LangContext";
 import Logo from "./Logo";
 import { SOCIAL_LINKS } from "../lib/social";
+import { LINK_LABELS, pageKeys, pagePath } from "../lib/seoSlugs";
 
 export default function Footer() {
-  const { t } = useLang();
+  const { t, locale } = useLang();
   const year = new Date().getFullYear();
   return (
     <footer style={{ background: "rgb(var(--bg-alt))", borderTop: "1px solid rgba(var(--accent),0.1)", padding: "48px 24px" }}>
@@ -28,10 +30,19 @@ export default function Footer() {
               </a>
             ))}
           </div>
-          <a href="/privacidad" style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(var(--ink),0.2)", textDecoration: "none" }}>{t.footer.privacy}</a>
+          <Link href="/privacidad" style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.75rem", color: "rgba(var(--ink),0.2)", textDecoration: "none" }}>{t.footer.privacy}</Link>
           <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.6rem", color: "rgba(var(--ink),0.2)" }}>© {year} · {t.footer.rights}</span>
         </div>
       </div>
+      <nav aria-label={locale === "es" ? "Explorar" : "Explore"}
+        style={{ maxWidth: 1280, margin: "24px auto 0", paddingTop: 20, borderTop: "1px solid rgba(var(--accent),0.08)", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "10px 24px" }}>
+        {pageKeys.map(k => (
+          <a key={k} href={pagePath(k, locale)}
+            style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.76rem", color: "rgba(var(--ink),0.6)", textDecoration: "none" }}>
+            {LINK_LABELS[k][locale]}
+          </a>
+        ))}
+      </nav>
       <div style={{ maxWidth: 1280, margin: "24px auto 0", paddingTop: 20, borderTop: "1px solid rgba(var(--accent),0.08)", textAlign: "center" }}>
         <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.62rem", letterSpacing: "0.05em", color: "rgba(var(--ink),0.25)" }}>
           Sitio web desarrollado por{" "}

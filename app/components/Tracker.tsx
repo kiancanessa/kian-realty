@@ -7,6 +7,7 @@ const LEAD_BY_SOURCE: Record<string, LeadMethod> = {
   contact: "contact_form",
   property: "property_inquiry",
   quiz: "quiz",
+  guide: "guide",
 };
 
 /** Where on the page a direct-contact link sits, so the report can say which one works. */

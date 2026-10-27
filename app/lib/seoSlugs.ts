@@ -58,3 +58,18 @@ export function langOfPath(pathname: string): Lang | null {
   const first = pathname.split("/").filter(Boolean)[0];
   return first && isLang(first) ? first : null;
 }
+
+/** Short link text, for the footer and "related pages" lists. */
+export const LINK_LABELS: Record<PageKey, Record<Lang, string>> = {
+  casas: { es: "Casas en venta", en: "Homes for sale" },
+  condominios: { es: "Condominios y departamentos", en: "Condos and apartments" },
+  terrenos: { es: "Terrenos en venta", en: "Land for sale" },
+  "frente-al-mar": { es: "Frente al mar", en: "Oceanfront" },
+  rentas: { es: "Rentas", en: "Rentals" },
+  "punta-azul": { es: "Punta Azul", en: "Punta Azul" },
+  "el-morro": { es: "El Morro", en: "El Morro" },
+  "plaza-del-mar": { es: "Plaza del Mar", en: "Plaza del Mar" },
+  "mar-de-calafia": { es: "Mar de Calafia", en: "Mar de Calafia" },
+  "terrazas-del-mar": { es: "Terrazas del Mar", en: "Terrazas del Mar" },
+  guia: { es: "Guía para comprar en México", en: "Buying in Mexico: guide" },
+};

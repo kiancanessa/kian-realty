@@ -2,7 +2,7 @@ import { sql } from "../../lib/db";
 import { getSessionUser } from "../../lib/auth";
 import { sendLeadAlert } from "../../lib/whatsapp";
 
-const VALID_SOURCES = ["contact", "property", "quiz", "interest"];
+const VALID_SOURCES = ["contact", "property", "quiz", "interest", "guide"];
 
 export async function POST(request: Request) {
   const sessionUser = await getSessionUser();

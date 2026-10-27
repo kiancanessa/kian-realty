@@ -5,6 +5,7 @@ import type { Announcement } from "../lib/announcements";
 import { X } from "lucide-react";
 import AnnouncementCard from "./templates/AnnouncementCard";
 import { INTRO_DONE_EVENT } from "./IntroCurtain";
+import { useLang } from "../lib/LangContext";
 
 /** Lets other first-visit prompts (the cookie banner) wait their turn instead
  *  of stacking behind the announcement. */
@@ -18,7 +19,10 @@ function seenKey(id: number) {
 
 export default function EventAnnouncement() {
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
-  const [locale, setLocale] = useState<Locale>("en");
+  // Follows the language of the site until the visitor uses the popup's own EN/ES switch.
+  const { locale: siteLocale } = useLang();
+  const [chosen, setLocale] = useState<Locale | null>(null);
+  const locale = chosen ?? siteLocale;
   const [visible, setVisible] = useState(false);
   const [videoOpen, setVideoOpen] = useState(false);
 
