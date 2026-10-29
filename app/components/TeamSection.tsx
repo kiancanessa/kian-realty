@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
-import { ArrowRight, Mail, MessageCircle, X, Check } from "lucide-react";
+import { ArrowRight, Globe, Mail, MessageCircle, X, Check } from "lucide-react";
 import { useLang } from "../lib/LangContext";
 
 function initials(name: string) {
@@ -42,7 +42,7 @@ function Portrait({ photo, name, rounded, focus }: { photo?: string; name: strin
 /** Longer, structured copy that does not fit a roster card — e.g. a
  *  services pitch with a headline and a list of reasons. */
 type MemberProfile = { headline?: string; listTitle?: string; points?: { title: string; text: string }[] };
-type TeamMember = { name: string; role: string; photo?: string; bio: string; whatsapp?: string; email?: string; profile?: MemberProfile };
+type TeamMember = { name: string; role: string; photo?: string; bio: string; whatsapp?: string; email?: string; website?: string; profile?: MemberProfile };
 
 const actionButton: React.CSSProperties = {
   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
@@ -63,6 +63,7 @@ const hoverOut = (e: React.MouseEvent<HTMLElement>) => {
 };
 
 function ContactLinks({ member, tabbable }: { member: TeamMember; tabbable: boolean }) {
+  const { locale } = useLang();
   return (
     <>
       {member.whatsapp && (
@@ -77,6 +78,13 @@ function ContactLinks({ member, tabbable }: { member: TeamMember; tabbable: bool
           aria-label={`Email — ${member.name}`} tabIndex={tabbable ? undefined : -1}
           onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
           <Mail size={17} /> Email
+        </a>
+      )}
+      {member.website && (
+        <a className="team-action" style={actionButton} href={member.website} target="_blank" rel="noopener noreferrer"
+          aria-label={`${locale === "es" ? "Portafolio" : "Portfolio"} — ${member.name}`} tabIndex={tabbable ? undefined : -1}
+          onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+          <Globe size={17} /> {locale === "es" ? "Portafolio" : "Portfolio"}
         </a>
       )}
     </>
@@ -171,7 +179,7 @@ function ProfileDialog({ member, onClose, closeLabel }: { member: TeamMember; on
             </div>
           )}
 
-          {(member.whatsapp || member.email) && (
+          {(member.whatsapp || member.email || member.website) && (
             <div style={{ display: "flex", gap: 10, marginTop: 26 }}>
               <ContactLinks member={member} tabbable />
             </div>
