@@ -23,6 +23,23 @@ import { parseFeed, parseDetail, type BolsaFeed, type BolsaListing, type BolsaDe
 
 const REF_PREFIX = "REF-";
 
+/** Partner listings this site chooses not to show, by the partner and the
+ *  EasyBroker id they carry. They stay in the partner's own feed; we simply
+ *  skip them here, so they leave the grid, the search and their own pages. */
+const HIDDEN_PARTNER_LISTINGS: Record<string, string[]> = {
+  lemus: [
+    "EB-XC6977", "EB-WZ1896", "EB-WZ1566", "EB-WZ1275", "EB-WU2794", "EB-WT9601",
+    "EB-WT9539", "EB-WT9517", "EB-WT9456", "EB-WR2586", "EB-WQ3412", "EB-WP3773",
+    "EB-WO0006", "EB-WF6463", "EB-WC4746", "EB-WJ6339", "EB-WC4667",
+  ],
+};
+const hiddenKeys = new Set(
+  Object.entries(HIDDEN_PARTNER_LISTINGS).flatMap(([partner, ids]) => ids.map(id => `${partner}:${id.toLowerCase()}`)),
+);
+function isHidden(partner: Partner, listing: BolsaListing): boolean {
+  return [listing.externalId, listing.id].some(k => k && hiddenKeys.has(`${partner.slug}:${k.toLowerCase()}`));
+}
+
 /** How long a listing stays up after we last managed to reach its owner. */
 const MAX_STALE_MS = 24 * 60 * 60 * 1000;
 /** How often the feed is re-fetched, and how often the copy is refreshed. */
@@ -190,7 +207,9 @@ async function allPartnerListings(): Promise<Found[]> {
   return feeds.flatMap((feed, i) => {
     if (!feed) return [];
     const partner = PARTNERS[i];
-    return feed.listings.map(listing => ({ partner, listing, ref: refFor(partner.slug, listing.id) }));
+    return feed.listings
+      .filter(listing => !isHidden(partner, listing))
+      .map(listing => ({ partner, listing, ref: refFor(partner.slug, listing.id) }));
   });
 }
 
