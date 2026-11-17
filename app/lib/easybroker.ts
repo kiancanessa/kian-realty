@@ -150,7 +150,7 @@ export function toCard(item: EBPropertyListItem): PropertyCard {
 // both the unfiltered view and the per-category filters: within any category
 // the pinned ids still rank ahead of every un-pinned one.
 const FEATURED_HOUSE_IDS = [
-  "EB-WP7422", "EB-VV4976", "EB-QT1711", "EB-UC4180", "EB-VY6690",
+  "EB-WP7422", "EB-VV4976", "EB-QT1711", "EB-UC4180", "EB-VY6690", "EB-XJ4426",
 ];
 const FEATURED_LAND_IDS = [
   "EB-WR3158", "EB-WR3138", "EB-WR3121", "EB-UM2192", "EB-VX6734", "EB-WN5050",
