@@ -83,6 +83,7 @@ export const translations = {
     property: {
       forSale: "For Sale",
       forRent: "For Rent",
+      exclusive: "Exclusive",
       consult: "Inquire",
       priceOnRequest: "Price on Request",
       salePrice: "Sale Price",
@@ -494,6 +495,7 @@ export const translations = {
     property: {
       forSale: "En Venta",
       forRent: "En Renta",
+      exclusive: "Exclusiva",
       consult: "Consultar",
       priceOnRequest: "Precio a Consultar",
       salePrice: "Precio de Venta",

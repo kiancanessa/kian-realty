@@ -11,6 +11,7 @@ import { sendInquiry, whatsappLink } from "../lib/sendInquiry";
 import StarRating from "./StarRating";
 import Avatar from "./Avatar";
 import FavoriteButton from "./FavoriteButton";
+import ExclusiveBadge from "./ExclusiveBadge";
 
 type PropertyReview = { id: number; name: string; rating: number; comment_en: string; comment_es: string; language: "en" | "es" };
 
@@ -146,6 +147,7 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
         <div style={{ position: "absolute", top: 24, left: 24, background: "rgb(var(--accent))", color: "#FAF6EE", padding: "6px 16px", fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", letterSpacing: "0.25em", textTransform: "uppercase", fontWeight: 600 }}>
           {op ? (op.type === "rental" ? t.property.forRent : t.property.forSale) : t.property.consult}
         </div>
+        <ExclusiveBadge id={property.public_id} top={64} left={24} />
         <FavoriteButton propertyId={property.public_id} propertyTitle={property.title} propertyImage={images[0]?.url} size={18} style={{ position: "absolute", top: 20, right: 20 }} />
         {images.length > 0 && (
           <div style={{ position: "absolute", bottom: 24, right: 24, background: "rgba(10,10,10,0.8)", border: "1px solid rgba(var(--accent),0.3)", padding: "8px 16px", fontFamily: "'DM Mono', monospace", fontSize: "0.68rem", color: "rgb(var(--accent))", letterSpacing: "0.15em" }}>
