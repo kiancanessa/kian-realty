@@ -6,7 +6,7 @@ import { PLACEHOLDER_IMAGE } from "./propertyFormat";
 const API_BASE = "https://api.easybroker.com/v1";
 const PAGE_LIMIT = 20;
 
-export type PropertyCategory = "house" | "apartment" | "land";
+export type PropertyCategory = "house" | "apartment" | "land" | "commercial";
 export type OperationType = "sale" | "rental";
 
 const PROPERTY_TYPE_MAP: Record<string, PropertyCategory> = {
@@ -17,6 +17,7 @@ const PROPERTY_TYPE_MAP: Record<string, PropertyCategory> = {
   "Casa en condominio": "apartment",
   "Terreno": "land",
   "Terreno comercial": "land",
+  "Local comercial": "commercial",
 };
 
 export function categoryFor(propertyType: string): PropertyCategory {

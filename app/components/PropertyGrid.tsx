@@ -5,7 +5,7 @@ import type { PropertyCard } from "../lib/easybroker";
 import { useReviewStats } from "../lib/useReviewStats";
 import PropertyCardTile from "./PropertyCardTile";
 
-type TypeFilter = "all" | "house" | "apartment" | "land";
+type TypeFilter = "all" | "house" | "apartment" | "land" | "commercial";
 type OpFilter = "all" | "sale" | "rental";
 
 function FilterButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
@@ -30,7 +30,8 @@ export default function PropertyGrid({ properties }: { properties: PropertyCard[
   const [op, setOp] = useState<OpFilter>("all");
   const reviewStats = useReviewStats();
 
-  const typeFilters: TypeFilter[] = ["all", "house", "apartment", "land"];
+  // "Commercial" only shows up when there is something commercial to filter.
+  const typeFilters: TypeFilter[] = ["all", "house", "apartment", "land", ...(properties.some(p => p.type === "commercial") ? ["commercial" as const] : [])];
   const opFilters: OpFilter[] = ["all", "sale", "rental"];
 
   const visible = properties

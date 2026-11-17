@@ -4,6 +4,7 @@ import { MapPin, ArrowLeft, X, ChevronLeft, ChevronRight, Phone, Mail, Bed, Bath
 import Link from "next/link";
 import type { EBPropertyDetail } from "../lib/easybroker";
 import { primaryOperation } from "../lib/easybroker";
+import { nightlyRate } from "../lib/propertyFormat";
 import { useLang } from "../lib/LangContext";
 import { googleMapEmbedUrl, googleMapsUrl, googleDirectionsUrl } from "../lib/maps";
 import { useSession } from "../lib/useSession";
@@ -195,6 +196,14 @@ export default function EasyBrokerDetail({ property }: { property: EBPropertyDet
               <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(2rem, 4vw, 3rem)", color: "rgb(var(--ink))", fontWeight: 300, lineHeight: 1 }}>
                 {op?.formatted_amount ?? t.property.priceOnRequest}
               </div>
+              {(() => {
+                const night = nightlyRate(property.operations);
+                return night && (
+                  <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.85rem", color: "rgb(var(--accent))", marginTop: 8 }}>
+                    {t.property.nightlyRate}: ${night.amount.toLocaleString("en-US")} {night.currency} {t.property.perNight}
+                  </div>
+                );
+              })()}
               <div style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.8rem", color: "rgba(var(--ink),0.4)", marginTop: 6 }}>
                 {t.property.typeLabels[property.property_type] ?? property.property_type}
               </div>

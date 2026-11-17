@@ -17,6 +17,14 @@ export function formatOwnPrice(
   return operation === "rental" ? `$${amount} ${currency}/mo` : `$${amount} ${currency}`;
 }
 
+/** The nightly rate of a listing that is also rented by the night, if any.
+ *  EasyBroker calls it "temporary_rental"; the rest of the site only knows
+ *  sale and rental, so it is read here and shown as an extra line. */
+export function nightlyRate(operations: { type: string; amount: number; currency: string }[]): { amount: number; currency: string } | null {
+  const o = operations.find(x => x.type === "temporary_rental" && x.amount > 0);
+  return o ? { amount: o.amount, currency: o.currency } : null;
+}
+
 /** Form inputs arrive as strings; empty means "not specified", not zero. */
 export function numOrNull(v: string | number | null | undefined): number | null {
   if (v === null || v === undefined || v === "") return null;

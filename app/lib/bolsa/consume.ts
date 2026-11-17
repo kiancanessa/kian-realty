@@ -123,7 +123,7 @@ const CATEGORY_BY_TYPE: Record<BolsaType, PropertyCategory> = {
   house: "house",
   apartment: "apartment",
   land: "land",
-  commercial: "land",
+  commercial: "commercial",
   building: "house",
   ranch: "land",
 };

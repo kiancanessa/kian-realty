@@ -7,7 +7,7 @@ import type { PropertyCard } from "../lib/easybroker";
 import { useReviewStats } from "../lib/useReviewStats";
 import PropertyCardTile from "./PropertyCardTile";
 
-type FilterKey = "all" | "house" | "apartment" | "land";
+type FilterKey = "all" | "house" | "apartment" | "land" | "commercial";
 
 export default function Featured({ properties }: { properties: PropertyCard[] }) {
   const { t } = useLang();
@@ -25,7 +25,8 @@ export default function Featured({ properties }: { properties: PropertyCard[] })
     return () => observer.disconnect();
   }, []);
 
-  const filters: FilterKey[] = ["all", "house", "apartment", "land"];
+  // "Commercial" only shows up when there is something commercial to filter.
+  const filters: FilterKey[] = ["all", "house", "apartment", "land", ...(properties.some(p => p.type === "commercial") ? ["commercial" as const] : [])];
   const visible = (filter === "all" ? properties : properties.filter(p => p.type === filter)).slice(0, 9);
 
   return (

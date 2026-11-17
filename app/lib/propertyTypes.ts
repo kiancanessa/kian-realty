@@ -11,4 +11,5 @@ export const PROPERTY_TYPES = [
   "Edificio",
   "Terreno",
   "Terreno comercial",
+  "Local comercial",
 ] as const;
